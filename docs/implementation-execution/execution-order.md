@@ -1,8 +1,9 @@
 # Execution Order
 
-IR-001 is Authorised and Not started. IR-002 through IR-022 and W2 through W7
-remain Draft and unauthorised; W1 is Ready to start through IR-001 only. The
-accepted roadmap order is authoritative.
+IR-001 and IR-002 are Implemented and Verified; W1 is complete. W2 through W7
+remain Draft and unauthorised. GATE-012 and separate product-owner acceptance
+are required before any W2 implementation. The accepted roadmap order remains
+authoritative.
 
 ## W1 — Evidence and tenant foundation
 
@@ -16,7 +17,9 @@ accepted roadmap order is authoritative.
 - Mandatory serial boundary: IR-002 follows IR-001 exit. IR-001 must establish
   or record the exact W1-exit blocker for the test/database/RLS/browser/CI
   capability; this capability is not a circular prerequisite to begin IR-001.
-- Schema dependencies: IR-002 plans Group-as-Tenant, Profile, stable Participant/group_members identity, configuration, archive/audit fields, parent-derived foreign keys, and generated-type provenance; it does not apply a migration.
+- Schema dependencies: IR-002 verified the Group-as-Tenant, structural Profile,
+  stable Participant/group_members identity, configuration, archive/audit,
+  parent-derived foreign keys, and generated-type provenance foundations.
 - Trusted-operation dependencies: None is implemented. IR-002 supplies the ownership and configuration invariants consumed by IR-003 and IR-008.
 - Security dependencies: Two-account/two-Group fixtures, parent-derived scope, and a deny-by-default transition strategy must be defined before W2.
 - UI dependencies: Accepted UI design is reference-only; W1 has no feature UI implementation.

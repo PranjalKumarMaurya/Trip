@@ -43,8 +43,8 @@ Schema dependencies flow from IR-002 to lifecycle/product work; Auth flows from 
 
 | IR item | Direct prerequisites | Blocking prerequisites | Permitted parallel work | Produces inputs for | Status |
 |---|---|---|---|---|---|
-| IR-001 | None | None | See accepted roadmap parallel-class rules; no unlisted parallelism | IR-002, IR-004, IR-022 | Authorised, Not started |
-| IR-002 | IR-001. | IR-001. | See accepted roadmap parallel-class rules; no unlisted parallelism | IR-003, IR-004, IR-007, IR-014, IR-022 | Draft |
+| IR-001 | None | None | See accepted roadmap parallel-class rules; no unlisted parallelism | IR-002, IR-004, IR-022 | Implemented and Verified |
+| IR-002 | IR-001. | IR-001. | See accepted roadmap parallel-class rules; no unlisted parallelism | IR-003, IR-004, IR-007, IR-014, IR-022 | Implemented and Verified |
 | IR-003 | IR-002, IR-004, IR-007, IR-008. | IR-002, IR-004, IR-007, IR-008. | See accepted roadmap parallel-class rules; no unlisted parallelism | IR-005, IR-006, IR-011, IR-012, IR-015, IR-016, IR-021, IR-022 | Draft |
 | IR-004 | IR-001, IR-002. | IR-001, IR-002. | See accepted roadmap parallel-class rules; no unlisted parallelism | IR-003, IR-005, IR-007, IR-021, IR-022 | Draft |
 | IR-005 | IR-003, IR-004, IR-007, IR-008. | IR-003, IR-004, IR-007, IR-008. | See accepted roadmap parallel-class rules; no unlisted parallelism | IR-006, IR-009, IR-010, IR-011, IR-021, IR-022 | Draft |

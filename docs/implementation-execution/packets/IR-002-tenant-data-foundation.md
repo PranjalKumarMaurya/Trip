@@ -1,7 +1,7 @@
 # IR-002 — Tenant data foundation
 ## 1. Status and ownership
 
-- Status: Implemented — independent verification pending
+- Status: Verified — authorisation closed
 - Wave: W1
 - Primary implementation owner: Not assigned unless documented
 - Review owners: architecture, security, database/migration, design, and product reviewers as applicable
@@ -59,8 +59,7 @@ supabase/migrations/001_initial.sql models users, events, expenses, settlements,
 | `supabase/migrations/007_ir002_configuration_archive_audit.sql` | Implemented | DBM-002 configuration/archive/audit | IR-002 | High | Dedicated local schema evidence |
 | `src/lib/database.types.ts` | Generated | DBM-013 output | IR-002 | Medium | Deterministic generation provenance |
 
-These paths are implemented exactly as authorised; independent verification is
-still required before any dependent packet consumes them.
+These paths are implemented and independently verified exactly as authorised.
 
 ## 10. Database and data-model work
 
@@ -172,9 +171,10 @@ Implemented DBM-001, DBM-002, and DBM-013 are recorded at
 `0a8a88446be90ba93a4d56406865c9c991879b33`; the final evidence run is
 `ir002-1785532761842-8ead547f-69a5-448e-a7f7-10193b8fb33f`. Its final manifest
 records clean apply, validation, rollback, clean reapply, deterministic type
-generation, build checks, and exact cleanup. IR-002 remains not Verified;
-GATE-011 remains not satisfied; W1 remains in progress. No later-packet or
-production work occurred.
+generation, build checks, and exact cleanup. The accepted independent
+verification record is `../ir-002-verification.md`; IR-002 is Verified,
+GATE-011 is satisfied, and W1 is complete. No later-packet or production work
+occurred.
 
 ## 29. Open questions
 

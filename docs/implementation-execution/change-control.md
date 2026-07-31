@@ -66,8 +66,10 @@ Wave order, IR scope, repository change paths, database migration plan, RLS plan
 - Architecture impact: none. Group remains the Trip Tenant; Auth remains
   authoritative; Participant remains `group_members.id`; no separate
   Participants table is introduced.
-- Gate impact: IR-002 may start only under its entry checks. GATE-011 remains
-  unsatisfied; W1 remains in progress; deployment and cutover remain blocked.
+- Gate impact: this authorisation was exercised and independently verified.
+  GATE-011 is satisfied and W1 is complete; GATE-012 and separate W2
+  product-owner authorisation remain required. Deployment and cutover remain
+  blocked.
 - Review/rollback: corrections inside the frozen correction class are permitted
   without a new product-owner authorisation. All other changes return here or
   to architecture/design change control. Reverting this record removes only

@@ -2,13 +2,13 @@
 
 ## Status and authorisation
 
-- Status: In progress; exit not achieved
+- Status: Complete
 - Implementation authorised: IR-001 and bounded IR-002 only
 - IR-001: Implemented and Verified
-- IR-002: Implemented — independent verification pending
-- W1 In progress: Yes
-- W1 exit achieved: No
-- Wave complete: No
+- IR-002: Implemented and Verified
+- W1 In progress: No
+- W1 exit achieved: Yes
+- Wave complete: Yes
 
 ## Wave objective
 
@@ -30,10 +30,9 @@ inventory, or source snapshot is not required to begin IR-001.
 
 ## Internal execution order
 
-IR-001 is implemented and verified. IR-002 is implemented from its separate
-physical contract and remains serial before W2 pending independent verification.
-IR-022 governance evidence may be maintained in parallel but does not
-substitute for either packet.
+IR-001 and IR-002 are implemented and verified. W1 is complete. IR-022
+governance evidence may be maintained in parallel but does not substitute for
+later packet authorisation.
 
 ## Parallel work boundaries
 
@@ -91,8 +90,18 @@ Stop for missing isolated fixture capability, ambiguous parent ownership, or a p
 
 ## Implementation-authorisation status
 
-IR-001 is implemented and verified. IR-002 is implemented but not independently
-verified. W1 remains in progress, GATE-011 is not satisfied, and W1 exit is not
-achieved.
+IR-001 and IR-002 are implemented and verified. GATE-007 through GATE-011 are
+satisfied, no W1 blocker remains, and W1 exit is achieved. GATE-012 remains
+required before W2 entry; no W2 packet is authorised by this closure.
+
+## W1 closure
+
+W1 completed through IR-001 Implemented and Verified; GATE-007 through
+GATE-010 Satisfied; IR-002 Implemented and Verified; and GATE-011 Satisfied.
+Deployment and cutover remain unauthorised. The next task is preparation of a
+separate bounded IR-004 Auth, Profile and Session authorisation package.
+IR-003 must not begin merely because its database prerequisites now exist, and
+no W2 implementation may begin without GATE-012 and separate product-owner
+acceptance.
 
 W1 contains no feature UI implementation.

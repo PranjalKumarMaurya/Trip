@@ -2,14 +2,14 @@
 
 ## Decision
 
-- Decision: **Implemented — independent verification pending**.
+- Decision: **Verified — authorisation closed**.
 - Authorisation date: 2026-08-01.
 - Starting commit reviewed: `0f1954c4d0305b77b234b0b9125e3a189b322fd6`.
 - Starting subject: `docs(ir-001): verify evidence foundation with accepted local limitations`.
 - Implementation code/evidence HEAD: `0a8a88446be90ba93a4d56406865c9c991879b33`.
 - IR-001: Implemented and Verified.
 - GATE-007 through GATE-010: Satisfied.
-- W1: In progress; GATE-011 is not satisfied and W1 exit is not achieved.
+- W1: Complete; GATE-011 is satisfied.
 - Deployment and cutover: not authorised.
 
 This is the sole authorisation for the DBM-001, DBM-002, and DBM-013 work
@@ -239,10 +239,10 @@ separation, Profile/Auth ownership, configuration/audit constraints, type
 provenance, secret safety, and absence of later-packet work. The completion
 record below claims Implemented only; verification remains independent.
 
-GATE-011 remains not satisfied. It requires GATE-007–010 plus independently
-verified IR-002 parent/constraint and two-Group evidence, local-boundary
-evidence, and an explicit W1-exit decision. IR-002 verification cannot
-silently close the gate.
+GATE-011 is satisfied by the accepted independent verification record:
+`../ir-002-verification.md`. It confirms GATE-007–010, independently verified
+IR-002 parent/constraint and two-Group evidence, the local-boundary evidence,
+and the recorded W1 exit decision.
 
 ## Implementation completion record
 
@@ -272,10 +272,23 @@ patterns.
 
 No legacy migration or seed changed. No product conversion, Auth flow,
 Invitation, RLS, Storage, Realtime, production-data migration, deployment, or
-cutover occurred. IR-002 is **Implemented**, not **Verified**; GATE-011 remains
-not satisfied and W1 remains in progress.
+cutover occurred. IR-002 is **Verified** and its authorisation is closed;
+GATE-011 is satisfied and W1 is complete.
+
+## Verification closure
+
+The accepted verification anchor, evidence run, generated-type checksum, and
+full decision are recorded in `../ir-002-verification.md`. No correction packet
+is required. IR-002 must not be reopened for a later-packet requirement or an
+unrelated shared-tool failure; only a newly discovered reproducible defect that
+directly violates an accepted IR-002 invariant may trigger correction or change
+control.
 
 ## Post-acceptance implementation prompt
+
+This is the historical implementation prompt retained with the authorisation
+record. It was superseded by the accepted verification closure above and must
+not be used to reopen IR-002.
 
 ```text
 Implement authorised IR-002 only from
