@@ -89,6 +89,31 @@ prior safe record cannot recover the raw hosted client text because retaining
 that text would violate the established evidence boundary; the successful
 `ubuntu-22.04` run proves the replacement contract on the hosted client path.
 
+## Final browser-security correction — 2026-07-31
+
+- Implementation commit: `b4967f7e89224111d21319fb36ca51035b98554b`
+  (`fix(ir-001): secure browser failure evidence`).
+- F-IR001-VER-007 removed the stale requirement for raw Playwright
+  `.last-run.json` and `error-context.md`. The retained contract is exactly a
+  safe summary, a single privacy-checked screenshot, and the evidence
+  manifest; raw output is removed after extraction.
+- F-IR001-VER-008 replaces page-visible text in the failure test context before
+  capture. The screenshot summary records the privacy transformation and the
+  `synthetic-redacted-browser-evidence` classification. No application source
+  was modified.
+- Local clean install, type/type-test checks, two 25-test unit runs, build,
+  browser normal/failure/manifests, and one complete database non-regression
+  sequence passed. Exact IR-001 Docker cleanup passed.
+- Hosted run `30627419186` at `b4967f7…` passed Browser evidence and Database
+  and RLS evidence. Its browser artifact contains only the redacted summary,
+  redacted screenshot, and manifest; its database artifact retains the
+  unchanged three phase records and manifest. Both artifacts have 14-day
+  retention and matching checksums.
+- SEC-IR001-001 is documented separately. It is contained within repository
+  and evidence boundaries but awaits the unrelated local project's owner to
+  recreate or rotate the exposed development credential; no unrelated resource
+  was mutated.
+
 ## Hosted database resolution — 2026-07-31
 
 - Implementation commit: `7a566338248b0df7ac42414dbc664138bee9c655`

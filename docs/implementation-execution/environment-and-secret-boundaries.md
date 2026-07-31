@@ -20,3 +20,13 @@ personal data.
 Repository-visible environment inventory is complete for this review. External
 evidence is intentionally deferred to its first consuming gate; it is not a
 universal W1 blocker.
+
+## IR-001 diagnostic safety rule — 2026-07-31
+
+IR-001 review diagnostics must emit only exact, allow-listed identifiers and
+safe categories. Do not run `ps e`, `ps auxeww`, broad process-command or
+`/proc/*/environ` inspection, broad Docker inspection, complete Supabase status
+output, complete environment dumps, or shell tracing with secrets. A local
+credential exposure incident is recorded in
+`ir-001-local-credential-exposure-incident.md`; its unrelated owner and
+rotation boundary are not inferred from this repository.

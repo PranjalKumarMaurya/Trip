@@ -43,3 +43,15 @@ browser-install boundary.
   evidence fails before the first normal phase can be retained. No gate or
   status promotion occurred; IR-001 remains In progress and IR-002 remains
   blocked.
+
+## Final consolidated security and browser correction — 2026-07-31
+
+- F-IR001-VER-007 and F-IR001-VER-008 were corrected in
+  `b4967f7e89224111d21319fb36ca51035b98554b` and validated locally and in
+  hosted run `30627419186`.
+- SEC-IR001-001 was discovered during the independent review. No credential
+  entered repository-controlled evidence or GitHub, but invalidation of the
+  unrelated local development credential requires its owner; see
+  `ir-001-local-credential-exposure-incident.md`.
+- No gate or status promotion occurred. IR-001 remains In progress and IR-002
+  remains unauthorised.
