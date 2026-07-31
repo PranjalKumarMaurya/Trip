@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "capability": "ir-002-tenant-foundation",
+  "runId": "ir002-1785532612937-e865d62c-dfe2-40af-81a9-b6edd7fa4daa",
+  "stage": "empty-target-rollback",
+  "result": "passed",
+  "environment": "local-isolated",
+  "projectId": "bachelor-trip-app-ir002",
+  "legacyTablesPreserved": 6,
+  "targetTablesRemaining": 0
+}

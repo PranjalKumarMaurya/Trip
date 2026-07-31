@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "capability": "ir-002-tenant-foundation",
+  "runId": "ir002-1785532612937-e865d62c-dfe2-40af-81a9-b6edd7fa4daa",
+  "stage": "type-generation-pass-2",
+  "result": "passed",
+  "environment": "local-isolated",
+  "projectId": "bachelor-trip-app-ir002",
+  "cliVersion": "2.105.0",
+  "schema": "public",
+  "migrationChecksums": {
+    "006_ir002_tenant_root.sql": "cb330e8b9f993bd3f8a633b4c9a931cd82af8438b384c4156e50ddf6dd214c26",
+    "007_ir002_configuration_archive_audit.sql": "17ad0e96bc2597b59cd31325cb4f4ce2968048bc8a511de93ffb6fc4e88bb338"
+  },
+  "generatedTypeChecksum": "55552e7a17ff965c1a41168c010a009ba24964c3c50db217ad3650b2fc898c9f"
+}

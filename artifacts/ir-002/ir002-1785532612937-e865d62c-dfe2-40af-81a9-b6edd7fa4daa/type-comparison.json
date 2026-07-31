@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "capability": "ir-002-tenant-foundation",
+  "runId": "ir002-1785532612937-e865d62c-dfe2-40af-81a9-b6edd7fa4daa",
+  "stage": "type-comparison",
+  "result": "passed",
+  "environment": "local-isolated",
+  "projectId": "bachelor-trip-app-ir002",
+  "comparison": "byte-identical",
+  "checksum": "55552e7a17ff965c1a41168c010a009ba24964c3c50db217ad3650b2fc898c9f"
+}

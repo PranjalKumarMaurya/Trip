@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "capability": "ir-002-tenant-foundation",
+  "runId": "ir002-1785532761842-8ead547f-69a5-448e-a7f7-10193b8fb33f",
+  "stage": "typecheck-test-build",
+  "result": "passed",
+  "environment": "local-isolated",
+  "projectId": "bachelor-trip-app-ir002",
+  "commands": [
+    "npm-run-typecheck",
+    "npm-run-test-types",
+    "npm-run-build"
+  ]
+}

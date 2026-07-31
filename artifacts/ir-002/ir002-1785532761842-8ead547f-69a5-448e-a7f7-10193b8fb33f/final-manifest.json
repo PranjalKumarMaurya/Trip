@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "ir": "IR-002",
+  "runId": "ir002-1785532761842-8ead547f-69a5-448e-a7f7-10193b8fb33f",
+  "result": "passed",
+  "environment": "local-isolated",
+  "requiredStages": [
+    "clean-application",
+    "schema-validation",
+    "constraint-tests",
+    "two-group-structural-tests",
+    "empty-target-rollback",
+    "clean-reapplication",
+    "type-generation-pass-1",
+    "type-generation-pass-2",
+    "type-comparison",
+    "typecheck-test-build",
+    "cleanup"
+  ],
+  "artifacts": [
+    {
+      "path": "artifacts/ir-002/ir002-1785532761842-8ead547f-69a5-448e-a7f7-10193b8fb33f/clean-application.json",
+      "bytes": 503,
+      "sha256": "2b6706d9d8d9973efa07f9d1ac01fbf06ae203c05bcb174f0b0ef6f73932c84c"
+    },
+    {
+      "path": "artifacts/ir-002/ir002-1785532761842-8ead547f-69a5-448e-a7f7-10193b8fb33f/clean-reapplication.json",
+      "bytes": 550,
+      "sha256": "7e967ae8c18ec72a3fc91ac23ec6bbd38fc197c08e766ef4192401a205796672"
+    },
+    {
+      "path": "artifacts/ir-002/ir002-1785532761842-8ead547f-69a5-448e-a7f7-10193b8fb33f/cleanup.json",
+      "bytes": 315,
+      "sha256": "802eb16c92235f102bb9fb99b63d955e80b62025a289db687c9a2052340d28aa"
+    },
+    {
+      "path": "artifacts/ir-002/ir002-1785532761842-8ead547f-69a5-448e-a7f7-10193b8fb33f/constraint-tests.json",
+      "bytes": 290,
+      "sha256": "b032f4acb6f5af94568a3fa7f402489d53bc0d46b68ea1f1d236c985fbdf2f3e"
+    },
+    {
+      "path": "artifacts/ir-002/ir002-1785532761842-8ead547f-69a5-448e-a7f7-10193b8fb33f/database.types.pass-1.ts",
+      "bytes": 17374,
+      "sha256": "55552e7a17ff965c1a41168c010a009ba24964c3c50db217ad3650b2fc898c9f"
+    },
+    {
+      "path": "artifacts/ir-002/ir002-1785532761842-8ead547f-69a5-448e-a7f7-10193b8fb33f/empty-target-rollback.json",
+      "bytes": 335,
+      "sha256": "a004161f33cbcb042a8b2f18a66fb867fa0b0e612ae13e33e49a24285f93b974"
+    },
+    {
+      "path": "artifacts/ir-002/ir002-1785532761842-8ead547f-69a5-448e-a7f7-10193b8fb33f/schema-validation.json",
+      "bytes": 290,
+      "sha256": "9bf3f1c2d8014464f81d7af79acd4cdb8ee80c7d7b791d26e6d7bd921fcb6b15"
+    },
+    {
+      "path": "artifacts/ir-002/ir002-1785532761842-8ead547f-69a5-448e-a7f7-10193b8fb33f/two-group-structural-tests.json",
+      "bytes": 299,
+      "sha256": "bfbb74962e65d26ef769c73ab65b31e124e76c6bb98026e39912eda76517c0d3"
+    },
+    {
+      "path": "artifacts/ir-002/ir002-1785532761842-8ead547f-69a5-448e-a7f7-10193b8fb33f/type-comparison.json",
+      "bytes": 385,
+      "sha256": "cfeb3b66e0fd999410ddf94071750e5acea9dab8169dbda57ee565c0c2fed109"
+    },
+    {
+      "path": "artifacts/ir-002/ir002-1785532761842-8ead547f-69a5-448e-a7f7-10193b8fb33f/type-generation-pass-1.json",
+      "bytes": 668,
+      "sha256": "2b7927fe0392dbf527c4af03a23aa194a68dd3e91c732de351ff3fe541953593"
+    },
+    {
+      "path": "artifacts/ir-002/ir002-1785532761842-8ead547f-69a5-448e-a7f7-10193b8fb33f/type-generation-pass-2.json",
+      "bytes": 668,
+      "sha256": "6383d0a3014bfc5c96da68e330910a53a556eb036692c1e073c9952fbae590a5"
+    },
+    {
+      "path": "artifacts/ir-002/ir002-1785532761842-8ead547f-69a5-448e-a7f7-10193b8fb33f/typecheck-test-build.json",
+      "bytes": 366,
+      "sha256": "02a00a08ba45cc009b7e06e3d2b50aa7a937238bab663a16a26011b55c1e2254"
+    }
+  ]
+}

@@ -11,14 +11,16 @@
     "typecheck": "tsc --noEmit",
     "test": "npm run test:unit",
     "test:types": "tsc --project tsconfig.tests.json --noEmit",
-    "test:unit": "node --test tests/unit/deterministic-clock.test.ts tests/unit/two-account-two-group-fixture.test.ts tests/unit/browser-artifact-safety.test.mjs tests/unit/database-evidence-contract.test.mjs tests/unit/database-cleanup-state.test.mjs tests/unit/rls-probe-result-contract.test.mjs",
+    "test:unit": "node --test tests/unit/deterministic-clock.test.ts tests/unit/two-account-two-group-fixture.test.ts tests/unit/browser-artifact-safety.test.mjs tests/unit/database-evidence-contract.test.mjs tests/unit/database-cleanup-state.test.mjs tests/unit/rls-probe-result-contract.test.mjs tests/unit/ir-002-tenant-foundation.test.mjs",
     "test:db": "node tests/database/run-database-normal-evidence.mjs",
     "test:db:failure": "node tests/database/run-rls-failure-injection.mjs",
     "test:db:cleanup": "node tests/database/assert-local-cleanup.mjs",
     "test:browser": "PLAYWRIGHT_BROWSERS_PATH=0 playwright test",
     "test:browser:failure": "node tests/browser/run-failure-injection.mjs",
     "test:browser:install": "PLAYWRIGHT_BROWSERS_PATH=0 playwright install chromium",
-    "test:evidence:manifest": "node tests/evidence/write-evidence-manifest.mjs"
+    "test:evidence:manifest": "node tests/evidence/write-evidence-manifest.mjs",
+    "test:ir002": "node tests/database/ir-002/run-tenant-foundation.mjs",
+    "test:ir002:cleanup": "node tests/database/ir-002/assert-cleanup.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",
