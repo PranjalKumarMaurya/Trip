@@ -1,14 +1,14 @@
 # IR-001 — Evidence foundation
 ## 1. Status and ownership
 
-- Status: Authorised
+- Status: Implemented and Verified
 - Wave: W1
 - Primary implementation owner: Not assigned unless documented
 - Review owners: architecture, security, database/migration, design, and product reviewers as applicable
 - Implementation authorised: Yes
-- Started: No
-- Implemented: No
-- Verified: No
+- Started: Yes — 2026-07-31
+- Implemented: Yes — 2026-07-31
+- Verified: Yes — 2026-07-31
 - Authorisation record: `../authorisations/IR-001-authorisation.md`
 
 ## 2. Objective

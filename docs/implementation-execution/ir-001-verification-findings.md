@@ -19,7 +19,7 @@
 | Owner | Bounded IR-001 correction owner |
 | Affected implementation files | `playwright.config.ts`, `tests/browser/run-failure-injection.mjs`, `.github/workflows/ir-001-evidence.yml`, and any correction-owned evidence-manifest control |
 | Affected generated evidence | `artifacts/ir-001/browser/test-results/failure-injection-IR-001-c-c5a36-tains-a-screenshot-artifact/error-context.md` |
-| Observed condition | The retained Playwright error context includes the absolute workstation path `/home/prospero/Work/bachelor-trip-app/...` in its location and test-source sections. |
+| Observed condition | The retained Playwright error context included the absolute workstation path `<developer-home>/<repository>/...` in its location and test-source sections. |
 | Requirement not met | The verification review requires retained evidence and manifest references to avoid absolute developer-specific paths where a repository-relative path is sufficient. |
 | Security assessment | No credential, token, or server secret was observed in the inspected artifact. The defect is evidence portability and retention hygiene, not a confirmed secret exposure. |
 | Required correction | Retain the required browser controlled-failure evidence in a developer-path-safe form: either sanitize/redact the generated error context before retention/upload or exclude it and retain an equivalent safe failure summary plus the required screenshot/result metadata. Limit manifest and workflow upload inputs to the reviewed safe allow-list. Do not change application behaviour. |

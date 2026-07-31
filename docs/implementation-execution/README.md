@@ -9,9 +9,9 @@
 - Implementation readiness review: Approved
 - Implementation authorisation scope: IR-001 only
 - IR-001 authorised: Yes
-- IR-001 status: Not started
+- IR-001 status: Implemented and Verified
 - IR-002 through IR-022 authorised: No
-- W1 status: Ready to start through IR-001 only
+- W1 status: In progress; exit not achieved
 - Application implementation: Not started
 
 ## Purpose
@@ -54,5 +54,6 @@ and `lock-record.md`; neither record authorises implementation.
 
 ## Current next activity
 
-Begin bounded IR-001 Evidence Foundation implementation in a new implementation
-session from the clean IR-001 authorisation commit.
+Prepare the separate bounded IR-002 Tenant Data Foundation authorisation
+package from the clean IR-001 verification commit. IR-002 implementation
+remains unauthorised until that package is accepted.

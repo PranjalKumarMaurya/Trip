@@ -2,11 +2,11 @@
 
 ## Status and authorisation
 
-- Status: Ready to start through IR-001 only
+- Status: In progress; exit not achieved
 - Implementation authorised: IR-001 only
-- IR-001: Authorised, Not started
+- IR-001: Implemented and Verified
 - IR-002: Not authorised
-- W1 In progress: No
+- W1 In progress: Yes
 - W1 exit achieved: No
 - Wave complete: No
 
@@ -88,7 +88,7 @@ Stop for missing isolated fixture capability, ambiguous parent ownership, or a p
 
 ## Implementation-authorisation status
 
-IR-001 only. W1 is not In progress, IR-002 is not authorised, and W1 exit is
-not achieved.
+IR-001 is implemented and verified. W1 remains in progress, IR-002 is not
+authorised, and W1 exit is not achieved.
 
 W1 contains no feature UI implementation.

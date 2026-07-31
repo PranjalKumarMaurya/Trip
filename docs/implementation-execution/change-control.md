@@ -27,3 +27,28 @@ Wave order, IR scope, repository change paths, database migration plan, RLS plan
 - Migration, RLS, trusted-operation, Storage, Realtime, and release changes require their specialist reviewers.
 - A change cannot imply packet/Wave authorisation, implementation start, or W7 cutover authority.
 - No locked change may be implemented before approval.
+
+## CC-IR001-20260731 — Verification environment authority decision
+
+- Decision authority: Product owner.
+- Scope: IR-001 Evidence Foundation verification only.
+- Authoritative execution environment: GitHub Actions on `ubuntu-22.04`,
+  Node 22, Playwright 1.55.1, and Supabase CLI 2.105.0.
+- Authoritative evidence: controlled browser failure and privacy transform,
+  browser manifest, database normal/controlled-failure/recovery evidence,
+  database manifest, durable exact Docker cleanup, and hosted artifacts.
+- Accepted local limitations: the current local host uses Playwright's
+  unsupported-host Ubuntu 20.04 fallback; controlled browser-failure staging
+  screenshots are not consistently reproduced locally; exact local Docker
+  resources can transiently reappear despite project-scoped stop before a
+  final clean exact-resource state.
+- Decision: those local limitations are non-blocking for IR-001 because the
+  authoritative hosted browser and database lanes passed in run `30627419186`,
+  their reviewed artifacts passed privacy/path/secret/allow-list/checksum
+  checks, local unit/type/build and database assertions passed, final local
+  exact-resource inspection was empty, no production or external Supabase
+  resource was used, and `SEC-IR001-001` is closed.
+- Boundaries: this decision establishes no general local-environment policy and
+  does not authorise deployment, migration rehearsal, cutover, or IR-002.
+- Rollback: revert this documentation-only decision and restore the previous
+  IR-001 verification status surfaces; no implementation state is altered.

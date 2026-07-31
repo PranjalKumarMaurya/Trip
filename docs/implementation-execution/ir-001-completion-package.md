@@ -3,8 +3,8 @@
 ## Status and review boundary
 
 - IR item: IR-001 — Evidence Foundation
-- Implementation status: **In progress**
-- Implemented / Verified / Complete: **Not claimed**
+- Implementation status: **Implemented and Verified**
+- Implemented / Verified: **Claimed by final independent review**
 - W1 exit: **Not claimed**
 - IR-002 authorisation: **Not claimed**
 - Package purpose: index the bounded implementation evidence for separate
@@ -101,10 +101,10 @@ and reviewer acceptance.
 
 | Gate | Evidence prepared | Status |
 |---|---|---|
-| GATE-007 — reviewed test/evidence/CI capability | Tooling decision, exact dependency record, Node/Playwright/Supabase capability, failure injection, retention/checksum conventions, CI workflow and removal paths. | Prepared for architecture/security/product review; **not passed or self-verified**. |
-| GATE-008 — isolated database/RLS and browser capability | Local-only RLS canary, two synthetic scope boundaries, cleanup proof, browser baseline boot, failure drivers, artifact record. | Prepared for security/database review; **not passed or self-verified**. |
-| GATE-009 — reproducible two-account/two-Group fixture | Fixed clock, stable synthetic fixture IDs, expectation matrix, deterministic reset/cleanup, and database canary mappings. | Prepared for security/test review; **not passed or self-verified**. |
-| GATE-010 — reviewed test environment and secret-safe access | Local Docker/browser boundary records, safe credentials category, cleanup scope, secret scans, manifest allow-list, and CI plan. | Prepared for security/operations review; hosted CI/access review remains open; **not passed or self-verified**. |
+| GATE-007 — reviewed test/evidence/CI capability | Tooling decision, exact dependency record, Node/Playwright/Supabase capability, failure injection, retention/checksum conventions, CI workflow and removal paths. | **Satisfied** by the final independent review and hosted workflow `30627419186`. |
+| GATE-008 — isolated database/RLS and browser capability | Local-only RLS canary, two synthetic scope boundaries, cleanup proof, browser baseline boot, failure drivers, artifact record. | **Satisfied** by the final independent review; hosted evidence is authoritative under `CC-IR001-20260731`. |
+| GATE-009 — reproducible two-account/two-Group fixture | Fixed clock, stable synthetic fixture IDs, expectation matrix, deterministic reset/cleanup, and database canary mappings. | **Satisfied** by the final independent review. |
+| GATE-010 — reviewed test environment and secret-safe access | Local Docker/browser boundary records, safe credentials category, cleanup scope, secret scans, manifest allow-list, and CI plan. | **Satisfied** by the final independent review; SEC-IR001-001 is closed and hosted retention/access were reviewed. |
 
 ## R-02 contribution and exclusions
 

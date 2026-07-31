@@ -2,34 +2,34 @@
 
 ## Decision
 
-**Corrections required.** This targeted independent review closed
-`SEC-IR001-001`, confirmed the prior hosted evidence, and found the following
-three current local evidence-integrity failures. This record does not change
-IR-001, gate, Wave, deployment, or IR-002 status.
+**Owner-directed closure accepted.** This targeted independent review closed
+`SEC-IR001-001`, confirmed the prior hosted evidence, and records the product
+owner's IR-001-only environment authority decision. This record does not
+authorise deployment, W1 exit, or IR-002.
 
 ## F-IR001-VER-009 — local controlled-browser failure cannot retain its required screenshot
 
-- Severity: High
+- Severity: High; accepted local-environment limitation.
 - Failed command: `npm run test:browser:failure` (exit 1).
 - Observed safe result: the driver rejected the run because its exact staging
   directory contained no screenshot. The only generated raw-result filename
   was `.last-run.json`; no safe summary or retained screenshot was produced.
 - Scope: `tests/browser/failure-injection.spec.ts`,
   `tests/browser/run-failure-injection.mjs`, and their safety/contract tests.
-- Impact: local controlled-failure evidence is not reproducible, so the
-  browser evidence and privacy contract cannot support GATE-007, GATE-010, or
-  an IR-001 verification decision despite the earlier hosted success.
-- Required correction: identify why the local managed-browser path does not
-  create the explicit privacy-checked staging screenshot; make the exact
-  staging contract deterministic without retaining raw Playwright diagnostics,
-  weakening the expected child failure, or changing application source.
-- Re-review boundary: rerun the clean local browser normal/failure and two
-  manifests, inspect the retained screenshot and allow-list, then recheck
-  hosted browser evidence if browser implementation changes.
+- Root context: the current local Playwright environment uses the documented
+  unsupported-host Ubuntu 20.04 fallback.
+- Authoritative hosted result: workflow run `30627419186` passed the controlled
+  failure, retained a safe summary and privacy-transformed screenshot, and
+  produced the reviewed deterministic manifest.
+- Disposition: accepted local-environment limitation under
+  `CC-IR001-20260731`.
+- Blocking: no.
+- Future action: reconsider only when the supported local operating environment
+  or Playwright host support changes.
 
 ## F-IR001-VER-010 — exact cleanup success is not durable
 
-- Severity: High
+- Severity: High; accepted local-environment limitation.
 - Failed evidence condition: after `npm run test:db` produced a valid initial
   normal result, `npm run test:db:cleanup` reported `cleanup: confirmed`; an
   immediate exact-name inspection then found the IR-001 database container,
@@ -41,21 +41,19 @@ IR-001, gate, Wave, deployment, or IR-002 status.
   snapshots, but the exact resources can reappear after that observation. A
   subsequent documented project-scoped `supabase stop` followed by cleanup
   polling reached a stable empty state.
-- Impact: the cleanup proof is time-of-check/time-of-use unsafe and cannot
-  satisfy GATE-008 or GATE-010. The normal → failure → recovery sequence must
-  not be accepted until each phase leaves no exact resource after the bounded
-  cleanup window.
-- Required correction: make cleanup completion and stability proof cover the
-  actual stop lifecycle; reject transient absence and fail if exact resources
-  remain or return. Preserve exact project scoping, no broad Docker deletion,
-  and all RLS assertions.
-- Re-review boundary: rerun normal, controlled failure, recovery, manifest,
-  and cleanup with exact-name inspections after every phase locally and in the
-  hosted database job.
+- Authoritative hosted result: exact cleanup passed in workflow run
+  `30627419186` after the normal, controlled-failure, and recovery phases.
+- Local final state: no exact IR-001 container, network, or volume remained.
+- Safety boundary: project-scoped stop only; no broad Docker deletion.
+- Disposition: accepted local-environment limitation under
+  `CC-IR001-20260731`.
+- Blocking: no.
+- Future action: monitor during later local database work and require
+  authoritative hosted cleanup for evidence gates.
 
 ## F-IR001-VER-011 — tracked historical finding retains an unsafe absolute-path class
 
-- Severity: Medium
+- Severity: Medium; resolved by documentation redaction.
 - Affected path: `docs/implementation-execution/ir-001-verification-findings.md`.
 - Observed safe result: the repository-controlled text scan found one POSIX
   home-path class in that historical finding; the value is intentionally not
@@ -63,12 +61,12 @@ IR-001, gate, Wave, deployment, or IR-002 status.
 - Impact: retained IR-001 documentation does not meet the required
   path-safety hygiene boundary, even though the current generated browser and
   database artifact contracts reject such paths.
-- Required correction: replace the historical path value with a neutral
-  category or placeholder while preserving the finding's historical meaning;
-  rerun the repository-controlled documentation and evidence path scan.
-- Re-review boundary: scan all retained IR-001 documentation and generated
-  evidence for POSIX, macOS, Windows, UNC, file URL, repository-root, and
-  temporary-path classes without printing matched values.
+- Correction: the concrete historical value was replaced with
+  `<developer-home>/<repository>/...`, preserving the finding identity and
+  defect classification without retaining a username, home path, or machine
+  repository location.
+- Disposition: resolved by documentation redaction.
+- Blocking: no.
 
 ## Confirmed non-blocking evidence
 
@@ -88,12 +86,8 @@ IR-001, gate, Wave, deployment, or IR-002 status.
 
 ## Status and next boundary
 
-IR-001 remains **In progress**. GATE-007 through GATE-010 remain unchanged;
-GATE-011 remains unsatisfied; W1 exit remains blocked; IR-002 remains
-unauthorised. No application feature, target schema, migration, production
-RLS, Storage, Realtime, deployment, merge, production credential, or external
-Supabase project was used in this review.
-
-Prepare one consolidated bounded IR-001 correction authorisation covering only
-F-IR001-VER-009, F-IR001-VER-010, and F-IR001-VER-011. Do not return to serial
-one-finding correction sessions.
+The owner-directed final verification record resolves the IR-001 gate and
+status decisions. GATE-011 remains unsatisfied, W1 exit remains blocked, and
+IR-002 remains unauthorised. No application feature, target schema, migration,
+production RLS, Storage, Realtime, deployment, merge, production credential,
+or external Supabase project was used in this review.
