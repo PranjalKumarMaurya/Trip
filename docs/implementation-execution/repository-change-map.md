@@ -6,7 +6,7 @@ existing: it is labelled **Proposed path — verify at packet start**.
 
 | Existing path | Current purpose | Planned action | First permitted IR / Wave | Later consumers | Concurrent-edit risk and serial owner | Test coverage | Rollback concern | Status |
 |---|---|---|---|---|---|---|---|---|
-| `package.json`, `package-lock.json` | npm dependencies and scripts; no test/CI scripts. | IR-001 may propose reviewed tooling only. | IR-001 / W1 | All test/evidence work | High: IR-001 is sole initial owner; no later packet changes tool configuration without its review record. | Build command and selected-tool dry run. | Remove/revert an unconsumed tool configuration; never hide a failing check. | Confirmed existing |
+| `package.json`, `package-lock.json` | npm dependencies and scripts. | IR-002 may add only dedicated IR-002 scripts to `package.json`; `package-lock.json` is prohibited. | IR-001 / W1; IR-002 bounded exception | All test/evidence work | High: IR-002 cannot alter dependencies or shared IR-001 semantics. | Dedicated local contract; existing build/type checks. | Remove/revert an unconsumed script; never hide a failing check. | Confirmed existing |
 | `vite.config.ts`, `tsconfig.json`, `tsconfig.node.json` | Vite and TypeScript build boundary. | Preserve until a reviewed tooling/routing decision requires an owned change. | IR-001 / W1 | IR-004, IR-011, IR-021 | High: IR-001 controls build/test config integration. | `npm run build`; selected-tool capability evidence. | Revert config without weakening type/build gate. | Confirmed existing |
 | `src/App.tsx` | Fixed five-tab shell, local tab state, 480px layout. | Scoped shell/Active Group conversion. | IR-011 / W4 | IR-012–015 | Critical shared foundation: IR-011 merges first; feature lanes use an explicit integration order. | UI-01–03, TC-003, Group-switch stale-state evidence. | Clear previous Group/session state before any fallback. | Confirmed existing |
 | `src/lib/supabase.ts` | Sole shared browser Supabase client using Vite URL/anon-key values. | Establish reviewed client/session boundary; do not put service-role access here. | IR-004 / W2 | IR-007, IR-010–015 | Critical: IR-004 owns first edit; policy/data consumers cannot independently create clients. | TC-001, TC-013, browser-secret inspection. | Revert without reintroducing browser authority. | Confirmed existing |
@@ -18,18 +18,19 @@ existing: it is labelled **Proposed path — verify at packet start**.
 | `src/tabs/ScanTab.tsx`, `supabase/functions/parse-document/index.ts` | Public ticket path and legacy privileged parse/upload/Event insertion. | Convert to validated private ingest/reconciliation flow. | IR-013 / W4 | IR-016, IR-021 | Critical server/Storage boundary; serial with IR-009 private Storage contract. | FP-007/008, UI-09, IPE-SCAN/STORAGE. | Quarantine/reconcile object and metadata; no public fallback. | Confirmed existing |
 | `src/tabs/SplitTab.tsx`, `src/components/AddExpenseModal.tsx`, `EditExpenseModal.tsx`, `SettleUpModal.tsx`, `src/lib/splitting.ts` | Global, name-keyed finance and direct mutations. | Convert to exact normalized finance with trusted writes. | IR-014 / W4 | IR-016, IR-021 | Critical finance lane; no concurrent shared-shell edit before IR-011 checkpoint. | FP-009–015, UI-10–12, EQ-01/SET-01/USD-01. | Preserve immutable exact history; no float/name fallback. | Confirmed existing |
 | `src/tabs/FXTab.tsx`, `src/lib/currency.ts`, `src/constants/seedData.ts`, `src/constants/eventTypes.ts`, `src/constants/tabAssets.ts` | Static FX/Bali content and fixed app constants. | Separate reference FX from ledger accounting and confine Bali content to configured Group. | IR-015 / W4 | IR-016, IR-021 | Medium: IR-015 owns configuration/FX lane; coordinate any shared copy/token impact with IR-011. | FP-016–018, UI-13, IPE-FX/TIME. | Do not recalculate/rewrite accounting history from live rates. | Confirmed existing |
-| `supabase/migrations/`, `supabase/seed.sql` | Five legacy SQL migrations and legacy source seed. | Read-only source inventory until an authorised DBM unit defines future target files. | IR-002 / W1 planning; IR-016 / W5 source transforms | All schema/migration consumers | Critical: database reviewer serialises all future schema/policy work; no two packets write one migration unit. | DBM register, M01–M18, S01–S19, RLS matrix. | Legacy source retained; SQL rollback is not assumed. | Confirmed existing |
+| `supabase/migrations/`, `supabase/seed.sql` | Five legacy SQL migrations and legacy source seed. | IR-002 may create only `006_ir002_tenant_root.sql` and `007_ir002_configuration_archive_audit.sql`; legacy files and seed remain read-only. | IR-002 / W1; IR-016 / W5 source transforms | All schema/migration consumers | Critical: database reviewer serialises all future schema/policy work; no two packets write one migration unit. | Dedicated IR-002 immutable evidence sequence. | Empty-target only; legacy source retained. | Confirmed existing |
 | `.env.example` | Browser-safe variable example and server-secret warning. | Inventory only; no value, secret, or deployed identifier enters documentation. | IR-001 / W1 | IR-004, IR-008, IR-013, IR-017–020 | High environment boundary: IR-001 owns inventory; each later packet consumes a named gate. | Secret-boundary review, TC-013. | Never add server secrets; invalid boundary blocks consuming packet. | Confirmed existing |
 
 ## Not-established target paths and serial ownership
 
-- **Proposed path — verify at packet start:** `tests/`,
-  `.github/workflows/`, `scripts/migration/`, `artifacts/`, feature directories,
-  and any generated database type path. IR-001 owns capability location
-  selection; IR-016 owns transform-runner planning; IR-021 owns evidence
-  rollup. None currently exists.
-- A generated type file is neither confirmed nor a hand-authored shared domain
-  type. DBM-013 controls provenance and refresh after approved schema units.
+- IR-002 authorises only `tests/database/ir-002/**`,
+  `tests/unit/ir-002-tenant-foundation.test.mjs`,
+  `tests/evidence/write-ir-002-evidence-manifest.mjs`, `artifacts/ir-002/**`,
+  optional `.github/workflows/ir-002-evidence.yml`, and generated
+  `src/lib/database.types.ts`. The workflow is local-only/non-deploy; it is
+  optional, not an implicit shared-workflow change.
+- DBM-013 controls generated-type provenance and refresh. The generated target
+  is not hand-authored and is generated only after approved schema units.
 - Deployment configuration and CI do not exist in the inspected repository.
   They remain **Not established**, not missing paths to invent.
 - Shared file conflict order is: IR-004 for client/session identity;

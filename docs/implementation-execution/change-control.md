@@ -52,3 +52,23 @@ Wave order, IR scope, repository change paths, database migration plan, RLS plan
   does not authorise deployment, migration rehearsal, cutover, or IR-002.
 - Rollback: revert this documentation-only decision and restore the previous
   IR-001 verification status surfaces; no implementation state is altered.
+
+## CC-IR002-20260801 — Tenant data foundation authorisation closure
+
+- Decision authority: Product owner.
+- Scope: DBM-001, DBM-002, and DBM-013 only, as frozen in
+  `authorisations/IR-002-authorisation.md`.
+- Reason: resolve Profile/Auth, bootstrap membership, physical configuration,
+  audit, migration-name, type-provenance, and local-evidence blockers before
+  implementation begins.
+- Decision: authorise the exact IR-002 allow-list and local-only execution
+  boundary; no implementation is performed by this record.
+- Architecture impact: none. Group remains the Trip Tenant; Auth remains
+  authoritative; Participant remains `group_members.id`; no separate
+  Participants table is introduced.
+- Gate impact: IR-002 may start only under its entry checks. GATE-011 remains
+  unsatisfied; W1 remains in progress; deployment and cutover remain blocked.
+- Review/rollback: corrections inside the frozen correction class are permitted
+  without a new product-owner authorisation. All other changes return here or
+  to architecture/design change control. Reverting this record removes only
+  documentation authorisation, never schema or data.

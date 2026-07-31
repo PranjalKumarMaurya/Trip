@@ -1,11 +1,11 @@
 # IR-002 — Tenant data foundation
 ## 1. Status and ownership
 
-- Status: Draft
+- Status: Authorised — implementation not started
 - Wave: W1
 - Primary implementation owner: Not assigned unless documented
 - Review owners: architecture, security, database/migration, design, and product reviewers as applicable
-- Implementation authorised: No
+- Implementation authorised: Yes; bounded by `authorisations/IR-002-authorisation.md`
 
 ## 2. Objective
 
@@ -15,11 +15,13 @@ Define executable target ownership/configuration schema work for one Group per T
 
 docs/architecture/domain-and-data-model.md; docs/architecture/multi-tenant-target-architecture.md; ADR-0001, ADR-0004, ADR-0005, ADR-0006; roadmap IR-002.
 
-The accepted documents govern; this Draft packet does not restate or amend their decisions.
+The accepted documents govern; this authorised packet does not restate or amend
+their decisions.
 
 ## 4. Entry gate
 
-Verified exit evidence for IR-001., clean repository, accepted design mapping, and no unresolved prerequisite security or architecture contradiction.
+Verified exit evidence for IR-001; clean repository; accepted design mapping;
+and the accepted physical contract in `authorisations/IR-002-authorisation.md`.
 
 ## 5. Dependencies
 
@@ -32,11 +34,16 @@ Verified exit evidence for IR-001., clean repository, accepted design mapping, a
 
 ## 6. In scope
 
-Draft schema/migration order, constraints, indexes, audit fields, archive semantics, generated-type refresh, two-Group invariants, and deny-by-default transition design.
+DBM-001 tenant root, DBM-002 configuration/archive/audit foundation, and
+DBM-013 generated-type provenance exactly as authorised; isolated local clean
+apply, constraint testing, empty-target rollback, reapplication, deterministic
+local type generation, and exact cleanup.
 
 ## 7. Explicitly out of scope
 
-Applying migrations, client ownership/name identity, an organisation model, a separate Trip tenant, or production schema action.
+Client ownership/name identity, an organisation model, a separate Trip tenant,
+linked/remote/production database action, production credentials, deployment,
+production migration, Bali-data migration, and cutover.
 
 ## 8. Current repository state
 
@@ -48,14 +55,19 @@ supabase/migrations/001_initial.sql models users, events, expenses, settlements,
 |---|---|---|---|---|---|
 | supabase/migrations/001_initial.sql through 005_todos.sql | Existing files — legacy reference, not edit target in this Draft pass | Legacy schema/policy history | IR-002 | High | Reviewed migration register |
 | supabase/seed.sql | Existing file — inspect only | Legacy seed source | IR-002/IR-016 | High | Source inventory |
-| `Proposed path — verify at packet start: supabase/migrations/<new-unit>.sql` | Proposed path | Future ordered schema unit | IR-002 | High | Schema/RLS/test evidence |
-| `Proposed path — verify at packet start: src/lib/database.types.ts` | Proposed generated path | Generated target types | IR-002 | Medium | Generation provenance |
+| `supabase/migrations/006_ir002_tenant_root.sql` | Authorised future path | DBM-001 tenant root | IR-002 | High | Dedicated local schema evidence |
+| `supabase/migrations/007_ir002_configuration_archive_audit.sql` | Authorised future path | DBM-002 configuration/archive/audit | IR-002 | High | Dedicated local schema evidence |
+| `src/lib/database.types.ts` | Authorised generated path | DBM-013 output | IR-002 | Medium | Deterministic generation provenance |
 
-Every proposed path is deliberately labelled **Proposed path — verify at packet start**. No proposed path is an assertion that it already exists.
+These are authorised future paths, not assertions that the files already exist.
 
 ## 10. Database and data-model work
 
-Plan Group, Profile, group_members, Participant, configuration, audit, parent foreign keys, archive markers, constraints, indexes, and generated types. Preserve legacy source mapping; do not assign timestamp filenames in Draft.
+Implement only the exact physical names, validation functions/reference data,
+constraints, audit destination, migration filenames, and generated-type path in
+the authorisation. `group_members` supplies structural `role` and `status` for
+bootstrap only; IR-005 retains lifecycle operations. Profiles remain structural
+until DBM-003 / IR-004 adds the Auth relationship.
 
 ## 11. RLS and authorization work
 
@@ -99,7 +111,11 @@ M01–M18, TC-002, TC-009, TC-019, ADR-0001/0004/0005/0006.
 
 ## 20. Automated tests
 
-Use current test tooling only where it exists. Repository inspection found no configured test, lint, database-test, browser-test, or CI runner; any new tooling is a proposed dependency for review under IR-001. Planned coverage may include unit, integration, database/RLS, browser, concurrency, idempotency, migration, rollback, visual-regression, and accessibility automation only after the selected tooling and environment capability are approved.
+Use only the dedicated IR-002 evidence paths in the authorisation. The required
+sequence is clean apply, constraints, two-Group structural fixture, empty-target
+rollback, clean reapply, two deterministic generated-type passes, exact cleanup,
+and manifest/secret-safety validation. The IR-001 synthetic controlled-failure
+sequence is not required and must not be altered.
 
 ## 21. Manual verification
 
@@ -117,21 +133,36 @@ Use structured, audit-safe operation results and failure classification; correla
 
 ## 24. Rollback and recovery
 
-Define packet boundary, reversible and irreversible work, safe stop, data preservation, schema/application rollback, partial failure handling, reconciliation, and release-blocking conditions before implementation. Do not imply all migrations are reversible.
+Only an empty isolated target with no downstream consumer may roll back: remove
+DBM-002 objects before DBM-001 objects. Preserve all legacy source objects;
+after target data exists, use forward repair. Do not imply general migration
+reversibility.
 
 ## 25. Implementation sequence
 
-1. Reconcile accepted invariants with legacy SQL. 2. Draft ordered DBM units. 3. Define parent/child constraints and archive behavior. 4. Define generated-type provenance. 5. Review two-Group invariant evidence before W2.
+1. Verify the authorised clean starting state. 2. Apply DBM-001/002 locally.
+3. Validate constraints and two-Group structural relationships. 4. Roll back
+the empty target. 5. Reapply and generate types twice. 6. Clean up and write
+the immutable manifest. 7. Submit for independent verification.
 
 Each future step must name its intended outcome, systems/files touched, prerequisite, verification, and rollback point before execution begins.
 
 ## 26. Stop conditions
 
-Stop rather than improvise for an architecture or locked-design contradiction, missing fixture, unsafe RLS result, cross-Group access, unreviewed migration ambiguity, unexpected production dependency, impossible rollback, unreviewed design change, or an R-02 defect that blocks the applicable acceptance gate.
+Stop for an architecture or locked-design contradiction, an allow-list change,
+missing authorised fixture, unsafe structural result, unreviewed migration
+ambiguity, external/production dependency, impossible empty-target rollback,
+or a required new dependency. Apply the direct-dependency blocker rule and
+correction limits in the authorisation; do not create a new verification
+requirement outside change control.
 
 ## 27. Completion evidence
 
-Before this packet can be Verified, retain reviewed implementation diff/test artifacts, negative security evidence, relevant fixture results, R-02 implementation evidence, rollback/recovery evidence, updated traceability, and an approved packet exit record. Draft status cannot satisfy this gate.
+Before independent verification, retain separate immutable records for clean
+apply, constraints, rollback, reapply, both type passes, cleanup, and final
+manifest. The verifier may rerun only authorised commands and inspect only
+authorised invariants. It may not add a new failure sequence, shared harness,
+artifact format, environment, dependency, or product scope.
 
 ## 28. Open questions
 
@@ -139,4 +170,15 @@ OE-002: deployed schema, RLS, row inventory, and production environment topology
 
 ## 29. Packet exit gate
 
-Dependent work may begin only when this packet has its required evidence, rollback conditions, reviewer decision, and an explicit exit record. This Draft packet neither marks the packet complete nor authorises implementation.
+Dependent work may begin only after IR-002 has its required evidence,
+independent reviewer decision, and explicit exit record. This authorisation
+does not mark IR-002 Implemented or Verified, GATE-011 satisfied, or W1
+complete.
+
+## 30. Authorisation and anti-loop contract
+
+The final physical schema contract, exact files, local-only boundary, correction
+classes, direct-dependency blocker rule, immutable evidence stages, GATE-011
+contract, and post-acceptance implementation prompt are frozen in
+`authorisations/IR-002-authorisation.md`. Corrections within that allow-list
+and contract are permitted; all other changes require change control.

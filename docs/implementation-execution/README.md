@@ -7,10 +7,11 @@
 - Package lock complete: Yes
 - Implementation Planning Freeze: Complete
 - Implementation readiness review: Approved
-- Implementation authorisation scope: IR-001 only
+- Implementation authorisation scope: IR-001 and bounded IR-002 only
 - IR-001 authorised: Yes
 - IR-001 status: Implemented and Verified
-- IR-002 through IR-022 authorised: No
+- IR-002 authorised: Yes — implementation not started
+- IR-003 through IR-022 authorised: No
 - W1 status: In progress; exit not achieved
 - Application implementation: Not started
 
@@ -54,6 +55,5 @@ and `lock-record.md`; neither record authorises implementation.
 
 ## Current next activity
 
-Prepare the separate bounded IR-002 Tenant Data Foundation authorisation
-package from the clean IR-001 verification commit. IR-002 implementation
-remains unauthorised until that package is accepted.
+Execute IR-002 only from its accepted bounded authorisation record. It remains
+local-only and cannot satisfy GATE-011, authorise W2, deployment, or cutover.

@@ -3,16 +3,17 @@
 ## Status and authorisation
 
 - Status: In progress; exit not achieved
-- Implementation authorised: IR-001 only
+- Implementation authorised: IR-001 and bounded IR-002 only
 - IR-001: Implemented and Verified
-- IR-002: Not authorised
+- IR-002: Authorised — implementation not started
 - W1 In progress: Yes
 - W1 exit achieved: No
 - Wave complete: No
 
 ## Wave objective
 
-No feature UI, target authority, migration execution, or production data action is permitted.
+No feature UI, production data action, or deployment is permitted. IR-002 may
+perform only its authorised isolated local schema/evidence work.
 
 ## IR packets
 
@@ -29,11 +30,9 @@ inventory, or source snapshot is not required to begin IR-001.
 
 ## Internal execution order
 
-Bounded IR-001 implementation may begin. IR-001 establishes reproducible
-evidence capability before IR-002 defines executable Tenant data work. IR-002
-remains blocked by the IR-001 dependency and separate authorisation. IR-022
-governance evidence may be maintained in parallel but does not substitute for
-either packet.
+IR-001 is implemented and verified. IR-002 is authorised from its separate
+physical contract and remains serial before W2. IR-022 governance evidence may
+be maintained in parallel but does not substitute for either packet.
 
 ## Parallel work boundaries
 
@@ -44,7 +43,10 @@ until W1 exit is explicitly achieved.
 
 ## Shared schema changes
 
-IR-002 may only plan the Group-as-Tenant, Profile, stable Participant/group_members, configuration, audit, archive, foreign-key, index, and generated-type units. No SQL, generated type, or schema change is created under this Wave authorisation.
+IR-002 may create only its authorised tenant, configuration, archive, audit,
+and generated-type foundation in an isolated local environment. It may not
+create product authority, Auth UI, RLS, Storage, Realtime, legacy transforms,
+or production schema state.
 
 ## Shared frontend changes
 
@@ -88,7 +90,7 @@ Stop for missing isolated fixture capability, ambiguous parent ownership, or a p
 
 ## Implementation-authorisation status
 
-IR-001 is implemented and verified. W1 remains in progress, IR-002 is not
-authorised, and W1 exit is not achieved.
+IR-001 is implemented and verified. IR-002 is authorised but not started. W1
+remains in progress, GATE-011 is not satisfied, and W1 exit is not achieved.
 
 W1 contains no feature UI implementation.
