@@ -2,8 +2,8 @@
 
 ## Status and authorisation
 
-- Status: Draft
-- Implementation authorised: No
+- Status: Active only for authorised IR-004
+- Implementation authorised: IR-004 only; IR-007 and IR-008 remain No
 - Wave complete: No
 
 ## Wave objective
@@ -30,11 +30,11 @@ Documentation and test-fixture preparation may parallelize, but Auth, RLS, and t
 
 ## Shared schema changes
 
-Plan Profile/Auth linkage and the RLS policy foundation for IR-002’s Tenant hierarchy. Later table-specific policies remain owned by their schema packets; no migration is applied in this Draft.
+IR-004 alone may implement DBM-003: Profile/Auth linkage and own-Profile privacy. DBM-006 and every Group/data policy remain IR-007 work; no later table-specific policy is implied.
 
 ## Shared frontend changes
 
-AUTH and pre-auth shell contracts are traced only. The local PersonaPicker is a confirmed later replacement candidate, not a W2 implementation change.
+IR-004 implements only AUTH, SHL-02, and PERM-19 through its frozen allow-list. The legacy workspace cannot render after Auth until later Group/security/application packets; legacy persona source remains source-preserving.
 
 ## Shared security changes
 
@@ -70,4 +70,6 @@ Stop for a browser service-role route, client authority, policy gap, or cross-Gr
 
 ## Implementation-authorisation status
 
-No
+Only IR-004 is authorised by `authorisations/IR-004-authorisation.md`.
+GATE-013, IR-007, IR-008, W2 completion, and every downstream packet remain
+unauthorised.

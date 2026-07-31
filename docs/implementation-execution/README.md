@@ -55,7 +55,6 @@ and `lock-record.md`; neither record authorises implementation.
 
 ## Current next activity
 
-Prepare the separate bounded IR-004 Auth, Profile and Session authorisation
-package. W2 has not started; GATE-012 is not automatically satisfied by W1
-completion, and no later packet is authorised by this record. Deployment and
-cutover remain unauthorised.
+Implement only the separately authorised bounded IR-004 package in
+`authorisations/IR-004-authorisation.md`. GATE-012 is satisfied for IR-004;
+IR-007/IR-008, GATE-013, W3, deployment, and cutover remain unauthorised.

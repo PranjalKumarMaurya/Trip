@@ -1,9 +1,9 @@
 # Execution Order
 
-IR-001 and IR-002 are Implemented and Verified; W1 is complete. W2 through W7
-remain Draft and unauthorised. GATE-012 and separate product-owner acceptance
-are required before any W2 implementation. The accepted roadmap order remains
-authoritative.
+IR-001 and IR-002 are Implemented and Verified; W1 is complete. GATE-012 is
+satisfied for the separately authorised bounded IR-004 only. IR-007 and
+IR-008, W2 exit, and W3 through W7 remain Draft and unauthorised. The accepted
+roadmap order remains authoritative.
 
 ## W1 — Evidence and tenant foundation
 
@@ -31,7 +31,7 @@ authoritative.
 
 ## W2 — Auth, security, and trusted operations
 
-- Mandatory entry gate: W1 ownership model passes and a safe environment boundary is recorded.
+- Mandatory entry gate: W1 ownership model passes, safe environment boundary is recorded, and GATE-012 has a separate bounded authorisation.
 - Internal packet order: IR-004 Auth/Profile/session contract precedes IR-007 RLS/ownership matrix; IR-007 precedes IR-008 trusted-operation boundary. No authoritative lifecycle operation starts in W2.
 - Permitted parallel work: AUTH screen/fixture traceability and table-policy test-case design may be prepared beside IR-004, but no RLS authority decision precedes the session-derived actor contract and no operation contract precedes IR-007.
 - Mandatory serial boundary: IR-004 → IR-007 → IR-008.
@@ -39,7 +39,7 @@ authoritative.
 - Trusted-operation dependencies: IR-008 inventories narrow server/trusted operation boundaries only after direct table access is deny-by-default by design.
 - Security dependencies: Session-derived identity, inactive/removed-member denial, two-Group substitution tests, service-role confinement, and a no-permissive-transition rule.
 - UI dependencies: AUTH and pre-auth SHL state contracts are traceability inputs only; no locked design asset is changed.
-- Migration dependencies: DBM-003 and DBM-006 are planning units; no policy or schema migration is applied.
+- Migration dependencies: DBM-003 is authorised only for IR-004's Profile/Auth and own-Profile privacy contract; DBM-006 remains unauthorised with IR-007.
 - Test dependencies: IR-001 capability, Auth expiration/continuation fixtures, two-account/two-Group negative cases, replay/race cases for later operations, and audit-safe failure evidence.
 - Mandatory exit evidence: Auth/session privacy, matrix, rollback, secret, and two-Group evidence design; no incomplete authoritative atomic operation.
 - Rollback checkpoint: Target paths remain inaccessible until security evidence passes; no permissive fallback.

@@ -74,3 +74,24 @@ Wave order, IR scope, repository change paths, database migration plan, RLS plan
   without a new product-owner authorisation. All other changes return here or
   to architecture/design change control. Reverting this record removes only
   documentation authorisation, never schema or data.
+
+## CC-IR004-20260801 — Auth, Profile and Session authorisation
+
+- Decision authority: Product owner.
+- Scope: only the frozen IR-004 allow-list and DBM-003 in
+  `authorisations/IR-004-authorisation.md`.
+- Decision: GATE-012 is satisfied by verified W1 evidence and this separate
+  W2 entry decision. IR-004 may implement a local-only Auth/Profile/session
+  boundary; it is not Implemented or Verified by this record.
+- Architecture impact: none. Auth remains authoritative; Profile stays
+  presentation-only; Group remains the Trip Tenant; `group_members.id` stays
+  the stable Participant identity. The sole physical resolution is nullable
+  one-to-one `profiles.auth_user_id` with restrictive deletion, trigger-owned
+  Profile creation, and own-Profile privacy.
+- Scope impact: no Group bootstrap/onboarding, Owner, Invitation, lifecycle,
+  claim, Group-data RLS, Storage, Realtime, legacy conversion, remote/production
+  Auth, provider configuration, dependency, redesign, deployment, or cutover.
+- Evidence/rollback: immutable `artifacts/ir-004/**`, local empty-target
+  rollback/reapply, deterministic types, and exact cleanup are required before
+  implementation completion. Corrections remain bounded as specified there;
+  every other change returns to change control.
