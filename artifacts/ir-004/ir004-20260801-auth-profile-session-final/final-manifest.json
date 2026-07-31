@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "ir": "IR-004",
+  "runId": "ir004-20260801-auth-profile-session-final",
+  "result": "passed",
+  "environment": "local-isolated",
+  "requiredStages": [
+    "clean-application",
+    "schema-validation",
+    "auth-profile-constraints",
+    "profile-privacy",
+    "session-browser",
+    "type-generation-pass-1",
+    "empty-target-rollback",
+    "clean-reapplication",
+    "type-generation-pass-2",
+    "type-comparison",
+    "typecheck-test-build",
+    "cleanup"
+  ],
+  "artifacts": [
+    {
+      "path": "artifacts/ir-004/ir004-20260801-auth-profile-session-final/auth-profile-constraints.json",
+      "bytes": 285,
+      "sha256": "f5505030eb21dfb008b69fe27c6ee7b5e40cb7d889bfe6303ff3bdac6c3018ee"
+    },
+    {
+      "path": "artifacts/ir-004/ir004-20260801-auth-profile-session-final/clean-application.json",
+      "bytes": 525,
+      "sha256": "5d9c03ea970c2a0fb2adcb055792c62ba2c5553a32b7a0454bb4a5ecdf559548"
+    },
+    {
+      "path": "artifacts/ir-004/ir004-20260801-auth-profile-session-final/clean-reapplication.json",
+      "bytes": 527,
+      "sha256": "b7eeee6373a8832cff9345b10081ed6acd9e7df7cc0a6719fb69960a46301d4a"
+    },
+    {
+      "path": "artifacts/ir-004/ir004-20260801-auth-profile-session-final/cleanup.json",
+      "bytes": 303,
+      "sha256": "a111a68737af8eae9ceb8fbe01af6d7b976be6f7f6f96dffe8bbec955efad564"
+    },
+    {
+      "path": "artifacts/ir-004/ir004-20260801-auth-profile-session-final/database.types.pass-1.ts",
+      "bytes": 17489,
+      "sha256": "8cad1b46109a2ab1e13b036f0e8b24adb07c78dc52db2ca65fdfde06e8fe33b2"
+    },
+    {
+      "path": "artifacts/ir-004/ir004-20260801-auth-profile-session-final/empty-target-rollback.json",
+      "bytes": 293,
+      "sha256": "279ce1c7e517d3c6b2ed5383fa3f58798b812f0bdb6f2b65d98c922985014193"
+    },
+    {
+      "path": "artifacts/ir-004/ir004-20260801-auth-profile-session-final/profile-privacy.json",
+      "bytes": 276,
+      "sha256": "44acee01664bb9d9475efc011b2b44b9478b415fa7580d796d427e7ae979b762"
+    },
+    {
+      "path": "artifacts/ir-004/ir004-20260801-auth-profile-session-final/schema-validation.json",
+      "bytes": 278,
+      "sha256": "ce709070aa406a562b50f4a074edc43a301f7729c9ca2ad130ac15a79a2d536a"
+    },
+    {
+      "path": "artifacts/ir-004/ir004-20260801-auth-profile-session-final/session-browser.json",
+      "bytes": 299,
+      "sha256": "fcbfbd1108dc12c23183df3262802b48c1044f1eae08b9f0d80f9233d0bcb432"
+    },
+    {
+      "path": "artifacts/ir-004/ir004-20260801-auth-profile-session-final/type-comparison.json",
+      "bytes": 373,
+      "sha256": "8768a587bbe09f9be06b4ad62df61868b26b3c3e6ebf26ce13a9d9bc14b77db0"
+    },
+    {
+      "path": "artifacts/ir-004/ir004-20260801-auth-profile-session-final/type-generation-pass-1.json",
+      "bytes": 499,
+      "sha256": "65ca72b668012f310a33bb16164bb8605f6ca4fc02de15ff0bd06a86f8a82dca"
+    },
+    {
+      "path": "artifacts/ir-004/ir004-20260801-auth-profile-session-final/type-generation-pass-2.json",
+      "bytes": 499,
+      "sha256": "dbe9536e42446dfdddfda5875c3f080cba70011953b1e2886ff3d62a8e90fff0"
+    },
+    {
+      "path": "artifacts/ir-004/ir004-20260801-auth-profile-session-final/typecheck-test-build.json",
+      "bytes": 354,
+      "sha256": "c608b822ad88c1db5ef86948c80bd2718cb3c5ab120058af32b9cf433e9a042d"
+    }
+  ]
+}

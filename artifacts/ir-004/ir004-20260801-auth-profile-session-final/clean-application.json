@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "capability": "ir-004-auth-profile-session",
+  "runId": "ir004-20260801-auth-profile-session-final",
+  "stage": "clean-application",
+  "result": "passed",
+  "environment": "local-isolated",
+  "projectId": "bachelor-trip-app-ir004",
+  "migrations": [
+    "001_initial.sql",
+    "002_tickets_bucket.sql",
+    "003_gmap_url.sql",
+    "004_paid_by_splits.sql",
+    "005_todos.sql",
+    "006_ir002_tenant_root.sql",
+    "007_ir002_configuration_archive_audit.sql",
+    "008_ir004_profile_auth.sql"
+  ]
+}

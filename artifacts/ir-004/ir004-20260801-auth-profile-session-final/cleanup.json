@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "capability": "ir-004-auth-profile-session",
+  "runId": "ir004-20260801-auth-profile-session-final",
+  "stage": "cleanup",
+  "result": "passed",
+  "environment": "local-isolated",
+  "projectId": "bachelor-trip-app-ir004",
+  "exactProjectResources": "absent",
+  "attempts": 2
+}

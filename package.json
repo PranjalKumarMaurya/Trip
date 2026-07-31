@@ -20,7 +20,12 @@
     "test:browser:install": "PLAYWRIGHT_BROWSERS_PATH=0 playwright install chromium",
     "test:evidence:manifest": "node tests/evidence/write-evidence-manifest.mjs",
     "test:ir002": "node tests/database/ir-002/run-tenant-foundation.mjs",
-    "test:ir002:cleanup": "node tests/database/ir-002/assert-cleanup.mjs"
+    "test:ir002:cleanup": "node tests/database/ir-002/assert-cleanup.mjs",
+    "test:ir004": "node tests/database/ir-004/run-auth-profile-session.mjs",
+    "test:ir004:cleanup": "node tests/database/ir-004/assert-cleanup.mjs",
+    "test:ir004:browser": "PLAYWRIGHT_BROWSERS_PATH=0 playwright test tests/browser/ir-004/auth-profile-session.spec.ts",
+    "test:ir004:unit": "node --test tests/unit/ir-004-auth-profile-session.test.mjs",
+    "test:ir004:evidence": "node tests/evidence/write-ir-004-evidence-manifest.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",

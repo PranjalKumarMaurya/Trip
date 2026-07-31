@@ -150,7 +150,7 @@ function validatePrivacy({ writeEvidence = true } = {}) {
 }
 
 function generateTypes(pass) {
-  const output = run('npx', ['--no-install', 'supabase', 'gen', 'types', 'typescript', '--local', '--schema', 'public', '--workdir', stackWorkdir], { capture: true })
+  const output = run('npx', ['--no-install', 'supabase', 'gen', 'types', 'typescript', '--local', '--schema', 'public', '--workdir', stackWorkdir], { capture: true }).replace(/\n\n$/u, '\n')
   if (!output.includes('auth_user_id') || !output.includes('profiles')) throw new Error('generated-types-missing-ir004-schema')
   writeFileSync(generatedTypesPath, output, 'utf8')
   if (pass === 1) writeFileSync(resolve(artifactDirectory, 'database.types.pass-1.ts'), output, 'utf8')
