@@ -149,3 +149,13 @@ IR-001 remains **In progress**. GATE-007 through GATE-010 remain unchanged,
 GATE-011 remains unsatisfied, W1 exit remains blocked, IR-002 remains
 unauthorised, and no deployment, merge, schema, production RLS, Storage, or
 Realtime change occurred.
+
+## SEC-IR001-001 closure — 2026-07-31
+
+The local development environment owner provided a safe closure confirmation
+for unrelated disposable alias `unrelated-local-supabase-dev-stack`: its exact
+local stack and database were recreated and the old credential was invalidated.
+No credential value or URL was recorded. Repository, Git/GitHub, retained
+artifact, production, and hosted-Supabase leakage or impact remain none found.
+The incident is closed for IR-001; the established allow-listed diagnostic rule
+remains active. This closure does not itself promote IR-001 or any gate.

@@ -49,3 +49,26 @@ commands include `ps e`, `ps auxeww`, broad process-command listings, broad
 status output, complete environment dumps, and shell tracing with secrets.
 See the dated IR-001 diagnostic rule appended to
 `environment-and-secret-boundaries.md`.
+
+## Closure — external owner confirmation
+
+- Incident ID: `SEC-IR001-001`
+- Confirmation date: 2026-07-31
+- Safe local project alias: `unrelated-local-supabase-dev-stack`
+- Owner role: Local development environment owner
+- Action category: exact disposable local Supabase stack and database recreated.
+- Old credential invalidated: **Yes**.
+- Repository leakage: none found.
+- Git and GitHub leakage: none found.
+- Retained-artifact leakage: none found.
+- Production impact: none found.
+- External hosted Supabase impact: none found.
+- Credential value or URL recorded: **No**.
+- Residual risk: **closed for IR-001**.
+- Prevention controls: active; future diagnostics remain restricted to the
+  allow-listed outputs in the procedural-prevention section above.
+
+The external owner confirmed that the exposed value belonged only to the named
+unrelated disposable local development/test environment and that recreation
+invalidated the old credential. This closure preserves the original incident
+and containment facts without recording any credential material.

@@ -8,17 +8,19 @@ W1 exit remains blocked; and IR-002 remains unauthorised.
 
 ## SEC-IR001-001 — local credential exposure incident
 
-- Status: **External owner action required**.
+- Status: **Closed by external owner rotation/recreation**.
 - Source: an over-broad process inspection exposed unrelated local Supabase
   development credential material in terminal output.
 - Containment: repository, retained-artifact, Git-history, and known temporary
   IR-001 path scans found no retained credential. Verified temporary review
   material was removed.
-- Invalidation: cannot be claimed from the IR-001 boundary because the other
-  local project's working directory and owner association are not safely
-  established. Its owner must recreate or rotate its local Supabase credentials.
+- Invalidation: on 2026-07-31, the local development environment owner
+  confirmed recreation of the exact disposable stack and database for safe
+  alias `unrelated-local-supabase-dev-stack`; the old credential is invalid.
+  No credential value or URL was recorded.
 - Prevention: future review diagnostics are restricted to safe, exact outputs.
-- Affected gates: GATE-010 until explicit owner invalidation is recorded.
+- Affected gates: GATE-010 incident prerequisite closed; final independent
+  review remains responsible for the gate decision.
 
 ## F-IR001-VER-007 — stale raw error-context dependency
 
