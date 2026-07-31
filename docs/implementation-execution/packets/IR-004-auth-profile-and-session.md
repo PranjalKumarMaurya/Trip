@@ -2,7 +2,7 @@
 
 ## Status and authority
 
-- Status: **Authorised — not Implemented; not Verified**.
+- Status: **Implemented — not Verified**.
 - Wave: W2; serial predecessor of IR-007 only.
 - Authorisation: `../authorisations/IR-004-authorisation.md` is the sole
   executable scope, allow-list, DBM, evidence, rollback, and correction
@@ -75,3 +75,13 @@ after that local-only package passes and Verified only after independent review.
 No verifier may append a Group, Invitation, final RLS, remote/production, or
 new-dependency requirement. Stop for any such need or an architecture/design
 contradiction; return to change control rather than expanding this packet.
+
+## Implementation handoff
+
+`ir004-20260801-auth-profile-session-final` is the immutable local-only
+implementation record. It proves DBM-003 apply, one-to-one constraints,
+own-Profile privacy, two synthetic linked accounts at the workspace-unavailable
+boundary, empty-target rollback and clean reapplication, byte-identical local
+type generation, build/type tests, and exact isolated-resource cleanup.
+Independent verification is the next action. It must not treat this status as
+authorisation for IR-003, IR-007, IR-008, or W2 exit.

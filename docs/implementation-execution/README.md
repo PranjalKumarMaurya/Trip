@@ -7,13 +7,14 @@
 - Package lock complete: Yes
 - Implementation Planning Freeze: Complete
 - Implementation readiness review: Approved
-- Implementation authorisation scope: none currently active
+- Implementation authorisation scope: IR-004 implemented; independent verification pending
 - IR-001 authorised: Yes
 - IR-001 status: Implemented and Verified
 - IR-002 authorised: closed — Implemented and Verified
-- IR-003 through IR-022 authorised: No
+- IR-004 status: Implemented — not Verified
+- IR-003 and IR-005 through IR-022 authorised: No
 - W1 status: Complete; GATE-011 satisfied
-- Application implementation: Not started
+- Application implementation: IR-004 only
 
 ## Purpose
 
@@ -55,6 +56,6 @@ and `lock-record.md`; neither record authorises implementation.
 
 ## Current next activity
 
-Implement only the separately authorised bounded IR-004 package in
+Independently verify the implemented bounded IR-004 package in
 `authorisations/IR-004-authorisation.md`. GATE-012 is satisfied for IR-004;
-IR-007/IR-008, GATE-013, W3, deployment, and cutover remain unauthorised.
+GATE-013, IR-007/IR-008, W3, deployment, and cutover remain unauthorised.

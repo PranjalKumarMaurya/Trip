@@ -2,7 +2,7 @@
 
 ## Decision
 
-- Decision: **Authorised — not Implemented; not Verified**.
+- Decision: **Implemented — not Verified**.
 - Authorisation date: 2026-08-01.
 - Starting branch: `v2`.
 - Starting commit: `9898dd81a60131e7c757465b0b5e2592d8fb1aed`
@@ -302,3 +302,20 @@ satisfied.
 `gate-ledger.md`, `repository-change-map.md`, `implementation-traceability.md`,
 `dependency-graph.md`, `execution-order.md`, `waves/W2-auth-security-and-trusted-operations.md`,
 `change-control.md`, and `README.md` record this decision only.
+
+## Implementation completion record
+
+- Implementation run: `ir004-20260801-auth-profile-session-final`, local and
+  isolated only.
+- DBM-003 applied from `008_ir004_profile_auth.sql` with checksum
+  `fd8775bc1a666d01424e4537ef4b5e6715dd2c171199f7d34d12fb5f9be40190`.
+- DBM-013 was generated twice with Supabase CLI `2.105.0`, `--local --schema
+  public`; both outputs were byte-identical with checksum
+  `8cad1b46109a2ab1e13b036f0e8b24adb07c78dc52db2ca65fdfde06e8fe33b2`.
+- The immutable final manifest records successful schema, constraint, privacy,
+  two-account browser boundary, rollback/reapplication, type, build, and
+  cleanup stages. Artifact inspection found no credentials, tokens, password,
+  or service-role material.
+- This is an implementation completion record only. Independent verification
+  remains required; GATE-013 remains unsatisfied, W2 remains in progress, and
+  IR-003, IR-007, and IR-008 remain unauthorised.

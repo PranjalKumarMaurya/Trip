@@ -14,9 +14,9 @@ integrated evidence where named; no row is a completion claim.
 
 | Accepted requirement set | Owning IR / Wave | Draft document(s) | Required evidence | Review result |
 |---|---|---|---|---|
-| IR-001–IR-022 | Exact packet and Wave mapping | Packets, execution order, dependency graph, gate ledger | Entry/exit decision, owned test/security/rollback evidence | IR-001/IR-002 Implemented and Verified; IR-004 Authorised, not Implemented; IR-003 and IR-005–022 Draft and unauthorised |
+| IR-001–IR-022 | Exact packet and Wave mapping | Packets, execution order, dependency graph, gate ledger | Entry/exit decision, owned test/security/rollback evidence | IR-001/IR-002 Implemented and Verified; IR-004 Implemented, not Verified; IR-003 and IR-005–022 Draft and unauthorised |
 | W1–W7 | Exact Wave mapping | Wave documents, execution order, gate ledger | Entry, serial/parallel, integration, rollback, exit evidence | W1 complete/GATE-011 satisfied; GATE-012 is satisfied for bounded IR-004 only; W2 exit and W3–W7 remain unauthorised |
-| Tenant, Profile, Group Member/Participant, configuration, ownership invariants | IR-002–008 / W1–W3 | DBM/TOP/security/registers | DBM-001 structural membership, DBM-002 configuration/audit, DBM-003 Auth link/privacy, lifecycle, two-Group evidence | IR-002 independently verified; DBM-003 authorised only; later lifecycle ownership remains deferred |
+| Tenant, Profile, Group Member/Participant, configuration, ownership invariants | IR-002–008 / W1–W3 | DBM/TOP/security/registers | DBM-001 structural membership, DBM-002 configuration/audit, DBM-003 Auth link/privacy, lifecycle, two-Group evidence | IR-002 independently verified; DBM-003 implemented, not independently verified; later lifecycle ownership remains deferred |
 | FP-001–FP-020 | IR-004, IR-009, IR-011–015, IR-022 / W2–W5 | Test plan, packets, IR-021 rollup | Named parity result and applicable IPE result | Complete mapping |
 | UI-01–UI-14 | IR-011–015 / W4 | Accepted UI traceability, packets, R-02 plan | Running-build flow/state, visual/manual review | Complete mapping |
 | TC-001–TC-019 | IR-003–011, IR-014, IR-022 / W2–W5 | Security/test plan, packets | Positive/negative conformance, two-Group/operation evidence | Complete mapping |

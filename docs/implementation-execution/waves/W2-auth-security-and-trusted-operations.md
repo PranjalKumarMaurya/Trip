@@ -2,7 +2,7 @@
 
 ## Status and authorisation
 
-- Status: Active only for authorised IR-004
+- Status: In progress; IR-004 Implemented — not Verified
 - Implementation authorised: IR-004 only; IR-007 and IR-008 remain No
 - Wave complete: No
 
@@ -70,6 +70,7 @@ Stop for a browser service-role route, client authority, policy gap, or cross-Gr
 
 ## Implementation-authorisation status
 
-Only IR-004 is authorised by `authorisations/IR-004-authorisation.md`.
-GATE-013, IR-007, IR-008, W2 completion, and every downstream packet remain
-unauthorised.
+IR-004 implementation is recorded in
+`authorisations/IR-004-authorisation.md`; independent verification remains
+next. GATE-013, IR-007, IR-008, W2 completion, and every downstream packet
+remain unauthorised.

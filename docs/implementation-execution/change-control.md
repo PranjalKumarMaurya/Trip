@@ -95,3 +95,19 @@ Wave order, IR scope, repository change paths, database migration plan, RLS plan
   rollback/reapply, deterministic types, and exact cleanup are required before
   implementation completion. Corrections remain bounded as specified there;
   every other change returns to change control.
+
+## CC-IR004-20260801-implementation — Auth/Profile/session implementation record
+
+- Scope: the accepted IR-004 allow-list only; no architecture or product scope
+  change.
+- Result: DBM-003, Auth/Profile privacy, the session/protected-entry boundary,
+  local-only tests, deterministic generated types, rollback/reapplication, and
+  immutable evidence completed in `ir004-20260801-auth-profile-session-final`.
+- Evidence: migration checksum
+  `fd8775bc1a666d01424e4537ef4b5e6715dd2c171199f7d34d12fb5f9be40190`; two
+  local Supabase CLI `2.105.0` type outputs byte-identical at
+  `8cad1b46109a2ab1e13b036f0e8b24adb07c78dc52db2ca65fdfde06e8fe33b2`; exact
+  isolated local resources were absent after cleanup.
+- Gate/status impact: IR-004 is Implemented, not Verified. GATE-013 remains
+  unsatisfied and W2 remains in progress. This record authorises neither
+  IR-003 nor IR-007/IR-008, deployment, or cutover.
