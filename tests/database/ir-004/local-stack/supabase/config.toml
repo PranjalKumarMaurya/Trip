@@ -1,0 +1,36 @@
+project_id = "bachelor-trip-app-ir004"
+
+[api]
+enabled = true
+port = 57521
+
+[db]
+port = 57522
+
+[db.pooler]
+enabled = false
+port = 57529
+
+[realtime]
+enabled = false
+
+[studio]
+enabled = false
+port = 57523
+
+[inbucket]
+enabled = false
+port = 57524
+smtp_port = 57525
+
+[storage]
+enabled = true
+
+[auth]
+enabled = true
+
+[edge_runtime]
+enabled = false
+
+[analytics]
+enabled = false
