@@ -5,7 +5,7 @@
 - Status: In progress; exit not achieved
 - Implementation authorised: IR-001 and bounded IR-002 only
 - IR-001: Implemented and Verified
-- IR-002: Authorised — implementation not started
+- IR-002: Implemented — independent verification pending
 - W1 In progress: Yes
 - W1 exit achieved: No
 - Wave complete: No
@@ -30,9 +30,10 @@ inventory, or source snapshot is not required to begin IR-001.
 
 ## Internal execution order
 
-IR-001 is implemented and verified. IR-002 is authorised from its separate
-physical contract and remains serial before W2. IR-022 governance evidence may
-be maintained in parallel but does not substitute for either packet.
+IR-001 is implemented and verified. IR-002 is implemented from its separate
+physical contract and remains serial before W2 pending independent verification.
+IR-022 governance evidence may be maintained in parallel but does not
+substitute for either packet.
 
 ## Parallel work boundaries
 
@@ -90,7 +91,8 @@ Stop for missing isolated fixture capability, ambiguous parent ownership, or a p
 
 ## Implementation-authorisation status
 
-IR-001 is implemented and verified. IR-002 is authorised but not started. W1
-remains in progress, GATE-011 is not satisfied, and W1 exit is not achieved.
+IR-001 is implemented and verified. IR-002 is implemented but not independently
+verified. W1 remains in progress, GATE-011 is not satisfied, and W1 exit is not
+achieved.
 
 W1 contains no feature UI implementation.

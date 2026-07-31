@@ -1,7 +1,7 @@
 # IR-002 — Tenant data foundation
 ## 1. Status and ownership
 
-- Status: Authorised — implementation not started
+- Status: Implemented — independent verification pending
 - Wave: W1
 - Primary implementation owner: Not assigned unless documented
 - Review owners: architecture, security, database/migration, design, and product reviewers as applicable
@@ -55,11 +55,12 @@ supabase/migrations/001_initial.sql models users, events, expenses, settlements,
 |---|---|---|---|---|---|
 | supabase/migrations/001_initial.sql through 005_todos.sql | Existing files — legacy reference, not edit target in this Draft pass | Legacy schema/policy history | IR-002 | High | Reviewed migration register |
 | supabase/seed.sql | Existing file — inspect only | Legacy seed source | IR-002/IR-016 | High | Source inventory |
-| `supabase/migrations/006_ir002_tenant_root.sql` | Authorised future path | DBM-001 tenant root | IR-002 | High | Dedicated local schema evidence |
-| `supabase/migrations/007_ir002_configuration_archive_audit.sql` | Authorised future path | DBM-002 configuration/archive/audit | IR-002 | High | Dedicated local schema evidence |
-| `src/lib/database.types.ts` | Authorised generated path | DBM-013 output | IR-002 | Medium | Deterministic generation provenance |
+| `supabase/migrations/006_ir002_tenant_root.sql` | Implemented | DBM-001 tenant root | IR-002 | High | Dedicated local schema evidence |
+| `supabase/migrations/007_ir002_configuration_archive_audit.sql` | Implemented | DBM-002 configuration/archive/audit | IR-002 | High | Dedicated local schema evidence |
+| `src/lib/database.types.ts` | Generated | DBM-013 output | IR-002 | Medium | Deterministic generation provenance |
 
-These are authorised future paths, not assertions that the files already exist.
+These paths are implemented exactly as authorised; independent verification is
+still required before any dependent packet consumes them.
 
 ## 10. Database and data-model work
 
@@ -140,10 +141,11 @@ reversibility.
 
 ## 25. Implementation sequence
 
-1. Verify the authorised clean starting state. 2. Apply DBM-001/002 locally.
-3. Validate constraints and two-Group structural relationships. 4. Roll back
-the empty target. 5. Reapply and generate types twice. 6. Clean up and write
-the immutable manifest. 7. Submit for independent verification.
+1. Verified the authorised clean starting state. 2. Applied DBM-001/002
+locally. 3. Validated constraints and two-Group structural relationships. 4.
+Rolled back the empty target. 5. Reapplied and generated types twice. 6.
+Cleaned up and wrote the immutable manifest. 7. Submit for independent
+verification.
 
 Each future step must name its intended outcome, systems/files touched, prerequisite, verification, and rollback point before execution begins.
 
@@ -164,7 +166,17 @@ manifest. The verifier may rerun only authorised commands and inspect only
 authorised invariants. It may not add a new failure sequence, shared harness,
 artifact format, environment, dependency, or product scope.
 
-## 28. Open questions
+## 28. Implementation record
+
+Implemented DBM-001, DBM-002, and DBM-013 are recorded at
+`0a8a88446be90ba93a4d56406865c9c991879b33`; the final evidence run is
+`ir002-1785532761842-8ead547f-69a5-448e-a7f7-10193b8fb33f`. Its final manifest
+records clean apply, validation, rollback, clean reapply, deterministic type
+generation, build checks, and exact cleanup. IR-002 remains not Verified;
+GATE-011 remains not satisfied; W1 remains in progress. No later-packet or
+production work occurred.
+
+## 29. Open questions
 
 OE-002: deployed schema, RLS, row inventory, and production environment topology are not established by repository inspection.
 

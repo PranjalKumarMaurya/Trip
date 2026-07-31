@@ -2,10 +2,11 @@
 
 ## Decision
 
-- Decision: **Authorised — implementation not started**.
+- Decision: **Implemented — independent verification pending**.
 - Authorisation date: 2026-08-01.
 - Starting commit reviewed: `0f1954c4d0305b77b234b0b9125e3a189b322fd6`.
 - Starting subject: `docs(ir-001): verify evidence foundation with accepted local limitations`.
+- Implementation code/evidence HEAD: `0a8a88446be90ba93a4d56406865c9c991879b33`.
 - IR-001: Implemented and Verified.
 - GATE-007 through GATE-010: Satisfied.
 - W1: In progress; GATE-011 is not satisfied and W1 exit is not achieved.
@@ -235,13 +236,44 @@ immutable evidence sequence, rollback/reapply proof, exact cleanup, completion
 record, and allow-list review pass. It becomes Verified only after independent
 review of those records, stable Participant identity, two-Group structural
 separation, Profile/Auth ownership, configuration/audit constraints, type
-provenance, secret safety, and absence of later-packet work. Neither status is
-claimed by this document.
+provenance, secret safety, and absence of later-packet work. The completion
+record below claims Implemented only; verification remains independent.
 
 GATE-011 remains not satisfied. It requires GATE-007–010 plus independently
 verified IR-002 parent/constraint and two-Group evidence, local-boundary
 evidence, and an explicit W1-exit decision. IR-002 verification cannot
 silently close the gate.
+
+## Implementation completion record
+
+DBM-001, DBM-002, and DBM-013 were implemented solely under this
+authorisation. The final code/evidence commit before this documentation record
+is `0a8a88446be90ba93a4d56406865c9c991879b33`.
+
+The final isolated local run is
+`artifacts/ir-002/ir002-1785532761842-8ead547f-69a5-448e-a7f7-10193b8fb33f/`.
+Its immutable final manifest references clean application, schema validation,
+constraint tests, two-Group structural tests, empty-target rollback, clean
+reapplication, both type-generation passes, type comparison, typecheck/type
+tests/build, and cleanup. The output checksum is
+`55552e7a17ff965c1a41168c010a009ba24964c3c50db217ad3650b2fc898c9f`.
+The migration checksums are
+`006_ir002_tenant_root.sql`:
+`cb330e8b9f993bd3f8a633b4c9a931cd82af8438b384c4156e50ddf6dd214c26` and
+`007_ir002_configuration_archive_audit.sql`:
+`17ad0e96bc2597b59cd31325cb4f4ce2968048bc8a511de93ffb6fc4e88bb338`.
+
+The evidence confirms the authorised empty-target rollback removed only target
+objects while preserving all six legacy source tables, then clean reapplication
+reproduced the schema and byte-identical generated types. The dedicated cleanup
+assertion passed after the exact local project resources disappeared. Artifact
+content was checked for prohibited secret, credential, local-path, and endpoint
+patterns.
+
+No legacy migration or seed changed. No product conversion, Auth flow,
+Invitation, RLS, Storage, Realtime, production-data migration, deployment, or
+cutover occurred. IR-002 is **Implemented**, not **Verified**; GATE-011 remains
+not satisfied and W1 remains in progress.
 
 ## Post-acceptance implementation prompt
 
@@ -262,5 +294,7 @@ Do not mark IR-002 Verified, GATE-011 satisfied, or W1 complete.
 
 ## Execution statement
 
-This authorisation closure created no migration, schema implementation,
-database execution, generated type, deployment, or cutover.
+The documentation-only authorisation closure created no migration, schema
+implementation, database execution, generated type, deployment, or cutover.
+The subsequent authorised implementation recorded above did create its bounded
+local schema and evidence only; it did not deploy or cut over.

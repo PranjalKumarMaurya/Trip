@@ -10,7 +10,7 @@
 - Implementation authorisation scope: IR-001 and bounded IR-002 only
 - IR-001 authorised: Yes
 - IR-001 status: Implemented and Verified
-- IR-002 authorised: Yes — implementation not started
+- IR-002 authorised: Yes — Implemented; independent verification pending
 - IR-003 through IR-022 authorised: No
 - W1 status: In progress; exit not achieved
 - Application implementation: Not started
@@ -55,5 +55,6 @@ and `lock-record.md`; neither record authorises implementation.
 
 ## Current next activity
 
-Execute IR-002 only from its accepted bounded authorisation record. It remains
-local-only and cannot satisfy GATE-011, authorise W2, deployment, or cutover.
+Independently verify implemented IR-002 from its accepted bounded authorisation
+record. It remains local-only and cannot satisfy GATE-011, authorise W2,
+deployment, or cutover.

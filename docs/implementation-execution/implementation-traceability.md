@@ -14,9 +14,9 @@ integrated evidence where named; no row is a completion claim.
 
 | Accepted requirement set | Owning IR / Wave | Draft document(s) | Required evidence | Review result |
 |---|---|---|---|---|
-| IR-001–IR-022 | Exact packet and Wave mapping | Packets, execution order, dependency graph, gate ledger | Entry/exit decision, owned test/security/rollback evidence | IR-001 Implemented and Verified; IR-002 Authorised and not started; IR-003–IR-022 Draft and unauthorised |
+| IR-001–IR-022 | Exact packet and Wave mapping | Packets, execution order, dependency graph, gate ledger | Entry/exit decision, owned test/security/rollback evidence | IR-001 Implemented and Verified; IR-002 Implemented, independent verification pending; IR-003–IR-022 Draft and unauthorised |
 | W1–W7 | Exact Wave mapping | Wave documents, execution order, gate ledger | Entry, serial/parallel, integration, rollback, exit evidence | W1 in progress; GATE-011 not satisfied; W2–W7 unauthorised |
-| Tenant, Profile, Group Member/Participant, configuration, ownership invariants | IR-002–008 / W1–W3 | DBM/TOP/security/registers | DBM-001 structural membership, DBM-002 configuration/audit, DBM-003 Auth link, lifecycle, two-Group evidence | IR-002 physical contract authorised; implementation evidence pending |
+| Tenant, Profile, Group Member/Participant, configuration, ownership invariants | IR-002–008 / W1–W3 | DBM/TOP/security/registers | DBM-001 structural membership, DBM-002 configuration/audit, DBM-003 Auth link, lifecycle, two-Group evidence | IR-002 implemented local evidence pending independent verification |
 | FP-001–FP-020 | IR-004, IR-009, IR-011–015, IR-022 / W2–W5 | Test plan, packets, IR-021 rollup | Named parity result and applicable IPE result | Complete mapping |
 | UI-01–UI-14 | IR-011–015 / W4 | Accepted UI traceability, packets, R-02 plan | Running-build flow/state, visual/manual review | Complete mapping |
 | TC-001–TC-019 | IR-003–011, IR-014, IR-022 / W2–W5 | Security/test plan, packets | Positive/negative conformance, two-Group/operation evidence | Complete mapping |
