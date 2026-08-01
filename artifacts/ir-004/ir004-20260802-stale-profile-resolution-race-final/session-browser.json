@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "capability": "ir-004-auth-browser",
+  "runId": "ir004-20260802-stale-profile-resolution-race-final",
+  "stage": "session-browser",
+  "result": "passed",
+  "environment": "local-browser",
+  "cases": [
+    "linked-account-protected-entry",
+    "browser-reload-protected-entry"
+  ]
+}

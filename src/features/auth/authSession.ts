@@ -9,6 +9,47 @@ export type AuthSessionState =
   | { status: 'authenticated-unlinked'; session: Session }
   | { status: 'error' }
 
+export interface ProfileResolutionToken {
+  generation: number
+  userId: string
+}
+
+export interface ProfileResolutionController {
+  currentGeneration: () => number
+  isGenerationCurrent: (generation: number) => boolean
+  beginProfileResolution: (userId: string) => ProfileResolutionToken
+  isCurrent: (token: ProfileResolutionToken) => boolean
+  invalidate: () => void
+  dispose: () => void
+}
+
+export function createProfileResolutionController(): ProfileResolutionController {
+  let active = true
+  let generation = 0
+  let currentUserId: string | null = null
+
+  const invalidate = () => {
+    generation += 1
+    currentUserId = null
+  }
+
+  return {
+    currentGeneration: () => generation,
+    isGenerationCurrent: (candidateGeneration) => active && candidateGeneration === generation,
+    beginProfileResolution: (userId) => {
+      generation += 1
+      currentUserId = userId
+      return { generation, userId }
+    },
+    isCurrent: (token) => active && token.generation === generation && token.userId === currentUserId,
+    invalidate,
+    dispose: () => {
+      active = false
+      invalidate()
+    },
+  }
+}
+
 async function loadSessionState(session: Session): Promise<AuthSessionState> {
   const { data, error } = await supabase
     .from('profiles')
@@ -31,29 +72,38 @@ export function useAuthSession(): AuthSessionState & { retry: () => void; markSi
   const [state, setState] = useState<AuthSessionState>({ status: 'loading' })
   const [retryToken, setRetryToken] = useState(0)
   const manualSignOut = useRef(false)
+  const controllerRef = useRef<ProfileResolutionController | null>(null)
 
   const retry = useCallback(() => setRetryToken((value) => value + 1), [])
   const markSignedOut = useCallback(() => {
     manualSignOut.current = true
+    controllerRef.current?.invalidate()
     setState({ status: 'signed-out', reason: 'signed-out' })
   }, [])
 
   useEffect(() => {
-    let active = true
+    const controller = createProfileResolutionController()
+    controllerRef.current = controller
 
     const applySession = async (session: Session | null, expired = false) => {
       if (!session) {
-        if (active) setState({ status: 'signed-out', reason: expired ? 'expired' : 'initial' })
+        controller.invalidate()
+        if (controller.isGenerationCurrent(controller.currentGeneration())) {
+          setState({ status: 'signed-out', reason: expired ? 'expired' : 'initial' })
+        }
         return
       }
 
+      const resolution = controller.beginProfileResolution(session.user.id)
       const next = await loadSessionState(session)
-      if (active) setState(next)
+      if (controller.isCurrent(resolution)) setState(next)
     }
 
+    const initialGeneration = controller.currentGeneration()
     void supabase.auth.getSession().then(({ data, error }) => {
+      if (!controller.isGenerationCurrent(initialGeneration)) return
       if (error) {
-        if (active) setState({ status: 'error' })
+        setState({ status: 'error' })
         return
       }
       void applySession(data.session)
@@ -65,17 +115,22 @@ export function useAuthSession(): AuthSessionState & { retry: () => void; markSi
         return
       }
       if (event === 'SIGNED_OUT') {
-        if (active) setState({ status: 'signed-out', reason: manualSignOut.current ? 'signed-out' : 'expired' })
+        void applySession(null, !manualSignOut.current)
+        setState({ status: 'signed-out', reason: manualSignOut.current ? 'signed-out' : 'expired' })
         manualSignOut.current = false
         return
       }
       if (event === 'PASSWORD_RECOVERY') {
-        if (active) setState({ status: 'signed-out', reason: 'recovery' })
+        controller.invalidate()
+        if (controller.isGenerationCurrent(controller.currentGeneration())) {
+          setState({ status: 'signed-out', reason: 'recovery' })
+        }
       }
     })
 
     return () => {
-      active = false
+      controller.dispose()
+      if (controllerRef.current === controller) controllerRef.current = null
       subscription.subscription.unsubscribe()
     }
   }, [retryToken])

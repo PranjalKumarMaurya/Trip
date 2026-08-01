@@ -319,3 +319,21 @@ satisfied.
 - This is an implementation completion record only. Independent verification
   remains required; GATE-013 remains unsatisfied, W2 remains in progress, and
   IR-003, IR-007, and IR-008 remain unauthorised.
+
+## Correction implementation record — F-IR004-VER-001
+
+- Correction run: `ir004-20260802-stale-profile-resolution-race-final`, local
+  and isolated only.
+- `src/features/auth/authSession.ts` now uses a monotonic session/profile
+  resolution generation. Sign-out, expiry, session replacement, user changes,
+  and effect cleanup invalidate older Profile lookups before they can commit.
+- Dedicated deferred-promise tests prove stale Profile results cannot restore
+  signed-out or expired authority, cannot replace Account B with Account A,
+  and still resolve the current session normally.
+- The new immutable manifest records successful schema, privacy, browser,
+  rollback/reapplication, deterministic-type, type/build, and cleanup stages.
+  DBM-003 and DBM-013 checksums remain unchanged.
+- This correction record does not change status: IR-004 remains Implemented —
+  not Verified; independent verification remains required. GATE-013 remains
+  unsatisfied, W2 remains in progress, and IR-003, IR-007, and IR-008 remain
+  unauthorised.

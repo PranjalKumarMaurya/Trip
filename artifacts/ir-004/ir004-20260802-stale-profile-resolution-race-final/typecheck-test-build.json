@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "capability": "ir-004-auth-profile-session",
+  "runId": "ir004-20260802-stale-profile-resolution-race-final",
+  "stage": "typecheck-test-build",
+  "result": "passed",
+  "environment": "local-isolated",
+  "projectId": "bachelor-trip-app-ir004",
+  "commands": [
+    "npm-run-typecheck",
+    "npm-run-test-types",
+    "npm-run-build"
+  ]
+}

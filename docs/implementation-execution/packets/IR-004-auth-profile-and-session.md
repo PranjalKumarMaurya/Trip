@@ -78,10 +78,14 @@ contradiction; return to change control rather than expanding this packet.
 
 ## Implementation handoff
 
-`ir004-20260801-auth-profile-session-final` is the immutable local-only
-implementation record. It proves DBM-003 apply, one-to-one constraints,
-own-Profile privacy, two synthetic linked accounts at the workspace-unavailable
-boundary, empty-target rollback and clean reapplication, byte-identical local
-type generation, build/type tests, and exact isolated-resource cleanup.
-Independent verification is the next action. It must not treat this status as
-authorisation for IR-003, IR-007, IR-008, or W2 exit.
+`ir004-20260801-auth-profile-session-final` remains the original immutable
+local-only implementation record. The separate immutable correction run,
+`ir004-20260802-stale-profile-resolution-race-final`, closes
+F-IR004-VER-001 with a monotonic Profile-resolution generation and deterministic
+deferred-promise race tests for sign-out, expiry, session replacement, and the
+normal current-session path. Both records prove DBM-003 apply, one-to-one
+constraints, own-Profile privacy, two synthetic linked accounts at the
+workspace-unavailable boundary, empty-target rollback and clean reapplication,
+byte-identical local type generation, build/type tests, and exact isolated-
+resource cleanup. Independent verification is the next action. It must not
+treat this status as authorisation for IR-003, IR-007, IR-008, or W2 exit.

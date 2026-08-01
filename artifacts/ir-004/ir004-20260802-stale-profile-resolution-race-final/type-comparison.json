@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "capability": "ir-004-auth-profile-session",
+  "runId": "ir004-20260802-stale-profile-resolution-race-final",
+  "stage": "type-comparison",
+  "result": "passed",
+  "environment": "local-isolated",
+  "projectId": "bachelor-trip-app-ir004",
+  "comparison": "byte-identical",
+  "checksum": "8cad1b46109a2ab1e13b036f0e8b24adb07c78dc52db2ca65fdfde06e8fe33b2"
+}
