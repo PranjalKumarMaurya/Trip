@@ -1,9 +1,11 @@
 # Execution Order
 
-IR-001 and IR-002 are Implemented and Verified; IR-004 is Implemented and not
-Verified; W1 is complete. GATE-012 is satisfied for the separately authorised
-bounded IR-004 only. IR-007 and IR-008, W2 exit, and W3 through W7 remain
-Draft and unauthorised. The accepted roadmap order remains authoritative.
+IR-001, IR-002, and IR-004 are Implemented and Verified; W1 is complete. The
+verified IR-004 output makes IR-007 the next packet to authorise, but IR-007
+is not yet implemented and IR-008 remains unauthorised. GATE-013 is not
+satisfied because its frozen IR-007/IR-008 evidence remains absent; W2 remains
+in progress, and W3 through W7, deployment, and cutover remain unauthorised.
+The accepted roadmap order remains authoritative.
 
 ## W1 — Evidence and tenant foundation
 

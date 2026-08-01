@@ -2,7 +2,7 @@
 
 ## Status and authority
 
-- Status: **Implemented — not Verified**.
+- Status: **Verified**.
 - Wave: W2; serial predecessor of IR-007 only.
 - Authorisation: `../authorisations/IR-004-authorisation.md` is the sole
   executable scope, allow-list, DBM, evidence, rollback, and correction
@@ -87,5 +87,10 @@ normal current-session path. Both records prove DBM-003 apply, one-to-one
 constraints, own-Profile privacy, two synthetic linked accounts at the
 workspace-unavailable boundary, empty-target rollback and clean reapplication,
 byte-identical local type generation, build/type tests, and exact isolated-
-resource cleanup. Independent verification is the next action. It must not
-treat this status as authorisation for IR-003, IR-007, IR-008, or W2 exit.
+resource cleanup. The correction was independently verified at
+`71e689932f5c40bcc0f1cc4a42b226331e8b7daa`; see
+[`../ir-004-verification.md`](../ir-004-verification.md). Both the original and
+corrected evidence records remain immutable. No IR-004 correction remains, and
+no verifier may retroactively enlarge the frozen verification criteria. This
+status does not authorise IR-003, IR-007, IR-008, W2 exit, deployment, or
+cutover.

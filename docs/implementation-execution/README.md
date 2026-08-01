@@ -7,14 +7,14 @@
 - Package lock complete: Yes
 - Implementation Planning Freeze: Complete
 - Implementation readiness review: Approved
-- Implementation authorisation scope: IR-004 implemented; independent verification pending
+- Implementation authorisation scope: IR-004 verified; IR-007 is the next packet to authorise
 - IR-001 authorised: Yes
 - IR-001 status: Implemented and Verified
 - IR-002 authorised: closed — Implemented and Verified
-- IR-004 status: Implemented — not Verified
+- IR-004 status: Verified
 - IR-003 and IR-005 through IR-022 authorised: No
 - W1 status: Complete; GATE-011 satisfied
-- Application implementation: IR-004 only
+- Application implementation: IR-004 verified; IR-007 is not yet authorised or implemented
 
 ## Purpose
 
@@ -56,6 +56,9 @@ and `lock-record.md`; neither record authorises implementation.
 
 ## Current next activity
 
-Independently verify the implemented bounded IR-004 package in
-`authorisations/IR-004-authorisation.md`. GATE-012 is satisfied for IR-004;
-GATE-013, IR-007/IR-008, W3, deployment, and cutover remain unauthorised.
+IR-004 is independently verified in
+[`ir-004-verification.md`](ir-004-verification.md). GATE-013 remains required:
+IR-007 must supply its deny-by-default RLS/two-Group evidence and IR-008 its
+trusted-operation/service-role boundary evidence. IR-007 is the next packet to
+authorise, but is not yet authorised or implemented. W3, deployment, and
+cutover remain unauthorised.

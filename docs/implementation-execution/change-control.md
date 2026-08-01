@@ -111,3 +111,22 @@ Wave order, IR scope, repository change paths, database migration plan, RLS plan
 - Gate/status impact: IR-004 is Implemented, not Verified. GATE-013 remains
   unsatisfied and W2 remains in progress. This record authorises neither
   IR-003 nor IR-007/IR-008, deployment, or cutover.
+
+## CC-IR004-20260802-verification — Corrected Auth/Profile/session verification
+
+- Scope: documentation-only closure of the accepted IR-004 verification; no
+  architecture, product, implementation, or evidence-artifact change.
+- Decision: the accepted independent verifier returned **VERIFIED** at
+  correction commit `71e689932f5c40bcc0f1cc4a42b226331e8b7daa` for
+  F-IR004-VER-001. The original immutable run
+  `ir004-20260801-auth-profile-session-final` and corrected immutable run
+  `ir004-20260802-stale-profile-resolution-race-final` remain unchanged.
+- Status impact: IR-004 and DBM-003 are Verified; no IR-004 correction remains.
+  The frozen GATE-013 contract is not satisfied because IR-007 and IR-008 have
+  not supplied their RLS/two-Group and trusted-operation/service-role evidence.
+  W2 remains in progress; IR-007 is next to authorise but is not implemented.
+  IR-003, deployment, and cutover remain unauthorised.
+- Verification boundary: no criterion was added retroactively. Only a future
+  reproducible defect that violates the frozen IR-004 contract can reopen
+  correction or change control. This record creates no IR-007 authorisation and
+  no W2-completion, deployment, or cutover authority.

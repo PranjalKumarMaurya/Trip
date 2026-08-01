@@ -2,8 +2,9 @@
 
 ## Status and authorisation
 
-- Status: In progress; IR-004 Implemented — not Verified
-- Implementation authorised: IR-004 only; IR-007 and IR-008 remain No
+- Status: In progress; IR-004 Verified
+- Next packet to authorise: IR-007; it remains unimplemented
+- Implementation authorised: no new packet; IR-008 remains No
 - Wave complete: No
 
 ## Wave objective
@@ -70,7 +71,9 @@ Stop for a browser service-role route, client authority, policy gap, or cross-Gr
 
 ## Implementation-authorisation status
 
-IR-004 implementation is recorded in
-`authorisations/IR-004-authorisation.md`; independent verification remains
-next. GATE-013, IR-007, IR-008, W2 completion, and every downstream packet
-remain unauthorised.
+IR-004 is independently verified in
+[`../ir-004-verification.md`](../ir-004-verification.md). IR-007 is the next
+packet to authorise, not an authorised or implemented packet. GATE-013 remains
+required because its frozen IR-007 deny-by-default RLS/two-Group and IR-008
+service-role/trusted-operation evidence is absent. W2 completion and every
+downstream packet, including IR-003, remain unauthorised.
