@@ -49,7 +49,7 @@ Schema dependencies flow from IR-002 to lifecycle/product work; Auth flows from 
 | IR-004 | IR-001, IR-002, GATE-012. | IR-001, IR-002, GATE-012. | No implementation parallelism; only its frozen allow-list. | IR-003, IR-005, IR-007, IR-021, IR-022 | Implemented and Verified |
 | IR-005 | IR-003, IR-004, IR-007, IR-008. | IR-003, IR-004, IR-007, IR-008. | See accepted roadmap parallel-class rules; no unlisted parallelism | IR-006, IR-009, IR-010, IR-011, IR-021, IR-022 | Draft |
 | IR-006 | IR-003, IR-005, IR-008. | IR-003, IR-005, IR-008. | See accepted roadmap parallel-class rules; no unlisted parallelism | IR-016, IR-021, IR-022 | Draft |
-| IR-007 | IR-002, IR-004. | IR-002, IR-004. | See accepted roadmap parallel-class rules; no unlisted parallelism | IR-003, IR-005, IR-008, IR-009, IR-010, IR-011, IR-021, IR-022 | Draft |
+| IR-007 | IR-002, IR-004. | IR-002, IR-004. | Four frozen lanes in `authorisations/IR-007-authorisation.md`; no unlisted parallelism. | IR-003, IR-005, IR-008, IR-009, IR-010, IR-011, IR-021, IR-022 | Authorised — implementation not started |
 | IR-008 | IR-007. | IR-007. | See accepted roadmap parallel-class rules; no unlisted parallelism | IR-003, IR-005, IR-006, IR-009, IR-010, IR-012, IR-013, IR-014, IR-016, IR-021, IR-022 | Draft |
 | IR-009 | IR-005, IR-007, IR-008. | IR-005, IR-007, IR-008. | See accepted roadmap parallel-class rules; no unlisted parallelism | IR-013, IR-021, IR-022 | Draft |
 | IR-010 | IR-005, IR-007, IR-008. | IR-005, IR-007, IR-008. | See accepted roadmap parallel-class rules; no unlisted parallelism | IR-011, IR-021, IR-022 | Draft |
@@ -70,7 +70,7 @@ Schema dependencies flow from IR-002 to lifecycle/product work; Auth flows from 
 
 No dependency cycle was found in the accepted roadmap graph. The table preserves IR-022's gate inputs from IR-001–IR-016; the diagram consolidates that already-serial upstream set at IR-016 rather than drawing sixteen redundant arrows. IR-022 joins IR-016/IR-021 at IR-017 and is not treated as a circular prerequisite for its own evidence.
 
-IR-004's verified output now makes IR-007 the next packet to authorise in the
-serial W2 path. This is not an IR-007 authorisation or implementation, and
-does not satisfy GATE-013 because IR-007 and IR-008 still own its remaining
-frozen evidence.
+IR-004's verified output made IR-007 the next serial W2 packet. IR-007 is now
+authorised but not implemented; its frozen four-lane contract does not satisfy
+GATE-013 until it is verified and IR-008 supplies the separate trusted-
+operation/service-role evidence.

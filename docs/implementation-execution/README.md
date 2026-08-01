@@ -7,14 +7,15 @@
 - Package lock complete: Yes
 - Implementation Planning Freeze: Complete
 - Implementation readiness review: Approved
-- Implementation authorisation scope: IR-004 verified; IR-007 is the next packet to authorise
+- Implementation authorisation scope: IR-004 verified; IR-007 authorised for base ownership RLS only
 - IR-001 authorised: Yes
 - IR-001 status: Implemented and Verified
 - IR-002 authorised: closed — Implemented and Verified
 - IR-004 status: Verified
-- IR-003 and IR-005 through IR-022 authorised: No
+- IR-007 status: Authorised — implementation not started
+- IR-003, IR-005–006, and IR-008 through IR-022 authorised: No
 - W1 status: Complete; GATE-011 satisfied
-- Application implementation: IR-004 verified; IR-007 is not yet authorised or implemented
+- Application implementation: IR-004 verified; IR-007 implementation not started
 
 ## Purpose
 
@@ -56,9 +57,8 @@ and `lock-record.md`; neither record authorises implementation.
 
 ## Current next activity
 
-IR-004 is independently verified in
-[`ir-004-verification.md`](ir-004-verification.md). GATE-013 remains required:
-IR-007 must supply its deny-by-default RLS/two-Group evidence and IR-008 its
-trusted-operation/service-role boundary evidence. IR-007 is the next packet to
-authorise, but is not yet authorised or implemented. W3, deployment, and
-cutover remain unauthorised.
+Implement only the frozen IR-007 base ownership RLS package in
+[`authorisations/IR-007-authorisation.md`](authorisations/IR-007-authorisation.md).
+It is authorised but not started. GATE-013 remains required: IR-007 must first
+be independently verified and IR-008 must still supply its trusted-operation/
+service-role boundary evidence. W3, deployment, and cutover remain unauthorised.

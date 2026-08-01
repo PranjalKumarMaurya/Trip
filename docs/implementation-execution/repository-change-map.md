@@ -6,7 +6,7 @@ existing: it is labelled **Proposed path — verify at packet start**.
 
 | Existing path | Current purpose | Planned action | First permitted IR / Wave | Later consumers | Concurrent-edit risk and serial owner | Test coverage | Rollback concern | Status |
 |---|---|---|---|---|---|---|---|---|
-| `package.json`, `package-lock.json` | npm dependencies and scripts. | IR-002 and now IR-004 may add only their own dedicated script aliases to `package.json`; `package-lock.json` is prohibited. | IR-001 / W1; bounded IR-002/IR-004 exceptions | All test/evidence work | High: neither packet changes dependencies or IR-001/IR-002 evidence semantics. | Dedicated local contract; existing build/type checks. | Remove/revert an unconsumed script; never hide a failing check. | Confirmed existing |
+| `package.json`, `package-lock.json` | npm dependencies and scripts. | IR-002, IR-004, and authorised IR-007 may add only their own dedicated script aliases to `package.json`; `package-lock.json` is prohibited. | IR-001 / W1; bounded IR-002/IR-004/IR-007 exceptions | All test/evidence work | High: no packet changes dependencies or prior evidence semantics. | Dedicated local contract; existing build/type checks. | Remove/revert an unconsumed script; never hide a failing check. | Confirmed existing |
 | `vite.config.ts`, `tsconfig.json`, `tsconfig.node.json` | Vite and TypeScript build boundary. | Preserve until a reviewed tooling/routing decision requires an owned change. | IR-001 / W1 | IR-004, IR-011, IR-021 | High: IR-001 controls build/test config integration. | `npm run build`; selected-tool capability evidence. | Revert config without weakening type/build gate. | Confirmed existing |
 | `src/App.tsx` | Fixed five-tab shell, local tab state, 480px layout. | IR-004 may replace only the active entry with its Auth boundary and no-workspace holding state; IR-011 later owns Group shell/Active Group conversion. | IR-004 / W2; IR-011 / W4 | IR-012–015 | Critical shared foundation: IR-004 may not add Group/data behaviour; IR-011 merges Group shell first. | IR-004 AUTH/session evidence; later UI-01–03/TC-003. | Never roll back to persona/global-data fallback. | Confirmed existing |
 | `src/lib/supabase.ts` | Sole shared browser Supabase client using Vite URL/anon-key values. | Establish reviewed client/session boundary; do not put service-role access here. | IR-004 / W2 | IR-007, IR-010–015 | Critical: IR-004 owns first edit; policy/data consumers cannot independently create clients. | TC-001, TC-013, browser-secret inspection. | Revert without reintroducing browser authority. | Confirmed existing |
@@ -41,6 +41,12 @@ existing: it is labelled **Proposed path — verify at packet start**.
   `src/lib/supabase.ts`, `src/lib/database.types.ts`, `package.json`, and
   `008_ir004_profile_auth.sql`; the exact conditional local-stack and Modal
   paths are in its authorisation. This is not broad `src/**` authority.
+- IR-007 authorises only the exact DBM-006/current-schema RLS paths in
+  `authorisations/IR-007-authorisation.md`: one reserved migration, generated
+  types, dedicated database/unit/evidence paths, dedicated package aliases,
+  and listed execution records. It does not authorise a legacy product-table
+  tenant conversion, Storage, Realtime, lifecycle, trusted operations, source
+  code, dependency, or prior-harness change.
 - Deployment configuration and CI do not exist in the inspected repository.
   They remain **Not established**, not missing paths to invent.
 - Shared file conflict order is: IR-004 for client/session identity and the

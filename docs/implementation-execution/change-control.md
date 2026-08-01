@@ -130,3 +130,21 @@ Wave order, IR scope, repository change paths, database migration plan, RLS plan
   reproducible defect that violates the frozen IR-004 contract can reopen
   correction or change control. This record creates no IR-007 authorisation and
   no W2-completion, deployment, or cutover authority.
+
+## CC-IR007-20260802 — Base ownership RLS authorisation
+
+- Decision authority: Product owner.
+- Scope: only DBM-006 and the exact current-schema, evidence, rollback, and
+  four-lane allow-list in `authorisations/IR-007-authorisation.md`.
+- Decision: reserve only `009_ir007_base_rls_ownership.sql`; authorise IR-007
+  and DBM-006, with implementation not started.
+- Security boundary: legacy product tables become browser fail closed; no
+  tenant-aware product access, Group bootstrap/lifecycle, Invitations, Storage,
+  Realtime, or trusted operation is authorised. The public `tickets` bucket
+  remains an IR-009/release risk, not an IR-007 exit blocker.
+- Gate/status impact: GATE-013 remains Not satisfied and W2 remains In
+  progress. IR-008, IR-003, deployment, and cutover remain unauthorised.
+- Review/rollback: empty-target rollback never restores a permissive policy;
+  populated targets remain fail closed and use forward correction. Reverting
+  this record removes documentation authority only and creates no security or
+  release authority.
