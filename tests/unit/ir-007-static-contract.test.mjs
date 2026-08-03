@@ -68,9 +68,11 @@ const authorisedChangedPaths = new Set([
   'docs/implementation-execution/change-control.md',
   'docs/implementation-execution/execution-order.md',
   'docs/implementation-execution/dependency-map.md',
+  'docs/implementation-execution/dependency-graph.md',
   'docs/implementation-execution/repository-change-map.md',
   'docs/implementation-execution/implementation-traceability.md',
   'docs/implementation-execution/waves/W2-auth-and-security-foundation.md',
+  'docs/implementation-execution/waves/W2-auth-security-and-trusted-operations.md',
   'docs/implementation-execution/README.md',
 ])
 

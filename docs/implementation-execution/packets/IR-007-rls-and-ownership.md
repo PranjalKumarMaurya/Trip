@@ -2,7 +2,7 @@
 
 ## Status and authority
 
-- Status: **Authorised — implementation not started**.
+- Status: **Implemented — not Verified**.
 - Wave: W2; serial predecessor of IR-008.
 - Authorisation: `../authorisations/IR-007-authorisation.md` is the sole
   executable scope, database-object, evidence, rollback, and parallel-ownership
@@ -60,11 +60,16 @@ runs, and JSON explain evidence against the frozen p95/plan limits.
 
 ## Evidence and rollback
 
-The implementation order is Lane A migration, Lane B adversarial cases, Lane C
+The implementation order was Lane A migration, Lane B adversarial cases, Lane C
 harness, Lane D static checks/aliases, integration, two generated-type passes,
-immutable evidence retention, final integration checks, then independent
-verification. Only Lane C may start or stop Docker/Supabase. IR-001, IR-002,
-and IR-004 harnesses and evidence remain untouched.
+immutable evidence retention, and final integration checks. The retained final
+local run is `ir007-1785780852521-160759ec-cd35-4143-ad82-512d22d7094d`;
+it passed all 40 executable cases, retained 10 deferred cases outside pass/fail,
+and produced byte-identical generated types at
+`2134e239b47ef04eeafcfa3165082b4b590895b6fde4a192dc2ba7201842976b`.
+Only Lane C started or stopped Docker/Supabase. IR-001, IR-002, and IR-004
+harnesses and evidence remain untouched. Independent verification remains
+required before this packet becomes Verified.
 
 Empty-target rollback must never recreate a permissive policy. A populated-
 target problem remains fail closed and is corrected only by a forward migration.

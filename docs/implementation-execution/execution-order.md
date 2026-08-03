@@ -1,10 +1,10 @@
 # Execution Order
 
 IR-001, IR-002, and IR-004 are Implemented and Verified; W1 is complete.
-IR-007 and DBM-006 are authorised but implementation has not started; IR-008
-remains unauthorised. GATE-013 is not satisfied because its frozen IR-007/IR-008
-evidence remains absent; W2 remains in progress, and W3 through W7, deployment,
-and cutover remain unauthorised. The accepted roadmap order remains
+IR-007 and DBM-006 are Implemented, not Verified; IR-008 remains unauthorised.
+GATE-013 is not satisfied because IR-007 still requires independent verification
+and IR-008 evidence remains absent; W2 remains in progress, and W3 through W7,
+deployment, and cutover remain unauthorised. The accepted roadmap order remains
 authoritative.
 
 ## W1 — Evidence and tenant foundation
@@ -42,9 +42,9 @@ authoritative.
 - Security dependencies: Session-derived identity, inactive/removed-member denial, two-Group substitution tests, service-role confinement, and a no-permissive-transition rule.
 - UI dependencies: AUTH and pre-auth SHL state contracts are traceability inputs only; no locked design asset is changed.
 - Migration dependencies: DBM-003 is verified for IR-004's Profile/Auth and
-  own-Profile privacy contract. DBM-006 is authorised only in
-  `009_ir007_base_rls_ownership.sql`; it remains unimplemented and cannot add
-  tenant-aware legacy product access.
+  own-Profile privacy contract. DBM-006 is implemented only in
+  `009_ir007_base_rls_ownership.sql`; it cannot add tenant-aware legacy product
+  access and remains subject to independent verification.
 - Test dependencies: IR-001 capability, Auth expiration/continuation fixtures, two-account/two-Group negative cases, replay/race cases for later operations, and audit-safe failure evidence.
 - Mandatory exit evidence: Auth/session privacy, matrix, rollback, secret, and two-Group evidence design; no incomplete authoritative atomic operation.
 - Rollback checkpoint: Target paths remain inaccessible until security evidence passes; no permissive fallback.

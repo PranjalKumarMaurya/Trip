@@ -148,3 +148,42 @@ Wave order, IR scope, repository change paths, database migration plan, RLS plan
   populated targets remain fail closed and use forward correction. Reverting
   this record removes documentation authority only and creates no security or
   release authority.
+
+## CC-IR007-20260803-implementation — Base ownership RLS implementation record
+
+- Scope: the accepted IR-007 four-lane allow-list and DBM-006 only; no
+  architecture, product, dependency, application, Storage, Realtime, trusted
+  operation, remote, deployment, or cutover scope changed.
+- Result: `009_ir007_base_rls_ownership.sql` applied as migration `009` after
+  migrations `001`–`008`, with SHA-256
+  `b4be413120833b6be6aa282bd5a02d5c3dcdf9c25b50e9e0e388921516a45873`.
+  The exact policy/function/grant catalogue, all 40 executable security cases,
+  empty-target fail-closed rollback, clean reapplication, and exact local
+  cleanup passed. The 10 future-target cases remain deferred and are excluded
+  from the pass/fail result.
+- Evidence: immutable local-isolated run
+  `ir007-1785780852521-160759ec-cd35-4143-ad82-512d22d7094d` has a passing
+  final manifest with 12 SHA-256-validated references. Its frozen 200-Group,
+  20-active-member-per-Group, 200-inactive-membership, 20-archived-Group, and
+  20,000-audit-row fixture passed warmed p95 timings of 1.752 ms
+  (Group/configuration), 1.867 ms (roster LIMIT 100), 1.236 ms (cross-Group
+  denial), 1.327 ms (Profile/active-membership), and 1.570 ms (Owner audit
+  LIMIT 100). Plans had no sequential scan of `profiles` or `group_members`,
+  no protected-row-proportional authorization loop, no temporary-file spill,
+  and used the selective active-membership index path.
+- Generated types: Supabase CLI `2.105.0` generated the local `--schema public`
+  output twice; both outputs were byte-identical at SHA-256
+  `2134e239b47ef04eeafcfa3165082b4b590895b6fde4a192dc2ba7201842976b` and the
+  tracked output was copied verbatim from generation.
+- Implementation commit chain: `092a7cd1e8a62c18cda5f674a90fe55ad45f847c`,
+  `a00dd58a5fcd90081c22539b2610e114cab39ce2`,
+  `9e82e2a9e4894648f7d04363fa598e3e61228aed`,
+  `37ebdb677386abdf624d74dcea82e7a85cba406a`,
+  `3b13033a0fa0ebfcd5400b9a337a91dc86609ae3`,
+  `29784e00744d86a45c57933aee3e6dfe30868334`, and
+  `55e03440bc1ed7e704748d50cf8a2f8c599697aa`.
+- Gate/status impact: DBM-006 and IR-007 are Implemented, not Verified.
+  GATE-013 remains Not satisfied and W2 remains In progress pending
+  independent IR-007 verification and IR-008's separate trusted-operation/
+  service-role evidence. IR-008, IR-003, deployment, and cutover remain Not
+  authorised.
