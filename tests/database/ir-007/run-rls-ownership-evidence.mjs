@@ -144,7 +144,13 @@ function assertPlainEvidenceValue(value) {
     throw new Error('refusing-nonplain-ir007-evidence')
   }
   Object.entries(value).forEach(([key, entry]) => {
-    if (!/^[A-Za-z][A-Za-z0-9 _-]{0,100}$/.test(key)) throw new Error('refusing-unsafe-ir007-evidence-key')
+    if (
+      !/^[A-Za-z][A-Za-z0-9 _-]{0,100}$/.test(key) &&
+      !/^(?:Temp )?I\/O(?: [A-Za-z]+){1,5}$/.test(key) &&
+      !expectedMigrationNames.includes(key)
+    ) {
+      throw new Error('refusing-unsafe-ir007-evidence-key')
+    }
     assertPlainEvidenceValue(entry)
   })
 }
@@ -214,19 +220,23 @@ function assertLoopbackEndpoint(raw, { protocol, port, label }) {
   } catch {
     throw new Error(`ir007-local-${label}-url-invalid`)
   }
-  if (
-    endpoint.protocol !== protocol ||
-    !['localhost', '127.0.0.1'].includes(endpoint.hostname) ||
-    endpoint.port !== String(port)
-  ) {
-    throw new Error(`refusing-nonlocal-ir007-${label}-endpoint`)
+  const permittedProtocols = Array.isArray(protocol) ? protocol : [protocol]
+  if (!permittedProtocols.includes(endpoint.protocol)) {
+    const scheme = endpoint.protocol.replace(/[^a-z0-9]/gi, '')
+    throw new Error(`refusing-nonlocal-ir007-${label}-scheme-${scheme}`)
+  }
+  if (!['localhost', '127.0.0.1'].includes(endpoint.hostname)) {
+    throw new Error(`refusing-nonlocal-ir007-${label}-host`)
+  }
+  if (endpoint.port !== String(port)) {
+    throw new Error(`refusing-nonlocal-ir007-${label}-port`)
   }
   return endpoint
 }
 
 function psqlOptions() {
   if (!databaseUrl) throw new Error('ir007-local-database-not-started')
-  const parsed = assertLoopbackEndpoint(databaseUrl, { protocol: 'postgres:', port: 57722, label: 'database' })
+  const parsed = assertLoopbackEndpoint(databaseUrl, { protocol: ['postgres:', 'postgresql:'], port: 57722, label: 'database' })
   return {
     args: [
       '--no-psqlrc', '--quiet', '--tuples-only', '--no-align', '--set', 'ON_ERROR_STOP=1',
@@ -308,7 +318,7 @@ function startStack() {
   started = true
   const environment = statusEnvironment()
   const databaseEndpoint = assertLoopbackEndpoint(environment.databaseUrl, {
-    protocol: 'postgres:', port: 57722, label: 'database',
+    protocol: ['postgres:', 'postgresql:'], port: 57722, label: 'database',
   })
   const apiEndpoint = assertLoopbackEndpoint(environment.apiUrl, {
     protocol: 'http:', port: 57721, label: 'api',
@@ -345,9 +355,17 @@ function cleanLocalCliState() {
       const path = resolve(directory, entry)
       const entryStats = lstatSync(path)
       if (!entryStats.isFile() || entryStats.isSymbolicLink()) throw new Error('refusing-unsafe-ir007-cli-state')
-      rmSync(path)
+      try {
+        rmSync(path)
+      } catch {
+        throw new Error('ir007-cli-state-file-cleanup-failed')
+      }
     }
-    rmSync(directory)
+    try {
+      rmSync(directory, { recursive: true, maxRetries: 3, retryDelay: 100 })
+    } catch {
+      throw new Error('ir007-cli-state-directory-cleanup-failed')
+    }
   }
 }
 
@@ -416,57 +434,148 @@ function assertCatalogue() {
     'public.get_group_roster(p_group_id uuid, p_limit integer)',
   ].join('|'), 'function-signatures')
   scalar(`
-    SELECT (
-      NOT has_schema_privilege('anon', 'ir007_private', 'USAGE')
-      AND NOT has_schema_privilege('authenticated', 'ir007_private', 'USAGE')
-      AND (SELECT bool_and(has_function_privilege('authenticated', pg_proc.oid, 'EXECUTE'))
-           FROM pg_catalog.pg_proc JOIN pg_catalog.pg_namespace ON pg_namespace.oid = pg_proc.pronamespace
-           WHERE pg_namespace.nspname = 'ir007_private')
-      AND (SELECT bool_and(NOT has_function_privilege('anon', pg_proc.oid, 'EXECUTE'))
-           FROM pg_catalog.pg_proc JOIN pg_catalog.pg_namespace ON pg_namespace.oid = pg_proc.pronamespace
-           WHERE pg_namespace.nspname = 'ir007_private')
-      AND (SELECT bool_and(has_function_privilege('authenticated', pg_proc.oid, 'EXECUTE')
-                           AND NOT has_function_privilege('anon', pg_proc.oid, 'EXECUTE'))
-           FROM pg_catalog.pg_proc JOIN pg_catalog.pg_namespace ON pg_namespace.oid = pg_proc.pronamespace
-           WHERE pg_namespace.nspname = 'public' AND pg_proc.proname IN ('get_group_roster', 'get_group_audit_summary'))
-    )::text
-  `, 't', 'helper-and-projection-grants')
+    SELECT string_agg(
+      COALESCE(role.rolname, 'PUBLIC') || ':' || privilege.privilege_type,
+      '|' ORDER BY COALESCE(role.rolname, 'PUBLIC'), privilege.privilege_type
+    )
+    FROM pg_catalog.pg_namespace AS schema
+    CROSS JOIN LATERAL pg_catalog.aclexplode(
+      COALESCE(schema.nspacl, pg_catalog.acldefault('n', schema.nspowner))
+    ) AS privilege
+    LEFT JOIN pg_catalog.pg_roles AS role ON role.oid = privilege.grantee
+    WHERE schema.nspname = 'ir007_private'
+  `, 'postgres:CREATE|postgres:USAGE', 'private-schema-direct-grants')
   scalar(`
-    SELECT (
-      has_column_privilege('authenticated', 'public.profiles', 'id', 'SELECT')
-      AND has_column_privilege('authenticated', 'public.profiles', 'display_name', 'SELECT')
-      AND has_column_privilege('authenticated', 'public.profiles', 'display_name', 'UPDATE')
-      AND NOT has_column_privilege('authenticated', 'public.profiles', 'auth_user_id', 'SELECT')
-      AND has_table_privilege('authenticated', 'public.groups', 'SELECT')
-      AND has_table_privilege('authenticated', 'public.group_configurations', 'SELECT')
-      AND NOT EXISTS (
-        SELECT 1
-        FROM unnest(ARRAY[${tableList}]) AS table_name
-        CROSS JOIN unnest(ARRAY['SELECT', 'INSERT', 'UPDATE', 'DELETE']) AS privilege_name
-        WHERE has_table_privilege('anon', format('public.%I', table_name), privilege_name)
-      )
-      AND NOT EXISTS (
-        SELECT 1
-        FROM unnest(ARRAY['profiles', 'group_members', 'group_audit_events', 'users', 'iso_4217_currency_codes',
-                          'events', 'expenses', 'settlements', 'exchange_rates', 'todos']) AS table_name
-        CROSS JOIN unnest(ARRAY['SELECT', 'INSERT', 'UPDATE', 'DELETE']) AS privilege_name
-        WHERE has_table_privilege('authenticated', format('public.%I', table_name), privilege_name)
-      )
-      AND NOT EXISTS (
-        SELECT 1
-        FROM unnest(ARRAY['groups', 'group_configurations']) AS table_name
-        CROSS JOIN unnest(ARRAY['INSERT', 'UPDATE', 'DELETE']) AS privilege_name
-        WHERE has_table_privilege('authenticated', format('public.%I', table_name), privilege_name)
-      )
-    )::text
-  `, 't', 'browser-table-grants')
+    SELECT count(*)::text
+    FROM pg_catalog.pg_proc AS function
+    JOIN pg_catalog.pg_namespace AS schema ON schema.oid = function.pronamespace
+    CROSS JOIN LATERAL pg_catalog.aclexplode(
+      COALESCE(function.proacl, pg_catalog.acldefault('f', function.proowner))
+    ) AS privilege
+    JOIN pg_catalog.pg_roles AS grantee ON grantee.oid = privilege.grantee
+    WHERE schema.nspname = 'ir007_private'
+      AND privilege.privilege_type = 'EXECUTE'
+      AND grantee.rolname = 'authenticated'
+  `, '3', 'authenticated-helper-execution')
   scalar(`
-    SELECT (
-      EXISTS (SELECT 1 FROM pg_catalog.pg_indexes WHERE schemaname = 'public' AND indexname = 'group_members_active_profile_group_role_idx')
-      AND (SELECT count(*) FROM pg_catalog.pg_indexes WHERE schemaname = 'public'
-           AND indexname IN ('group_members_active_profile_group_role_idx', 'group_members_active_owner_profile_group_idx')) BETWEEN 1 AND 2
-    )::text
-  `, 't', 'membership-index-inventory')
+    SELECT count(*)::text
+    FROM pg_catalog.pg_proc AS function
+    JOIN pg_catalog.pg_namespace AS schema ON schema.oid = function.pronamespace
+    CROSS JOIN LATERAL pg_catalog.aclexplode(
+      COALESCE(function.proacl, pg_catalog.acldefault('f', function.proowner))
+    ) AS privilege
+    LEFT JOIN pg_catalog.pg_roles AS grantee ON grantee.oid = privilege.grantee
+    WHERE schema.nspname = 'ir007_private'
+      AND privilege.privilege_type = 'EXECUTE'
+      AND (privilege.grantee = 0 OR grantee.rolname = 'anon')
+  `, '0', 'anon-helper-execution')
+  scalar(`
+    SELECT count(*)::text
+    FROM pg_catalog.pg_proc AS function
+    JOIN pg_catalog.pg_namespace AS schema ON schema.oid = function.pronamespace
+    CROSS JOIN LATERAL pg_catalog.aclexplode(
+      COALESCE(function.proacl, pg_catalog.acldefault('f', function.proowner))
+    ) AS privilege
+    JOIN pg_catalog.pg_roles AS grantee ON grantee.oid = privilege.grantee
+    WHERE schema.nspname = 'public'
+      AND function.proname IN ('get_group_roster', 'get_group_audit_summary')
+      AND privilege.privilege_type = 'EXECUTE'
+      AND grantee.rolname = 'authenticated'
+  `, '2', 'authenticated-projection-execution')
+  scalar(`
+    SELECT count(*)::text
+    FROM pg_catalog.pg_proc AS function
+    JOIN pg_catalog.pg_namespace AS schema ON schema.oid = function.pronamespace
+    CROSS JOIN LATERAL pg_catalog.aclexplode(
+      COALESCE(function.proacl, pg_catalog.acldefault('f', function.proowner))
+    ) AS privilege
+    LEFT JOIN pg_catalog.pg_roles AS grantee ON grantee.oid = privilege.grantee
+    WHERE schema.nspname = 'public'
+      AND function.proname IN ('get_group_roster', 'get_group_audit_summary')
+      AND privilege.privilege_type = 'EXECUTE'
+      AND (privilege.grantee = 0 OR grantee.rolname = 'anon')
+  `, '0', 'anon-projection-execution')
+  scalar(`
+    SELECT string_agg(
+      attribute.attname || ':' || privilege.privilege_type,
+      '|' ORDER BY attribute.attname, privilege.privilege_type
+    )
+    FROM pg_catalog.pg_attribute AS attribute
+    JOIN pg_catalog.pg_class AS table_class ON table_class.oid = attribute.attrelid
+    JOIN pg_catalog.pg_namespace AS schema ON schema.oid = table_class.relnamespace
+    CROSS JOIN LATERAL pg_catalog.aclexplode(
+      COALESCE(attribute.attacl, pg_catalog.acldefault('c', table_class.relowner))
+    ) AS privilege
+    JOIN pg_catalog.pg_roles AS grantee ON grantee.oid = privilege.grantee
+    WHERE schema.nspname = 'public'
+      AND table_class.relname = 'profiles'
+      AND attribute.attnum > 0
+      AND NOT attribute.attisdropped
+      AND grantee.rolname = 'authenticated'
+  `, 'display_name:SELECT|display_name:UPDATE|id:SELECT', 'profile-column-grants')
+  scalar(`
+    SELECT string_agg(
+      relation.relname || ':' || privilege.privilege_type,
+      '|' ORDER BY relation.relname, privilege.privilege_type
+    )
+    FROM pg_catalog.pg_class AS relation
+    JOIN pg_catalog.pg_namespace AS schema ON schema.oid = relation.relnamespace
+    CROSS JOIN LATERAL pg_catalog.aclexplode(
+      COALESCE(relation.relacl, pg_catalog.acldefault('r', relation.relowner))
+    ) AS privilege
+    JOIN pg_catalog.pg_roles AS grantee ON grantee.oid = privilege.grantee
+    WHERE schema.nspname = 'public'
+      AND relation.relname IN ('groups', 'group_configurations')
+      AND privilege.privilege_type = 'SELECT'
+      AND grantee.rolname = 'authenticated'
+  `, 'group_configurations:SELECT|groups:SELECT', 'authenticated-group-read-grants')
+  scalar(`
+    SELECT count(*)::text
+    FROM pg_catalog.pg_class AS relation
+    JOIN pg_catalog.pg_namespace AS schema ON schema.oid = relation.relnamespace
+    CROSS JOIN LATERAL pg_catalog.aclexplode(
+      COALESCE(relation.relacl, pg_catalog.acldefault('r', relation.relowner))
+    ) AS privilege
+    LEFT JOIN pg_catalog.pg_roles AS grantee ON grantee.oid = privilege.grantee
+    WHERE schema.nspname = 'public'
+      AND relation.relname IN (${tableList})
+      AND (privilege.grantee = 0 OR grantee.rolname = 'anon')
+  `, '0', 'anon-table-grants')
+  scalar(`
+    SELECT count(*)::text
+    FROM pg_catalog.pg_class AS relation
+    JOIN pg_catalog.pg_namespace AS schema ON schema.oid = relation.relnamespace
+    CROSS JOIN LATERAL pg_catalog.aclexplode(
+      COALESCE(relation.relacl, pg_catalog.acldefault('r', relation.relowner))
+    ) AS privilege
+    JOIN pg_catalog.pg_roles AS grantee ON grantee.oid = privilege.grantee
+    WHERE schema.nspname = 'public'
+      AND relation.relname IN ('group_members', 'group_audit_events', 'users', 'iso_4217_currency_codes',
+                               'events', 'expenses', 'settlements', 'exchange_rates', 'todos')
+      AND grantee.rolname = 'authenticated'
+  `, '0', 'authenticated-direct-table-denial')
+  scalar(`
+    SELECT count(*)::text
+    FROM pg_catalog.pg_class AS relation
+    JOIN pg_catalog.pg_namespace AS schema ON schema.oid = relation.relnamespace
+    CROSS JOIN LATERAL pg_catalog.aclexplode(
+      COALESCE(relation.relacl, pg_catalog.acldefault('r', relation.relowner))
+    ) AS privilege
+    JOIN pg_catalog.pg_roles AS grantee ON grantee.oid = privilege.grantee
+    WHERE schema.nspname = 'public'
+      AND relation.relname IN ('groups', 'group_configurations')
+      AND privilege.privilege_type IN ('INSERT', 'UPDATE', 'DELETE')
+      AND grantee.rolname = 'authenticated'
+  `, '0', 'group-configuration-write-denial')
+  scalar(`
+    SELECT count(*)::text FROM pg_catalog.pg_indexes
+    WHERE schemaname = 'public' AND indexname = 'group_members_active_profile_group_role_idx'
+  `, '1', 'required-membership-index')
+  scalar(`
+    SELECT count(*)::text FROM pg_catalog.pg_indexes
+    WHERE schemaname = 'public'
+      AND indexname IN ('group_members_active_profile_group_role_idx', 'group_members_active_owner_profile_group_idx')
+  `, '1', 'membership-index-inventory')
   scalar(`
     SELECT count(*)::text
     FROM pg_catalog.pg_trigger
@@ -552,13 +661,13 @@ function emptyTargetRollback() {
   `)
   scalar(`
     SELECT (
-      (SELECT count(*) FROM public.group_audit_events) = 0
-      AND (SELECT count(*) FROM public.group_configurations) = 0
-      AND (SELECT count(*) FROM public.group_members) = 0
-      AND (SELECT count(*) FROM public.profiles) = 0
-      AND (SELECT count(*) FROM public.groups) = 0
+      (SELECT count(*) FROM public.group_audit_events)
+      + (SELECT count(*) FROM public.group_configurations)
+      + (SELECT count(*) FROM public.group_members)
+      + (SELECT count(*) FROM public.profiles)
+      + (SELECT count(*) FROM public.groups)
     )::text
-  `, 't', 'empty-target-before-rollback')
+  `, '0', 'empty-target-before-rollback')
   runPsqlFile(rollbackSqlPath)
   scalar(`
     SELECT count(*)::text FROM pg_catalog.pg_policies
@@ -566,15 +675,15 @@ function emptyTargetRollback() {
   `, '0', 'rollback-legacy-permissive-policies')
   scalar(`
     SELECT (
-      NOT EXISTS (SELECT 1 FROM pg_catalog.pg_namespace WHERE nspname = 'ir007_private')
-      AND NOT EXISTS (SELECT 1 FROM pg_catalog.pg_proc JOIN pg_catalog.pg_namespace ON pg_namespace.oid = pg_proc.pronamespace
-                      WHERE pg_namespace.nspname = 'public' AND pg_proc.proname IN ('get_group_roster', 'get_group_audit_summary'))
-      AND NOT EXISTS (SELECT 1 FROM pg_catalog.pg_policies WHERE schemaname = 'public'
-                      AND policyname IN ('profiles_update_own_presentation', 'groups_select_active_member', 'group_configurations_select_active_member'))
-      AND EXISTS (SELECT 1 FROM pg_catalog.pg_policies WHERE schemaname = 'public'
-                  AND policyname = 'profiles_select_own_linked_profile')
+      (SELECT count(*) FROM pg_catalog.pg_namespace WHERE nspname = 'ir007_private')
+      + (SELECT count(*) FROM pg_catalog.pg_proc JOIN pg_catalog.pg_namespace ON pg_namespace.oid = pg_proc.pronamespace
+         WHERE pg_namespace.nspname = 'public' AND pg_proc.proname IN ('get_group_roster', 'get_group_audit_summary'))
+      + (SELECT count(*) FROM pg_catalog.pg_policies WHERE schemaname = 'public'
+         AND policyname IN ('profiles_update_own_presentation', 'groups_select_active_member', 'group_configurations_select_active_member'))
+      + (SELECT count(*) FROM pg_catalog.pg_policies WHERE schemaname = 'public'
+         AND policyname = 'profiles_select_own_linked_profile')
     )::text
-  `, 't', 'rollback-ir007-object-removal')
+  `, '1', 'rollback-ir007-object-removal')
   scalar(`
     SELECT count(*)::text
     FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_namespace.oid = pg_class.relnamespace

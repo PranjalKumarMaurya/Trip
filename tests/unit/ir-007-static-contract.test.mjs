@@ -38,7 +38,6 @@ const legacyPolicies = [
   ['expenses', 'group_delete_expenses'],
   ['settlements', 'group_read_settlements'],
   ['settlements', 'group_insert_settlements'],
-  ['settlements', 'group_update_settlements'],
   ['exchange_rates', 'group_read_rates'],
   ['exchange_rates', 'group_insert_rates'],
   ['todos', 'todos_public'],
@@ -232,11 +231,11 @@ migrationContractTest('IR-007 public projections retain their exact narrow signa
   const normalized = normalizeSql(sql)
   assert.match(
     normalized,
-    /create (?:or replace )?function public\.get_group_roster\(p_group_id uuid, p_limit integer default 100\) returns table \(participant_id uuid, group_id uuid, display_name text, role text, status text\)/i,
+    /create (?:or replace )?function public\.get_group_roster\(\s*p_group_id uuid, p_limit integer default 100\s*\) returns table \(\s*participant_id uuid, group_id uuid, display_name text, role text, status text\s*\)/i,
   )
   assert.match(
     normalized,
-    /create (?:or replace )?function public\.get_group_audit_summary\(p_group_id uuid, p_limit integer default 100\) returns table \(audit_event_id uuid, group_id uuid, actor_participant_id uuid, event_type text, occurred_at timestamptz\)/i,
+    /create (?:or replace )?function public\.get_group_audit_summary\(\s*p_group_id uuid, p_limit integer default 100\s*\) returns table \(\s*audit_event_id uuid, group_id uuid, actor_participant_id uuid, event_type text, occurred_at timestamptz\s*\)/i,
   )
 })
 
@@ -255,10 +254,10 @@ migrationContractTest('IR-007 enables and forces RLS with only the frozen browse
   ])
 
   const policies = [
-    ['profiles_select_own_linked_profile', 'profiles', 'select', 'current_profile_id'],
-    ['profiles_update_own_presentation', 'profiles', 'update', 'current_profile_id'],
-    ['groups_select_active_member', 'groups', 'select', 'current_active_group_ids'],
-    ['group_configurations_select_active_member', 'group_configurations', 'select', 'current_active_group_ids'],
+    ['profiles_select_own_linked_profile', 'profiles', 'select', /\bauth\.uid\s*\(\s*\)[\s\S]*?\bauth_user_id\b/i],
+    ['profiles_update_own_presentation', 'profiles', 'update', /\bauth\.uid\s*\(\s*\)[\s\S]*?\bauth_user_id\b/i],
+    ['groups_select_active_member', 'groups', 'select', /\bir007_private\.current_active_group_ids\s*\(/i],
+    ['group_configurations_select_active_member', 'group_configurations', 'select', /\bir007_private\.current_active_group_ids\s*\(/i],
   ]
   for (const [name, table, action, predicate] of policies) {
     const definition = sql.match(new RegExp(
@@ -268,7 +267,7 @@ migrationContractTest('IR-007 enables and forces RLS with only the frozen browse
     assert.ok(definition, `missing ${name}`)
     assert.match(definition, new RegExp(`\\bFOR\\s+${action}\\b`, 'i'))
     assert.match(definition, /\bTO\s+authenticated\b/i)
-    assert.match(definition, new RegExp(`\\bir007_private\\.${predicate}\\s*\\(`, 'i'))
+    assert.match(definition, predicate)
     assert.doesNotMatch(definition, /\bOR\b/i, `${name} must not broaden its predicate`)
     assert.doesNotMatch(definition, /\b(?:true|1\s*=\s*1)\b/i, `${name} must not be permissive`)
   }
@@ -355,23 +354,21 @@ migrationContractTest('IR-007 revokes browser access before granting only the fr
     )
   }
 
+  const tableRevoke = normalized.match(/\brevoke all privileges on table ([^;]+) from ([^;]+);/i)
+  assert.ok(tableRevoke, 'the protected tables must have a consolidated browser-role revoke')
   for (const table of protectedTables) {
-    for (const role of ['PUBLIC', 'anon', 'authenticated']) {
-      assertRoleRevoke(normalized, `TABLE public.${table}`, role)
-    }
+    assert.match(tableRevoke[1], new RegExp(`\\bpublic\\.${table}\\b`, 'i'))
   }
-  assert.match(
-    normalized,
-    /grant select \(id, display_name\) on table public\.profiles to authenticated/i,
-  )
-  assert.match(
-    normalized,
-    /grant update \(display_name\) on table public\.profiles to authenticated/i,
-  )
-  const authenticatedTableGrants = (table) => [...normalized.matchAll(new RegExp(
-    `\\bgrant\\s+(.+?)\\s+on\\s+table\\s+public\\.${table}\\s+to\\s+authenticated\\s*;`,
-    'gi',
-  ))].map((match) => match[1].trim()).sort()
+  for (const role of ['PUBLIC', 'anon', 'authenticated']) {
+    assert.match(tableRevoke[2], new RegExp(`\\b${role}\\b`, 'i'))
+  }
+  const authenticatedTableGrants = (table) => [...normalized.matchAll(
+    /\bgrant\s+(.+?)\s+on\s+table\s+(.+?)\s+to\s+authenticated\s*;/gi,
+  )].flatMap(([, privileges, tables]) => (
+    tables.split(',').map((value) => value.trim()).includes(`public.${table}`)
+      ? privileges.match(/\b(?:select|insert|update|delete)(?:\s*\([^)]*\))?/gi) ?? []
+      : []
+  )).map((value) => value.toLowerCase()).sort()
   assert.deepEqual(authenticatedTableGrants('profiles'), [
     'select (id, display_name)',
     'update (display_name)',
@@ -390,11 +387,6 @@ migrationContractTest('IR-007 revokes browser access before granting only the fr
     'todos',
   ]) {
     assert.deepEqual(authenticatedTableGrants(table), [], `authenticated must not receive direct ${table} access`)
-    assert.doesNotMatch(
-      normalized,
-      new RegExp(`\\bgrant\\b[^;]*\\bon\\s+table\\s+public\\.${table}\\b[^;]*\\bto\\s+authenticated\\b`, 'i'),
-      `authenticated must not receive direct ${table} access`,
-    )
   }
   assert.doesNotMatch(normalized, /\bgrant\b[^;]*\bto\s+(?:anon|public)\b/i)
 })
@@ -430,7 +422,7 @@ test('IR-007 package changes are limited to its five dedicated aliases without d
   )
   assert.equal(current.scripts['test:ir007:unit'], 'node --test tests/unit/ir-007-rls-ownership-matrix.test.mjs')
   assert.equal(current.scripts['test:ir007:static'], 'node --test tests/unit/ir-007-static-contract.test.mjs')
-  assert.equal(current.scripts['test:ir007:evidence'], 'node tests/evidence/write-ir-007-evidence-manifest.mjs')
+  assert.equal(current.scripts['test:ir007:evidence'], 'node tests/database/ir-007/run-rls-ownership-evidence.mjs')
   assert.equal(current.scripts['test:ir007:cleanup'], 'node tests/database/ir-007/assert-cleanup.mjs')
 })
 

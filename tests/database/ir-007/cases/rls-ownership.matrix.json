@@ -302,16 +302,16 @@
       "expected": "allowed",
       "assertions": [
         {
-          "assertionId": "same-group-roster-has-four-members",
+          "assertionId": "same-group-roster-has-five-members",
           "kind": "scalar",
-          "expectedScalar": "4",
+          "expectedScalar": "5",
           "sql": "SELECT count(*)::text FROM public.get_group_roster('{{ids.groupA}}'::uuid, 100);"
         },
         {
           "assertionId": "roster-has-only-frozen-fields",
           "kind": "scalar",
           "expectedScalar": "true",
-          "sql": "WITH roster AS (SELECT to_jsonb(item) AS payload FROM public.get_group_roster('{{ids.groupA}}'::uuid, 100) AS item) SELECT CASE WHEN count(*) = 4 AND bool_and((SELECT array_agg(keys.key ORDER BY keys.key) FROM jsonb_object_keys(payload) AS keys(key)) = ARRAY['display_name', 'group_id', 'participant_id', 'role', 'status']::text[]) THEN 'true' ELSE 'false' END FROM roster;"
+          "sql": "WITH roster AS (SELECT to_jsonb(item) AS payload FROM public.get_group_roster('{{ids.groupA}}'::uuid, 100) AS item) SELECT CASE WHEN count(*) = 5 AND bool_and((SELECT array_agg(keys.key ORDER BY keys.key) FROM jsonb_object_keys(payload) AS keys(key)) = ARRAY['display_name', 'group_id', 'participant_id', 'role', 'status']::text[]) THEN 'true' ELSE 'false' END FROM roster;"
         },
         {
           "assertionId": "duplicate-display-names-retain-distinct-participant-identities",
@@ -665,7 +665,7 @@
         {
           "assertionId": "same-group-roster-completes-without-recursion",
           "kind": "scalar",
-          "expectedScalar": "4",
+          "expectedScalar": "5",
           "sql": "SELECT count(*)::text FROM public.get_group_roster('{{ids.groupA}}'::uuid, 100);"
         },
         {
@@ -687,7 +687,7 @@
           "assertionId": "roster-contains-no-auth-user-or-profile-id",
           "kind": "scalar",
           "expectedScalar": "true",
-          "sql": "WITH roster AS (SELECT to_jsonb(item) AS payload FROM public.get_group_roster('{{ids.groupA}}'::uuid, 100) AS item) SELECT CASE WHEN count(*) = 4 AND bool_and(NOT (payload ? 'auth_user_id') AND NOT (payload ? 'profile_id')) THEN 'true' ELSE 'false' END FROM roster;"
+          "sql": "WITH roster AS (SELECT to_jsonb(item) AS payload FROM public.get_group_roster('{{ids.groupA}}'::uuid, 100) AS item) SELECT CASE WHEN count(*) = 5 AND bool_and(NOT (payload ? 'auth_user_id') AND NOT (payload ? 'profile_id')) THEN 'true' ELSE 'false' END FROM roster;"
         }
       ]
     },

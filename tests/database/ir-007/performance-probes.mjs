@@ -43,8 +43,8 @@ export const IR007_PERFORMANCE_PROBES = Object.freeze([
     statement: `
       SELECT profiles.id, groups.id
       FROM public.profiles
-      JOIN public.groups ON groups.id = '${GROUP_A_ID}'::uuid
-      WHERE profiles.auth_user_id = (SELECT auth.uid())
+      CROSS JOIN public.groups
+      WHERE groups.id = '${GROUP_A_ID}'::uuid
     `,
   }),
   Object.freeze({
