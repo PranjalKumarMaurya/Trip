@@ -1,0 +1,805 @@
+{
+  "schemaVersion": 1,
+  "capability": "ir-007-rls-ownership",
+  "fixture": "tests/database/ir-007/cases/fixtures.sql",
+  "retainedEvidence": false,
+  "actors": {
+    "anonymous": {
+      "state": "anonymous",
+      "dbRole": "anon",
+      "authUserId": null
+    },
+    "authenticatedNoProfile": {
+      "state": "Auth User without Profile",
+      "dbRole": "authenticated",
+      "authUserId": "00000000-0000-4000-8000-000000007107"
+    },
+    "linkedNoMembership": {
+      "state": "linked Profile without membership",
+      "dbRole": "authenticated",
+      "authUserId": "00000000-0000-4000-8000-000000007106"
+    },
+    "activeOwnerA": {
+      "state": "active Owner in Group A",
+      "dbRole": "authenticated",
+      "authUserId": "00000000-0000-4000-8000-000000007101"
+    },
+    "activeMemberA": {
+      "state": "active Member in Group A",
+      "dbRole": "authenticated",
+      "authUserId": "00000000-0000-4000-8000-000000007102"
+    },
+    "activeOwnerB": {
+      "state": "active Owner in Group B",
+      "dbRole": "authenticated",
+      "authUserId": "00000000-0000-4000-8000-000000007103"
+    },
+    "inactiveMemberA": {
+      "state": "inactive membership",
+      "dbRole": "authenticated",
+      "authUserId": "00000000-0000-4000-8000-000000007104"
+    },
+    "archivedOwner": {
+      "state": "active membership in archived Group",
+      "dbRole": "authenticated",
+      "authUserId": "00000000-0000-4000-8000-000000007105"
+    },
+    "schemaInspector": {
+      "state": "isolated schema inspector",
+      "dbRole": null,
+      "authUserId": null
+    }
+  },
+  "ids": {
+    "groupA": "00000000-0000-4000-8000-000000007301",
+    "groupB": "00000000-0000-4000-8000-000000007302",
+    "archivedGroup": "00000000-0000-4000-8000-000000007303",
+    "forgedGroup": "00000000-0000-4000-8000-0000000073ff",
+    "profileOwnerA": "00000000-0000-4000-8000-000000007201",
+    "profileMemberA": "00000000-0000-4000-8000-000000007202",
+    "profileOwnerB": "00000000-0000-4000-8000-000000007203",
+    "profileNoMembership": "00000000-0000-4000-8000-000000007206",
+    "forgedProfile": "00000000-0000-4000-8000-0000000072ff",
+    "participantOwnerA": "00000000-0000-4000-8000-000000007401",
+    "participantMemberA": "00000000-0000-4000-8000-000000007402",
+    "forgedParticipant": "00000000-0000-4000-8000-0000000074ff",
+    "legacyEvent": "00000000-0000-4000-8000-000000007701",
+    "legacyExpense": "00000000-0000-4000-8000-000000007702",
+    "legacySettlement": "00000000-0000-4000-8000-000000007703",
+    "legacyExchangeRate": "00000000-0000-4000-8000-000000007704",
+    "legacyTodo": "00000000-0000-4000-8000-000000007705"
+  },
+  "duplicateDisplayNames": {
+    "displayName": "Duplicate Display",
+    "profileIds": [
+      "00000000-0000-4000-8000-000000007208",
+      "00000000-0000-4000-8000-000000007209"
+    ],
+    "participantIds": [
+      "00000000-0000-4000-8000-000000007403",
+      "00000000-0000-4000-8000-000000007404"
+    ]
+  },
+  "cases": [
+    {
+      "caseId": "IR007-RLS-001-anonymous-profile-denial",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "anonymous",
+      "expected": "denied",
+      "assertions": [
+        {
+          "assertionId": "anonymous-cannot-select-profiles",
+          "kind": "error",
+          "sql": "SELECT id FROM public.profiles WHERE id = '{{ids.profileOwnerA}}'::uuid;"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-002-own-profile-read",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "activeOwnerA",
+      "expected": "allowed",
+      "assertions": [
+        {
+          "assertionId": "linked-account-reads-own-profile",
+          "kind": "scalar",
+          "expectedScalar": "1",
+          "sql": "SELECT count(*)::text FROM public.profiles WHERE id = '{{ids.profileOwnerA}}'::uuid;"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-003-own-profile-presentation-update",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "activeOwnerA",
+      "expected": "allowed",
+      "assertions": [
+        {
+          "assertionId": "linked-account-updates-only-own-display-name",
+          "kind": "scalar",
+          "expectedScalar": "1",
+          "sql": "WITH attempted AS (UPDATE public.profiles SET display_name = 'Owner A updated' WHERE id = '{{ids.profileOwnerA}}'::uuid RETURNING id) SELECT count(*)::text FROM attempted;"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-004-cross-account-profile-denial",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "activeMemberA",
+      "expected": "denied",
+      "assertions": [
+        {
+          "assertionId": "member-a-cannot-read-owner-b-profile",
+          "kind": "scalar",
+          "expectedScalar": "0",
+          "sql": "SELECT count(*)::text FROM public.profiles WHERE id = '{{ids.profileOwnerB}}'::uuid;"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-005-no-profile-denial",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "authenticatedNoProfile",
+      "expected": "denied",
+      "assertions": [
+        {
+          "assertionId": "auth-user-without-profile-cannot-read-group",
+          "kind": "scalar",
+          "expectedScalar": "0",
+          "sql": "SELECT count(*)::text FROM public.groups WHERE id = '{{ids.groupA}}'::uuid;"
+        },
+        {
+          "assertionId": "auth-user-without-profile-cannot-read-configuration",
+          "kind": "scalar",
+          "expectedScalar": "0",
+          "sql": "SELECT count(*)::text FROM public.group_configurations WHERE group_id = '{{ids.groupA}}'::uuid;"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-006-no-membership-denial",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "linkedNoMembership",
+      "expected": "denied",
+      "assertions": [
+        {
+          "assertionId": "linked-non-member-cannot-read-group",
+          "kind": "scalar",
+          "expectedScalar": "0",
+          "sql": "SELECT count(*)::text FROM public.groups WHERE id = '{{ids.groupA}}'::uuid;"
+        },
+        {
+          "assertionId": "linked-non-member-cannot-read-configuration",
+          "kind": "scalar",
+          "expectedScalar": "0",
+          "sql": "SELECT count(*)::text FROM public.group_configurations WHERE group_id = '{{ids.groupA}}'::uuid;"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-007-active-same-group-read",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "activeMemberA",
+      "expected": "allowed",
+      "assertions": [
+        {
+          "assertionId": "active-member-reads-own-group",
+          "kind": "scalar",
+          "expectedScalar": "1",
+          "sql": "SELECT count(*)::text FROM public.groups WHERE id = '{{ids.groupA}}'::uuid;"
+        },
+        {
+          "assertionId": "active-member-reads-own-configuration",
+          "kind": "scalar",
+          "expectedScalar": "1",
+          "sql": "SELECT count(*)::text FROM public.group_configurations WHERE group_id = '{{ids.groupA}}'::uuid;"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-008-cross-group-denial",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "activeOwnerB",
+      "expected": "denied",
+      "assertions": [
+        {
+          "assertionId": "owner-b-cannot-read-group-a",
+          "kind": "scalar",
+          "expectedScalar": "0",
+          "sql": "SELECT count(*)::text FROM public.groups WHERE id = '{{ids.groupA}}'::uuid;"
+        },
+        {
+          "assertionId": "owner-b-cannot-read-group-a-configuration",
+          "kind": "scalar",
+          "expectedScalar": "0",
+          "sql": "SELECT count(*)::text FROM public.group_configurations WHERE group_id = '{{ids.groupA}}'::uuid;"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-009-inactive-membership-denial",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "inactiveMemberA",
+      "expected": "denied",
+      "assertions": [
+        {
+          "assertionId": "inactive-member-cannot-read-group",
+          "kind": "scalar",
+          "expectedScalar": "0",
+          "sql": "SELECT count(*)::text FROM public.groups WHERE id = '{{ids.groupA}}'::uuid;"
+        },
+        {
+          "assertionId": "inactive-member-cannot-read-configuration",
+          "kind": "scalar",
+          "expectedScalar": "0",
+          "sql": "SELECT count(*)::text FROM public.group_configurations WHERE group_id = '{{ids.groupA}}'::uuid;"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-010-archived-group-denial",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "archivedOwner",
+      "expected": "denied",
+      "assertions": [
+        {
+          "assertionId": "archived-membership-cannot-read-group",
+          "kind": "scalar",
+          "expectedScalar": "0",
+          "sql": "SELECT count(*)::text FROM public.groups WHERE id = '{{ids.archivedGroup}}'::uuid;"
+        },
+        {
+          "assertionId": "archived-membership-cannot-read-configuration",
+          "kind": "scalar",
+          "expectedScalar": "0",
+          "sql": "SELECT count(*)::text FROM public.group_configurations WHERE group_id = '{{ids.archivedGroup}}'::uuid;"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-011-direct-configuration-write-member-denial",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "activeMemberA",
+      "expected": "denied",
+      "assertions": [
+        {
+          "assertionId": "member-cannot-directly-update-configuration",
+          "kind": "error",
+          "sql": "UPDATE public.group_configurations SET trip_name = 'unauthorized member mutation' WHERE group_id = '{{ids.groupA}}'::uuid;"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-012-direct-configuration-write-owner-denial",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "activeOwnerA",
+      "expected": "denied",
+      "assertions": [
+        {
+          "assertionId": "owner-cannot-directly-update-configuration",
+          "kind": "error",
+          "sql": "UPDATE public.group_configurations SET trip_name = 'unauthorized owner mutation' WHERE group_id = '{{ids.groupA}}'::uuid;"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-013-same-group-roster-projection",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "activeMemberA",
+      "expected": "allowed",
+      "assertions": [
+        {
+          "assertionId": "same-group-roster-has-four-members",
+          "kind": "scalar",
+          "expectedScalar": "4",
+          "sql": "SELECT count(*)::text FROM public.get_group_roster('{{ids.groupA}}'::uuid, 100);"
+        },
+        {
+          "assertionId": "roster-has-only-frozen-fields",
+          "kind": "scalar",
+          "expectedScalar": "true",
+          "sql": "WITH roster AS (SELECT to_jsonb(item) AS payload FROM public.get_group_roster('{{ids.groupA}}'::uuid, 100) AS item) SELECT CASE WHEN count(*) = 4 AND bool_and((SELECT array_agg(keys.key ORDER BY keys.key) FROM jsonb_object_keys(payload) AS keys(key)) = ARRAY['display_name', 'group_id', 'participant_id', 'role', 'status']::text[]) THEN 'true' ELSE 'false' END FROM roster;"
+        },
+        {
+          "assertionId": "duplicate-display-names-retain-distinct-participant-identities",
+          "kind": "scalar",
+          "expectedScalar": "true",
+          "sql": "SELECT CASE WHEN count(*) = 2 AND count(DISTINCT participant_id) = 2 THEN 'true' ELSE 'false' END FROM public.get_group_roster('{{ids.groupA}}'::uuid, 100) WHERE display_name = 'Duplicate Display';"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-014-cross-group-roster-denial",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "activeMemberA",
+      "expected": "denied",
+      "assertions": [
+        {
+          "assertionId": "member-a-cannot-project-group-b-roster",
+          "kind": "scalar",
+          "expectedScalar": "0",
+          "sql": "SELECT count(*)::text FROM public.get_group_roster('{{ids.groupB}}'::uuid, 100);"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-015-direct-membership-insert-denial",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "activeOwnerA",
+      "expected": "denied",
+      "assertions": [
+        {
+          "assertionId": "owner-cannot-directly-insert-membership",
+          "kind": "error",
+          "sql": "INSERT INTO public.group_members (id, group_id, profile_id, role, status) VALUES ('00000000-0000-4000-8000-0000000074fe'::uuid, '{{ids.groupA}}'::uuid, '{{ids.profileNoMembership}}'::uuid, 'member', 'active');"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-016-direct-membership-update-denial",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "activeOwnerA",
+      "expected": "denied",
+      "assertions": [
+        {
+          "assertionId": "owner-cannot-directly-update-membership",
+          "kind": "error",
+          "sql": "UPDATE public.group_members SET role = 'owner' WHERE id = '{{ids.participantMemberA}}'::uuid;"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-017-direct-membership-delete-denial",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "activeOwnerA",
+      "expected": "denied",
+      "assertions": [
+        {
+          "assertionId": "owner-cannot-directly-delete-membership",
+          "kind": "error",
+          "sql": "DELETE FROM public.group_members WHERE id = '{{ids.participantMemberA}}'::uuid;"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-018-raw-audit-insert-denial",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "activeOwnerA",
+      "expected": "denied",
+      "assertions": [
+        {
+          "assertionId": "owner-cannot-directly-insert-audit-event",
+          "kind": "error",
+          "sql": "INSERT INTO public.group_audit_events (id, group_id, actor_group_member_id, event_type, request_id, occurred_at) VALUES ('00000000-0000-4000-8000-0000000075ff'::uuid, '{{ids.groupA}}'::uuid, '{{ids.participantOwnerA}}'::uuid, 'membership_lifecycle', '00000000-0000-4000-8000-0000000076ff'::uuid, now());"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-019-raw-audit-update-denial",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "activeOwnerA",
+      "expected": "denied",
+      "assertions": [
+        {
+          "assertionId": "owner-cannot-directly-update-audit-event",
+          "kind": "error",
+          "sql": "UPDATE public.group_audit_events SET event_type = 'membership_lifecycle' WHERE id = '00000000-0000-4000-8000-000000007501'::uuid;"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-020-raw-audit-delete-denial",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "activeOwnerA",
+      "expected": "denied",
+      "assertions": [
+        {
+          "assertionId": "owner-cannot-directly-delete-audit-event",
+          "kind": "error",
+          "sql": "DELETE FROM public.group_audit_events WHERE id = '00000000-0000-4000-8000-000000007501'::uuid;"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-021-active-owner-audit-summary-success",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "activeOwnerA",
+      "expected": "allowed",
+      "assertions": [
+        {
+          "assertionId": "owner-reads-group-a-audit-summary",
+          "kind": "scalar",
+          "expectedScalar": "2",
+          "sql": "SELECT count(*)::text FROM public.get_group_audit_summary('{{ids.groupA}}'::uuid, 100);"
+        },
+        {
+          "assertionId": "audit-summary-has-only-frozen-fields",
+          "kind": "scalar",
+          "expectedScalar": "true",
+          "sql": "WITH summary AS (SELECT to_jsonb(item) AS payload FROM public.get_group_audit_summary('{{ids.groupA}}'::uuid, 100) AS item) SELECT CASE WHEN count(*) = 2 AND bool_and((SELECT array_agg(keys.key ORDER BY keys.key) FROM jsonb_object_keys(payload) AS keys(key)) = ARRAY['actor_participant_id', 'audit_event_id', 'event_type', 'group_id', 'occurred_at']::text[]) THEN 'true' ELSE 'false' END FROM summary;"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-022-ordinary-member-audit-summary-denial",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "activeMemberA",
+      "expected": "denied",
+      "assertions": [
+        {
+          "assertionId": "member-cannot-read-audit-summary",
+          "kind": "scalar",
+          "expectedScalar": "0",
+          "sql": "SELECT count(*)::text FROM public.get_group_audit_summary('{{ids.groupA}}'::uuid, 100);"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-023-forged-group-id-denial",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "activeMemberA",
+      "expected": "denied",
+      "assertions": [
+        {
+          "assertionId": "forged-group-id-cannot-return-roster",
+          "kind": "scalar",
+          "expectedScalar": "0",
+          "sql": "SELECT count(*)::text FROM public.get_group_roster('{{ids.forgedGroup}}'::uuid, 100);"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-024-forged-profile-id-denial",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "activeMemberA",
+      "expected": "denied",
+      "assertions": [
+        {
+          "assertionId": "forged-profile-id-cannot-update-profile",
+          "kind": "scalar",
+          "expectedScalar": "0",
+          "sql": "WITH attempted AS (UPDATE public.profiles SET display_name = 'forged profile mutation' WHERE id = '{{ids.forgedProfile}}'::uuid RETURNING id) SELECT count(*)::text FROM attempted;"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-025-forged-participant-id-denial",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "activeMemberA",
+      "expected": "denied",
+      "assertions": [
+        {
+          "assertionId": "forged-participant-id-cannot-read-raw-membership",
+          "kind": "error",
+          "sql": "SELECT id FROM public.group_members WHERE id = '{{ids.forgedParticipant}}'::uuid;"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-026-anonymous-legacy-events-denial",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "anonymous",
+      "expected": "denied",
+      "assertions": [
+        {
+          "assertionId": "anonymous-cannot-read-legacy-event",
+          "kind": "error",
+          "sql": "SELECT id FROM public.events WHERE id = '{{ids.legacyEvent}}'::uuid;"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-027-authenticated-legacy-events-denial",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "activeMemberA",
+      "expected": "denied",
+      "assertions": [
+        {
+          "assertionId": "authenticated-cannot-read-legacy-event",
+          "kind": "error",
+          "sql": "SELECT id FROM public.events WHERE id = '{{ids.legacyEvent}}'::uuid;"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-028-anonymous-legacy-expenses-denial",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "anonymous",
+      "expected": "denied",
+      "assertions": [
+        {
+          "assertionId": "anonymous-cannot-read-legacy-expense",
+          "kind": "error",
+          "sql": "SELECT id FROM public.expenses WHERE id = '{{ids.legacyExpense}}'::uuid;"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-029-authenticated-legacy-expenses-denial",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "activeMemberA",
+      "expected": "denied",
+      "assertions": [
+        {
+          "assertionId": "authenticated-cannot-read-legacy-expense",
+          "kind": "error",
+          "sql": "SELECT id FROM public.expenses WHERE id = '{{ids.legacyExpense}}'::uuid;"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-030-anonymous-legacy-settlements-denial",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "anonymous",
+      "expected": "denied",
+      "assertions": [
+        {
+          "assertionId": "anonymous-cannot-read-legacy-settlement",
+          "kind": "error",
+          "sql": "SELECT id FROM public.settlements WHERE id = '{{ids.legacySettlement}}'::uuid;"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-031-authenticated-legacy-settlements-denial",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "activeMemberA",
+      "expected": "denied",
+      "assertions": [
+        {
+          "assertionId": "authenticated-cannot-read-legacy-settlement",
+          "kind": "error",
+          "sql": "SELECT id FROM public.settlements WHERE id = '{{ids.legacySettlement}}'::uuid;"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-032-anonymous-legacy-exchange-rates-denial",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "anonymous",
+      "expected": "denied",
+      "assertions": [
+        {
+          "assertionId": "anonymous-cannot-read-legacy-exchange-rate",
+          "kind": "error",
+          "sql": "SELECT id FROM public.exchange_rates WHERE id = '{{ids.legacyExchangeRate}}'::uuid;"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-033-authenticated-legacy-exchange-rates-denial",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "activeMemberA",
+      "expected": "denied",
+      "assertions": [
+        {
+          "assertionId": "authenticated-cannot-read-legacy-exchange-rate",
+          "kind": "error",
+          "sql": "SELECT id FROM public.exchange_rates WHERE id = '{{ids.legacyExchangeRate}}'::uuid;"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-034-anonymous-legacy-todos-denial",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "anonymous",
+      "expected": "denied",
+      "assertions": [
+        {
+          "assertionId": "anonymous-cannot-read-legacy-todo",
+          "kind": "error",
+          "sql": "SELECT id FROM public.todos WHERE id = '{{ids.legacyTodo}}'::uuid;"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-035-authenticated-legacy-todos-denial",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "activeMemberA",
+      "expected": "denied",
+      "assertions": [
+        {
+          "assertionId": "authenticated-cannot-read-legacy-todo",
+          "kind": "error",
+          "sql": "SELECT id FROM public.todos WHERE id = '{{ids.legacyTodo}}'::uuid;"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-036-legacy-permissive-policy-absence",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "schemaInspector",
+      "expected": "allowed",
+      "assertions": [
+        {
+          "assertionId": "all-named-legacy-permissive-policies-are-absent",
+          "kind": "scalar",
+          "expectedScalar": "0",
+          "sql": "SELECT count(*)::text FROM pg_catalog.pg_policies WHERE schemaname = 'public' AND policyname = ANY (ARRAY['group_read_events', 'group_insert_events', 'group_update_events', 'group_delete_events', 'group_read_expenses', 'group_insert_expenses', 'group_update_expenses', 'group_delete_expenses', 'group_read_settlements', 'group_insert_settlements', 'group_read_rates', 'group_insert_rates', 'group_update_rates', 'todos_public']);"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-037-no-recursive-rls-result",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "activeMemberA",
+      "expected": "allowed",
+      "assertions": [
+        {
+          "assertionId": "same-group-roster-completes-without-recursion",
+          "kind": "scalar",
+          "expectedScalar": "4",
+          "sql": "SELECT count(*)::text FROM public.get_group_roster('{{ids.groupA}}'::uuid, 100);"
+        },
+        {
+          "assertionId": "same-group-group-read-completes-without-recursion",
+          "kind": "scalar",
+          "expectedScalar": "1",
+          "sql": "SELECT count(*)::text FROM public.groups WHERE id = '{{ids.groupA}}'::uuid;"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-038-no-raw-auth-user-id-in-roster",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "activeMemberA",
+      "expected": "allowed",
+      "assertions": [
+        {
+          "assertionId": "roster-contains-no-auth-user-or-profile-id",
+          "kind": "scalar",
+          "expectedScalar": "true",
+          "sql": "WITH roster AS (SELECT to_jsonb(item) AS payload FROM public.get_group_roster('{{ids.groupA}}'::uuid, 100) AS item) SELECT CASE WHEN count(*) = 4 AND bool_and(NOT (payload ? 'auth_user_id') AND NOT (payload ? 'profile_id')) THEN 'true' ELSE 'false' END FROM roster;"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-039-anonymous-legacy-users-and-currency-denial",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "anonymous",
+      "expected": "denied",
+      "assertions": [
+        {
+          "assertionId": "anonymous-cannot-read-legacy-users",
+          "kind": "error",
+          "sql": "SELECT id FROM public.users LIMIT 1;"
+        },
+        {
+          "assertionId": "anonymous-cannot-read-currency-codes",
+          "kind": "error",
+          "sql": "SELECT code FROM public.iso_4217_currency_codes LIMIT 1;"
+        }
+      ]
+    },
+    {
+      "caseId": "IR007-RLS-040-authenticated-legacy-users-and-currency-denial",
+      "scope": "current-schema",
+      "executable": true,
+      "actor": "activeMemberA",
+      "expected": "denied",
+      "assertions": [
+        {
+          "assertionId": "authenticated-cannot-read-legacy-users",
+          "kind": "error",
+          "sql": "SELECT id FROM public.users LIMIT 1;"
+        },
+        {
+          "assertionId": "authenticated-cannot-read-currency-codes",
+          "kind": "error",
+          "sql": "SELECT code FROM public.iso_4217_currency_codes LIMIT 1;"
+        }
+      ]
+    }
+  ],
+  "deferredCases": [
+    {
+      "caseId": "IR007-DEFERRED-tenant-aware-events",
+      "scope": "future-target",
+      "executable": false,
+      "expected": "deferred",
+      "reason": "Tenant-aware Event ownership is not present in the current schema."
+    },
+    {
+      "caseId": "IR007-DEFERRED-tenant-aware-todos",
+      "scope": "future-target",
+      "executable": false,
+      "expected": "deferred",
+      "reason": "Tenant-aware Todo and Participant ownership are not present in the current schema."
+    },
+    {
+      "caseId": "IR007-DEFERRED-normalized-finance-and-settlements",
+      "scope": "future-target",
+      "executable": false,
+      "expected": "deferred",
+      "reason": "Normalized finance, FX, and Settlement target ownership are later-packet work."
+    },
+    {
+      "caseId": "IR007-DEFERRED-documents",
+      "scope": "future-target",
+      "executable": false,
+      "expected": "deferred",
+      "reason": "Document metadata and object ownership are later-packet work."
+    },
+    {
+      "caseId": "IR007-DEFERRED-storage",
+      "scope": "future-target",
+      "executable": false,
+      "expected": "deferred",
+      "reason": "Private Storage authorization belongs to IR-009."
+    },
+    {
+      "caseId": "IR007-DEFERRED-realtime",
+      "scope": "future-target",
+      "executable": false,
+      "expected": "deferred",
+      "reason": "Realtime authorization follows later resource ownership work."
+    },
+    {
+      "caseId": "IR007-DEFERRED-invitations",
+      "scope": "future-target",
+      "executable": false,
+      "expected": "deferred",
+      "reason": "Invitation inspection and acceptance are trusted future operations."
+    },
+    {
+      "caseId": "IR007-DEFERRED-group-bootstrap",
+      "scope": "future-target",
+      "executable": false,
+      "expected": "deferred",
+      "reason": "Group bootstrap is a future trusted operation."
+    },
+    {
+      "caseId": "IR007-DEFERRED-membership-lifecycle",
+      "scope": "future-target",
+      "executable": false,
+      "expected": "deferred",
+      "reason": "Membership and ownership lifecycle transitions are future trusted operations."
+    },
+    {
+      "caseId": "IR007-DEFERRED-trusted-operations",
+      "scope": "future-target",
+      "executable": false,
+      "expected": "deferred",
+      "reason": "Trusted operations remain outside the IR-007 current-schema pass/fail count."
+    }
+  ]
+}
