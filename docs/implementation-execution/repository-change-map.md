@@ -50,7 +50,8 @@ existing: it is labelled **Proposed path — verify at packet start**.
   code, dependency, or prior-harness change.
 - IR-008 authorises only its named authorisation/packet/register/governance
   documents, dedicated static contract test/evidence paths, and optional
-  `artifacts/ir-008/**`. It reserves no `010_*` migration and must not modify
+  `artifacts/ir-008/**`. Its retained static contract evidence is Implemented,
+  not Verified; it reserves no `010_*` migration and must not modify
   `supabase/migrations/**`, `supabase/functions/**`, `src/**`, generated types,
   package files, Storage, Realtime, environment files, deployment, remote
   Supabase, or IR-001/002/004/007 evidence semantics. It creates no physical

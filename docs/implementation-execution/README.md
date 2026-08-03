@@ -13,7 +13,8 @@
 - IR-002 authorised: closed — Implemented and Verified
 - IR-004 status: Verified
 - IR-007 status: Verified
-- IR-008 status: Authorised, implementation not started
+- IR-008 status: Implemented, not Verified (contract validation and immutable
+  evidence only)
 - IR-003, IR-005–006, and IR-009 through IR-022 authorised: No
 - W1 status: Complete; GATE-011 satisfied
 - Application implementation: IR-004 and IR-007 verified
@@ -58,9 +59,10 @@ and `lock-record.md`; neither record authorises implementation.
 
 ## Current next activity
 
-IR-008 now freezes only the trusted-operation contract, TOP ownership register,
-and static evidence plan; it implements no physical TOP, migration, function,
-source, generated type, database action, deployment, or cutover. IR-007's
+IR-008 has implemented only the trusted-operation contract, TOP ownership
+register, and static immutable evidence; it implements no physical TOP,
+migration, function, source, generated type, database action, deployment, or
+cutover. IR-007's
 accepted independent verification remains final, and GATE-013 is still Not
 satisfied pending physical-owner trusted-operation/service-role evidence.
 IR-003, Storage (IR-009), Realtime (IR-010), product conversion, deployment,

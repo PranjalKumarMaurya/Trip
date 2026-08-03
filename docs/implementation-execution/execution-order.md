@@ -1,9 +1,10 @@
 # Execution Order
 
 IR-001, IR-002, IR-004, IR-007, and DBM-006 are Implemented and Verified; W1
-is complete. IR-008 is authorised only to freeze the common trusted-operation
-contract/register and static evidence plan; implementation is not started and
-all physical owners remain unauthorised. GATE-013 remains Not satisfied because
+is complete. IR-008 is Implemented, not Verified for the common
+trusted-operation contract/register and static immutable evidence only; zero
+physical operations, DBM units, or migrations are implemented and all physical
+owners remain unauthorised. GATE-013 remains Not satisfied because
 owner-packet trusted-operation/service-role evidence remains absent; W2 remains
 in progress, and W3 through W7, deployment, and cutover remain unauthorised.
 The accepted roadmap order remains authoritative.

@@ -50,7 +50,7 @@ Schema dependencies flow from IR-002 to lifecycle/product work; Auth flows from 
 | IR-005 | IR-003, IR-004, IR-007, IR-008. | IR-003, IR-004, IR-007, IR-008. | See accepted roadmap parallel-class rules; no unlisted parallelism | IR-006, IR-009, IR-010, IR-011, IR-021, IR-022 | Draft |
 | IR-006 | IR-003, IR-005, IR-008. | IR-003, IR-005, IR-008. | See accepted roadmap parallel-class rules; no unlisted parallelism | IR-016, IR-021, IR-022 | Draft |
 | IR-007 | IR-002, IR-004. | IR-002, IR-004. | Four frozen lanes in `authorisations/IR-007-authorisation.md`; no unlisted parallelism. | IR-003, IR-005, IR-008, IR-009, IR-010, IR-011, IR-021, IR-022 | Verified |
-| IR-008 | IR-007. | IR-007. | Contract/register and static evidence paths only; no physical TOP work or unlisted parallelism. | IR-003, IR-005, IR-006, IR-009, IR-010, IR-012, IR-013, IR-014, IR-016, IR-021, IR-022 | Authorised — implementation not started |
+| IR-008 | IR-007. | IR-007. | Contract/register and static evidence paths only; no physical TOP work or unlisted parallelism. | IR-003, IR-005, IR-006, IR-009, IR-010, IR-012, IR-013, IR-014, IR-016, IR-021, IR-022 | Implemented, not Verified |
 | IR-009 | IR-005, IR-007, IR-008. | IR-005, IR-007, IR-008. | See accepted roadmap parallel-class rules; no unlisted parallelism | IR-013, IR-021, IR-022 | Draft |
 | IR-010 | IR-005, IR-007, IR-008. | IR-005, IR-007, IR-008. | See accepted roadmap parallel-class rules; no unlisted parallelism | IR-011, IR-021, IR-022 | Draft |
 | IR-011 | IR-003, IR-005, IR-007, IR-010. | IR-003, IR-005, IR-007, IR-010. | See accepted roadmap parallel-class rules; no unlisted parallelism | IR-012, IR-013, IR-014, IR-015, IR-021, IR-022 | Draft |
@@ -71,8 +71,8 @@ Schema dependencies flow from IR-002 to lifecycle/product work; Auth flows from 
 No dependency cycle was found in the accepted roadmap graph. The table preserves IR-022's gate inputs from IR-001–IR-016; the diagram consolidates that already-serial upstream set at IR-016 rather than drawing sixteen redundant arrows. IR-022 joins IR-016/IR-021 at IR-017 and is not treated as a circular prerequisite for its own evidence.
 
 IR-004's verified output made IR-007 the next serial W2 packet. IR-007 is
-independently Verified. IR-008 is authorised only to freeze the common trusted
-operation contract/register and static evidence plan; each physical owner is
-still unauthorised. Its future trusted-operation/service-role evidence remains
+independently Verified. IR-008 is Implemented, not Verified for the common
+trusted-operation contract/register and static immutable evidence; each
+physical owner is still unauthorised. Its future trusted-operation/service-role evidence remains
 the frozen GATE-013 requirement. IR-003, Storage (IR-009), Realtime (IR-010),
 product conversion, deployment, and cutover remain unauthorised.

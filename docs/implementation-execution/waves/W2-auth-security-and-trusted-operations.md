@@ -2,8 +2,8 @@
 
 ## Status and authorisation
 
-- Status: In progress; IR-004 Verified; IR-007 Verified; IR-008 Authorised,
-  implementation not started
+- Status: In progress; IR-004 Verified; IR-007 Verified; IR-008 Implemented,
+  not Verified (contract validation and immutable evidence only)
 - Physical owner packets: Not authorised
 - Wave complete: No
 
@@ -76,8 +76,8 @@ Stop for a browser service-role route, client authority, policy gap, or cross-Gr
 IR-004 is independently verified in
 [`../ir-004-verification.md`](../ir-004-verification.md). IR-007 is independently
 Verified in [`../ir-007-verification.md`](../ir-007-verification.md) within its
-frozen authorisation. IR-008 is authorised only to freeze its common TOP and
-service-role contract; its implementation is not started and no physical TOP is
+frozen authorisation. IR-008 is Implemented, not Verified for its common TOP
+and service-role contract evidence; no physical TOP, DBM unit, or migration is
 implemented. GATE-013 remains Not satisfied because owner-packet trusted-
 operation/service-role rollback evidence is absent. W2 remains In progress.
 IR-003, Storage (IR-009), Realtime (IR-010), product conversion, deployment,
