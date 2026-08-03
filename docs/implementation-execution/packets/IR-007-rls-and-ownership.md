@@ -2,13 +2,14 @@
 
 ## Status and authority
 
-- Status: **Implemented — not Verified**.
+- Status: **Verified**.
 - Wave: W2; serial predecessor of IR-008.
 - Authorisation: `../authorisations/IR-007-authorisation.md` is the sole
   executable scope, database-object, evidence, rollback, and parallel-ownership
   contract.
 - Entry: IR-002, IR-004, DBM-001–003, GATE-012, and the clean repository are
-  verified. GATE-013 remains Not satisfied and W2 remains In progress.
+  verified. GATE-013 remains Not satisfied and W2 remains In progress because
+  IR-008's separate trusted-operation evidence is absent.
 
 ## Objective
 
@@ -41,7 +42,8 @@ status or any membership provenance/transition.
 Future target Events/Todos, normalized finance, Settlements target ownership,
 Documents, private Storage, Realtime, Invitations, bootstrap, lifecycle, and
 trusted operations are reusable later-packet requirements only. They are not
-IR-007 implementation or verification criteria.
+IR-007 implementation or verification criteria; the 10 deferred security cases
+remain owned by their future target packets.
 
 The public `tickets` Storage bucket is a known eventual-release risk. IR-009
 owns private Storage; IR-007 does not modify or verify Storage security
@@ -68,17 +70,20 @@ it passed all 40 executable cases, retained 10 deferred cases outside pass/fail,
 and produced byte-identical generated types at
 `2134e239b47ef04eeafcfa3165082b4b590895b6fde4a192dc2ba7201842976b`.
 Only Lane C started or stopped Docker/Supabase. IR-001, IR-002, and IR-004
-harnesses and evidence remain untouched. Independent verification remains
-required before this packet becomes Verified.
+harnesses and evidence remain untouched. The accepted independent verification
+is recorded in [`../ir-007-verification.md`](../ir-007-verification.md) and is
+final.
 
 Empty-target rollback must never recreate a permissive policy. A populated-
 target problem remains fail closed and is corrected only by a forward migration.
 
 ## Exit and downstream boundary
 
-IR-007 becomes Verified only after its frozen local security, performance,
-type, rollback/reapplication, cleanup, immutable-evidence, and independent-
-verification contract passes. It then supplies the RLS/two-Group input to
-GATE-013 and IR-008. It does not satisfy GATE-013 without IR-008's separate
-service-role/trusted-operation evidence and does not authorise IR-003,
-deployment, or cutover.
+IR-007 is Verified under its frozen local security, performance, type,
+rollback/reapplication, cleanup, immutable-evidence, and independent-
+verification contract. It supplies the RLS/two-Group input to GATE-013 and
+IR-008. It does not satisfy GATE-013 without IR-008's separate service-role/
+trusted-operation evidence and does not authorise IR-003, Storage, Realtime,
+product conversion, deployment, or cutover. No later-packet requirement may
+reopen IR-007; only a reproducible defect violating its frozen contract may
+trigger correction or change control.

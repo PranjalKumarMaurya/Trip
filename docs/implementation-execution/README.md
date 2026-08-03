@@ -7,15 +7,15 @@
 - Package lock complete: Yes
 - Implementation Planning Freeze: Complete
 - Implementation readiness review: Approved
-- Implementation authorisation scope: IR-004 verified; IR-007 implemented for base ownership RLS only
+- Implementation authorisation scope: IR-004 and IR-007 verified; IR-008 remains unauthorised
 - IR-001 authorised: Yes
 - IR-001 status: Implemented and Verified
 - IR-002 authorised: closed — Implemented and Verified
 - IR-004 status: Verified
-- IR-007 status: Implemented — not Verified
+- IR-007 status: Verified
 - IR-003, IR-005–006, and IR-008 through IR-022 authorised: No
 - W1 status: Complete; GATE-011 satisfied
-- Application implementation: IR-004 verified; IR-007 implemented, not Verified
+- Application implementation: IR-004 and IR-007 verified
 
 ## Purpose
 
@@ -57,8 +57,8 @@ and `lock-record.md`; neither record authorises implementation.
 
 ## Current next activity
 
-Obtain independent verification of the implemented frozen IR-007 base ownership
-RLS package in [`authorisations/IR-007-authorisation.md`](authorisations/IR-007-authorisation.md).
-GATE-013 remains Not satisfied: IR-007 must first be independently verified and
-IR-008 must still supply its trusted-operation/service-role boundary evidence.
-W3, deployment, and cutover remain unauthorised.
+Authorise only the frozen IR-008 trusted-operation contract next. IR-007's
+accepted independent verification is final and does not satisfy GATE-013 by
+itself: IR-008 must still supply its trusted-operation/service-role boundary
+evidence. IR-003, Storage (IR-009), Realtime (IR-010), product conversion,
+deployment, and cutover remain unauthorised.

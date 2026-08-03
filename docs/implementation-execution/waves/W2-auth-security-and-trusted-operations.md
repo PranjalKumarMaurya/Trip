@@ -2,8 +2,8 @@
 
 ## Status and authorisation
 
-- Status: In progress; IR-004 Verified; IR-007 Implemented — not Verified
-- Implementation authorised: IR-007 base ownership RLS only; IR-008 remains No
+- Status: In progress; IR-004 Verified; IR-007 Verified
+- Next packet to authorise: IR-008 trusted operations; IR-008 remains No
 - Wave complete: No
 
 ## Wave objective
@@ -71,8 +71,10 @@ Stop for a browser service-role route, client authority, policy gap, or cross-Gr
 ## Implementation-authorisation status
 
 IR-004 is independently verified in
-[`../ir-004-verification.md`](../ir-004-verification.md). IR-007 is implemented
-only within [`../authorisations/IR-007-authorisation.md`](../authorisations/IR-007-authorisation.md)
-and is not Verified. GATE-013 remains Not satisfied because independent IR-007
-verification and IR-008 service-role/trusted-operation evidence are absent. W2
-completion and every downstream packet, including IR-003, remain unauthorised.
+[`../ir-004-verification.md`](../ir-004-verification.md). IR-007 is independently
+Verified in [`../ir-007-verification.md`](../ir-007-verification.md) within its
+frozen authorisation. GATE-013 remains Not satisfied under its existing frozen
+contract because IR-008 service-role/trusted-operation evidence is absent. W2
+remains In progress. IR-008 is the next packet to authorise; IR-003, Storage
+(IR-009), Realtime (IR-010), product conversion, deployment, and cutover remain
+unauthorised.

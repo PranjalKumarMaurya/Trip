@@ -187,3 +187,25 @@ Wave order, IR scope, repository change paths, database migration plan, RLS plan
   independent IR-007 verification and IR-008's separate trusted-operation/
   service-role evidence. IR-008, IR-003, deployment, and cutover remain Not
   authorised.
+
+## CC-IR007-20260804-verification — Accepted independent verification closure
+
+- Decision: **VERIFIED**. The independent verifier accepted immutable evidence
+  run `ir007-1785780852521-160759ec-cd35-4143-ad82-512d22d7094d` for
+  `009_ir007_base_rls_ownership.sql` (SHA-256
+  `b4be413120833b6be6aa282bd5a02d5c3dcdf9c25b50e9e0e388921516a45873`) and
+  generated database types (SHA-256
+  `2134e239b47ef04eeafcfa3165082b4b590895b6fde4a192dc2ba7201842976b`).
+- Closure: IR-007 and DBM-006 transition from Implemented to Verified. No
+  correction packet is required and no IR-007 implementation defect remains.
+  The accepted verification evidence is final; later-packet requirements,
+  including the 10 deferred security cases owned by their future target
+  packets, cannot reopen IR-007.
+- Gate/status impact: GATE-013 remains Not satisfied only because IR-008's
+  trusted-operation/service-role evidence is absent under its existing frozen
+  contract. W2 remains In progress. IR-008 is the next packet to authorise;
+  IR-003, Storage (IR-009), Realtime (IR-010), product conversion, deployment,
+  and cutover remain unauthorised.
+- Boundary: this is a verification-status record, not a correction packet or a
+  scope-changing change-control action. It creates no implementation, database
+  execution, deployment, or cutover authority.
