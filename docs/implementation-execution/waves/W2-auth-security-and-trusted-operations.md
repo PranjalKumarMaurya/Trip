@@ -2,8 +2,9 @@
 
 ## Status and authorisation
 
-- Status: In progress; IR-004 Verified; IR-007 Verified
-- Next packet to authorise: IR-008 trusted operations; IR-008 remains No
+- Status: In progress; IR-004 Verified; IR-007 Verified; IR-008 Authorised,
+  implementation not started
+- Physical owner packets: Not authorised
 - Wave complete: No
 
 ## Wave objective
@@ -22,7 +23,9 @@ W1 ownership model passes and a safe environment boundary is recorded.
 
 ## Internal execution order
 
-IR-004 precedes IR-007; IR-007 precedes IR-008. No authoritative lifecycle operation begins before the narrow trusted-operation boundary is reviewed.
+IR-004 precedes IR-007; IR-007 precedes IR-008. IR-008 freezes the common
+trusted-operation boundary only; no authoritative lifecycle operation begins
+until its separately authorised physical owner packet implements it.
 
 ## Parallel work boundaries
 
@@ -73,8 +76,9 @@ Stop for a browser service-role route, client authority, policy gap, or cross-Gr
 IR-004 is independently verified in
 [`../ir-004-verification.md`](../ir-004-verification.md). IR-007 is independently
 Verified in [`../ir-007-verification.md`](../ir-007-verification.md) within its
-frozen authorisation. GATE-013 remains Not satisfied under its existing frozen
-contract because IR-008 service-role/trusted-operation evidence is absent. W2
-remains In progress. IR-008 is the next packet to authorise; IR-003, Storage
-(IR-009), Realtime (IR-010), product conversion, deployment, and cutover remain
-unauthorised.
+frozen authorisation. IR-008 is authorised only to freeze its common TOP and
+service-role contract; its implementation is not started and no physical TOP is
+implemented. GATE-013 remains Not satisfied because owner-packet trusted-
+operation/service-role rollback evidence is absent. W2 remains In progress.
+IR-003, Storage (IR-009), Realtime (IR-010), product conversion, deployment,
+and cutover remain unauthorised.

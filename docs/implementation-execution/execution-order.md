@@ -1,11 +1,12 @@
 # Execution Order
 
 IR-001, IR-002, IR-004, IR-007, and DBM-006 are Implemented and Verified; W1
-is complete. IR-008 is the next packet to authorise and remains unauthorised.
-GATE-013 remains Not satisfied because its frozen IR-008 trusted-operation/
-service-role evidence remains absent; W2 remains in progress, and W3 through
-W7, deployment, and cutover remain unauthorised. The accepted roadmap order
-remains authoritative.
+is complete. IR-008 is authorised only to freeze the common trusted-operation
+contract/register and static evidence plan; implementation is not started and
+all physical owners remain unauthorised. GATE-013 remains Not satisfied because
+owner-packet trusted-operation/service-role evidence remains absent; W2 remains
+in progress, and W3 through W7, deployment, and cutover remain unauthorised.
+The accepted roadmap order remains authoritative.
 
 ## W1 — Evidence and tenant foundation
 
@@ -38,7 +39,7 @@ remains authoritative.
 - Permitted parallel work: AUTH screen/fixture traceability and table-policy test-case design may be prepared beside IR-004, but no RLS authority decision precedes the session-derived actor contract and no operation contract precedes IR-007.
 - Mandatory serial boundary: IR-004 → IR-007 → IR-008.
 - Schema dependencies: IR-004 consumes the IR-002 Profile identity plan; IR-007 defines policy foundations for the IR-002 Tenant hierarchy and the later membership/document/finance tables.
-- Trusted-operation dependencies: IR-008 inventories narrow server/trusted operation boundaries only after direct table access is deny-by-default by design.
+- Trusted-operation dependencies: IR-008 freezes narrow server/trusted-operation contract and ownership boundaries only after direct table access is deny-by-default by design. It implements no physical operation, migration, function, RPC, Edge Function, browser action, or type refresh.
 - Security dependencies: Session-derived identity, inactive/removed-member denial, two-Group substitution tests, service-role confinement, and a no-permissive-transition rule.
 - UI dependencies: AUTH and pre-auth SHL state contracts are traceability inputs only; no locked design asset is changed.
 - Migration dependencies: DBM-003 is verified for IR-004's Profile/Auth and

@@ -1,0 +1,146 @@
+{
+  "schemaVersion": 1,
+  "capability": "ir-008-trusted-operation-contract",
+  "implementationState": "authorised-not-started",
+  "executionEnvironment": "static-only-no-docker-or-supabase-stack",
+  "actorDerivation": [
+    "auth.uid()",
+    "profiles.auth_user_id",
+    "profiles.id",
+    "current group_members relationship",
+    "active status",
+    "required Group-scoped role",
+    "current Group archive state"
+  ],
+  "evidenceRequirements": {
+    "physicalTrustedOperationsImplemented": 0,
+    "migration010": "absent",
+    "migrationTreeSha256": "bbc599993f53522a4827b06e5bfb2880419c3acf23d08161c307b524b8482fb5",
+    "genericProxy": "absent",
+    "browserServiceRole": "absent",
+    "knownUnresolvedParseDocumentSha256": "9a7c8590777275eabbc2871f4112905ee82bb1fff54d20ddbbf568d7b2502d3f",
+    "generatedTypeSha256": "2134e239b47ef04eeafcfa3165082b4b590895b6fde4a192dc2ba7201842976b",
+    "generatedTypeDrift": "none",
+    "applicationSourceTreeSha256": "60848f1a79d4fa9b3507e5379705a14e2fff0f5986a155da532804498e8a9416",
+    "applicationAuthority": "not-introduced",
+    "performance": "not-run-not-applicable",
+    "absentOperationExecution": "never-reported-successfully"
+  },
+  "adversarialRequirements": [
+    "replay",
+    "cross-Group substitution",
+    "inactive membership",
+    "archive state",
+    "stale authority",
+    "races"
+  ],
+  "auditRequirements": [
+    "operation",
+    "Group",
+    "target references",
+    "actor/system provenance",
+    "safe outcome or reason category",
+    "occurrence time",
+    "request/correlation ID"
+  ],
+  "auditProhibitions": [
+    "passwords",
+    "tokens",
+    "service-role keys",
+    "plaintext invitation proof",
+    "document content",
+    "public object URLs",
+    "client-fabricated actor, recorder, or uploader identity"
+  ],
+  "operations": [
+    {
+      "id": "TOP-001",
+      "operation": "bootstrap_group",
+      "logicalSignature": "bootstrap_group(group_request, configuration_request, request_id)",
+      "requestFields": ["group_request", "configuration_request", "request_id"],
+      "physicalOwner": "IR-003"
+    },
+    {
+      "id": "TOP-002",
+      "operation": "create_invitation",
+      "logicalSignature": "create_invitation(group_id, recipient_request, invitation_request, request_id)",
+      "requestFields": ["group_id", "recipient_request", "invitation_request", "request_id"],
+      "physicalOwner": "IR-005"
+    },
+    {
+      "id": "TOP-003",
+      "operation": "accept_invitation",
+      "logicalSignature": "accept_invitation(invitation_proof, continuation_context, request_id)",
+      "requestFields": ["invitation_proof", "continuation_context", "request_id"],
+      "physicalOwner": "IR-005"
+    },
+    {
+      "id": "TOP-004",
+      "operation": "change_member_role",
+      "logicalSignature": "change_member_role(group_id, target_membership_id, requested_role, request_id)",
+      "requestFields": ["group_id", "target_membership_id", "requested_role", "request_id"],
+      "physicalOwner": "IR-005"
+    },
+    {
+      "id": "TOP-005",
+      "operation": "transfer_ownership",
+      "logicalSignature": "transfer_ownership(group_id, successor_membership_id, prior_owner_outcome, request_id)",
+      "requestFields": ["group_id", "successor_membership_id", "prior_owner_outcome", "request_id"],
+      "physicalOwner": "IR-005"
+    },
+    {
+      "id": "TOP-006",
+      "operation": "deactivate_membership",
+      "logicalSignature": "deactivate_membership(group_id, target_membership_id, action, confirmation, request_id)",
+      "requestFields": ["group_id", "target_membership_id", "action", "confirmation", "request_id"],
+      "physicalOwner": "IR-005"
+    },
+    {
+      "id": "TOP-007",
+      "operation": "set_group_archive_state",
+      "logicalSignature": "set_group_archive_state(group_id, desired_archive_state, request_id)",
+      "requestFields": ["group_id", "desired_archive_state", "request_id"],
+      "physicalOwner": "IR-005"
+    },
+    {
+      "id": "TOP-008",
+      "operation": "claim_legacy_participant",
+      "logicalSignature": "claim_legacy_participant(group_id, claim_proof, claim_reference, request_id)",
+      "requestFields": ["group_id", "claim_proof", "claim_reference", "request_id"],
+      "physicalOwner": "IR-006"
+    },
+    {
+      "id": "TOP-009",
+      "operation": "commit_expense",
+      "logicalSignature": "commit_expense(group_id, ledger_payload, request_id)",
+      "requestFields": ["group_id", "ledger_payload", "request_id"],
+      "physicalOwner": "IR-014"
+    },
+    {
+      "id": "TOP-010",
+      "operation": "record_settlement",
+      "logicalSignature": "record_settlement(group_id, settlement_payload, request_id)",
+      "requestFields": ["group_id", "settlement_payload", "request_id"],
+      "physicalOwner": "IR-014"
+    },
+    {
+      "id": "TOP-011",
+      "operation": "change_sensitive_configuration",
+      "logicalSignature": "change_sensitive_configuration(group_id, configuration_change, expected_version, request_id)",
+      "requestFields": ["group_id", "configuration_change", "expected_version", "request_id"],
+      "physicalOwner": "IR-015"
+    },
+    {
+      "id": "TOP-012",
+      "operation": "ingest_and_reconcile_document",
+      "logicalSignature": "ingest_and_reconcile_document(group_id, object_reference, metadata, extraction_result, association_request, reconciliation_key, request_id)",
+      "requestFields": ["group_id", "object_reference", "metadata", "extraction_result", "association_request", "reconciliation_key", "request_id"],
+      "physicalOwner": "IR-013, consuming IR-009"
+    }
+  ],
+  "immutableEvidence": {
+    "writeOnce": true,
+    "secretSafe": true,
+    "operationExecutionStatus": "not-implemented"
+  }
+}
