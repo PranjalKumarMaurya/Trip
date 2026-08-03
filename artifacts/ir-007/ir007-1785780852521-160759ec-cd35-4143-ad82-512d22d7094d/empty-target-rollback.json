@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "capability": "ir-007-rls-ownership",
+  "runId": "ir007-1785780852521-160759ec-cd35-4143-ad82-512d22d7094d",
+  "stage": "empty-target-rollback",
+  "result": "passed",
+  "environment": "local-isolated",
+  "projectId": "bachelor-trip-app-ir007",
+  "details": {
+    "targetRows": 0,
+    "permissiveLegacyPolicies": "absent",
+    "rollbackDisposition": "fail-closed"
+  }
+}

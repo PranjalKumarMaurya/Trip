@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "ir": "IR-007",
+  "runId": "ir007-1785780587764-0a644d1b-678a-4bc1-b927-1700d291f89b",
+  "result": "passed",
+  "environment": "local-isolated",
+  "projectId": "bachelor-trip-app-ir007",
+  "requiredStages": [
+    "clean-application",
+    "schema-policy-function-grant-catalogue",
+    "adversarial-matrix",
+    "performance-probes",
+    "type-generation-pass-1",
+    "empty-target-rollback",
+    "clean-reapplication",
+    "type-generation-pass-2",
+    "type-comparison",
+    "cleanup",
+    "secret-safety"
+  ],
+  "evidenceControls": [
+    "write-once-stage-records",
+    "loopback-only-endpoints",
+    "exact-docker-project-cleanup",
+    "secret-safety-scan"
+  ],
+  "artifacts": [
+    {
+      "path": "artifacts/ir-007/ir007-1785780587764-0a644d1b-678a-4bc1-b927-1700d291f89b/adversarial-matrix.json",
+      "bytes": 7119,
+      "sha256": "c653a246bd2f8a0935bb17a3caf59510e215edd06777f70da9bf3afdc76291e5"
+    },
+    {
+      "path": "artifacts/ir-007/ir007-1785780587764-0a644d1b-678a-4bc1-b927-1700d291f89b/clean-application.json",
+      "bytes": 751,
+      "sha256": "d99da73c7ff67f6b4f3f16c39154641569e2bba80248eb2c02a18da4f1b73c40"
+    },
+    {
+      "path": "artifacts/ir-007/ir007-1785780587764-0a644d1b-678a-4bc1-b927-1700d291f89b/clean-reapplication.json",
+      "bytes": 681,
+      "sha256": "2c1bf39a2a2450bd6067147cba7564ba63d6a025eb735acd641572e17b645ff7"
+    },
+    {
+      "path": "artifacts/ir-007/ir007-1785780587764-0a644d1b-678a-4bc1-b927-1700d291f89b/cleanup.json",
+      "bytes": 377,
+      "sha256": "7d3cdd4c68b634b7b68aa7da647cef47f7f041e0cb5c107c8e0b13eccee35e39"
+    },
+    {
+      "path": "artifacts/ir-007/ir007-1785780587764-0a644d1b-678a-4bc1-b927-1700d291f89b/database.types.pass-1.ts",
+      "bytes": 18033,
+      "sha256": "2134e239b47ef04eeafcfa3165082b4b590895b6fde4a192dc2ba7201842976b"
+    },
+    {
+      "path": "artifacts/ir-007/ir007-1785780587764-0a644d1b-678a-4bc1-b927-1700d291f89b/empty-target-rollback.json",
+      "bytes": 395,
+      "sha256": "11f0a178c41c0e9bebf9d14bb95aa080ef9f02bdb92ab4363c71b323264c9a82"
+    },
+    {
+      "path": "artifacts/ir-007/ir007-1785780587764-0a644d1b-678a-4bc1-b927-1700d291f89b/performance-probes.json",
+      "bytes": 159443,
+      "sha256": "eacaa251849b7038de98eec58f40c530af197c6fab4f67f6a3cd1acf3be3f84c"
+    },
+    {
+      "path": "artifacts/ir-007/ir007-1785780587764-0a644d1b-678a-4bc1-b927-1700d291f89b/schema-policy-function-grant-catalogue.json",
+      "bytes": 1149,
+      "sha256": "073fefa47df2d2ed6b22fcb5b0aa6b3e4e347dfb8170383ace4f95e5b8ae9e42"
+    },
+    {
+      "path": "artifacts/ir-007/ir007-1785780587764-0a644d1b-678a-4bc1-b927-1700d291f89b/secret-safety.json",
+      "bytes": 355,
+      "sha256": "585b6a5366555df78927e2a0132f53f2b90216884b2dcfecff64f7e24b62d284"
+    },
+    {
+      "path": "artifacts/ir-007/ir007-1785780587764-0a644d1b-678a-4bc1-b927-1700d291f89b/type-comparison.json",
+      "bytes": 404,
+      "sha256": "8fc85b646a0be68a63593c2de1a2da29fdcba48bea926ca1e026d8ca63e47e72"
+    },
+    {
+      "path": "artifacts/ir-007/ir007-1785780587764-0a644d1b-678a-4bc1-b927-1700d291f89b/type-generation-pass-1.json",
+      "bytes": 1424,
+      "sha256": "4f42fd65c4ff08fd1345999f26a8df48b68bd7da9667e64851ad6ad0b34b0911"
+    },
+    {
+      "path": "artifacts/ir-007/ir007-1785780587764-0a644d1b-678a-4bc1-b927-1700d291f89b/type-generation-pass-2.json",
+      "bytes": 1424,
+      "sha256": "ac7ff5e000d42a9efca1048c63c317d1c8d61d21f080e3a07fce8069357f0054"
+    }
+  ]
+}

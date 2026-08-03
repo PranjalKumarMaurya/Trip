@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "capability": "ir-007-rls-ownership",
+  "runId": "ir007-1785778878290-5fc638c3-6f9d-45a7-9071-2081c21b9b57",
+  "stage": "clean-application",
+  "result": "passed",
+  "environment": "local-isolated",
+  "projectId": "bachelor-trip-app-ir007",
+  "details": {
+    "migrations": [
+      "001_initial.sql",
+      "002_tickets_bucket.sql",
+      "003_gmap_url.sql",
+      "004_paid_by_splits.sql",
+      "005_todos.sql",
+      "006_ir002_tenant_root.sql",
+      "007_ir002_configuration_archive_audit.sql",
+      "008_ir004_profile_auth.sql",
+      "009_ir007_base_rls_ownership.sql"
+    ],
+    "endpoints": {
+      "database": "loopback:57722",
+      "api": "loopback:57721"
+    },
+    "application": "manual-001-through-009"
+  }
+}

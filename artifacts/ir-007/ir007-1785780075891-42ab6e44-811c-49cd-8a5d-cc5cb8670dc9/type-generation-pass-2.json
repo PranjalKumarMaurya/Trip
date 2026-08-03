@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "capability": "ir-007-rls-ownership",
+  "runId": "ir007-1785780075891-42ab6e44-811c-49cd-8a5d-cc5cb8670dc9",
+  "stage": "type-generation-pass-2",
+  "result": "passed",
+  "environment": "local-isolated",
+  "projectId": "bachelor-trip-app-ir007",
+  "details": {
+    "cliVersion": "2.105.0",
+    "schema": "public",
+    "migrationChecksums": {
+      "001_initial.sql": "370f0e89c718645b0d419a476fa4404f2d9339df5f2286ba2184264f67912b79",
+      "002_tickets_bucket.sql": "055abed5cf8a04ef04030b5f34ae3e1b2e3e2caa4efe4b8054f6d4d40cb3ff0a",
+      "003_gmap_url.sql": "f3d0c67e74bc5ef015bcac0f6292c156d00a414501fdadd32634c6c218007ba7",
+      "004_paid_by_splits.sql": "8042533554f97ae6e929bef784d2a9b43531abd3af846b7d1317297733f40f41",
+      "005_todos.sql": "96181aeb519d2ad723fae0300a7ecb0f0067fbbb757fef06631b3fda22b0c601",
+      "006_ir002_tenant_root.sql": "cb330e8b9f993bd3f8a633b4c9a931cd82af8438b384c4156e50ddf6dd214c26",
+      "007_ir002_configuration_archive_audit.sql": "17ad0e96bc2597b59cd31325cb4f4ce2968048bc8a511de93ffb6fc4e88bb338",
+      "008_ir004_profile_auth.sql": "fd8775bc1a666d01424e4537ef4b5e6715dd2c171199f7d34d12fb5f9be40190",
+      "009_ir007_base_rls_ownership.sql": "b4be413120833b6be6aa282bd5a02d5c3dcdf9c25b50e9e0e388921516a45873"
+    },
+    "generatedTypeChecksum": "2134e239b47ef04eeafcfa3165082b4b590895b6fde4a192dc2ba7201842976b",
+    "sourceWrite": "lane-d-owned"
+  }
+}

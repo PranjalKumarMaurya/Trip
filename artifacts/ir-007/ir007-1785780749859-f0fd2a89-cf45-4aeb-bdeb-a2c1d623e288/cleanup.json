@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "capability": "ir-007-rls-ownership",
+  "runId": "ir007-1785780749859-f0fd2a89-cf45-4aeb-bdeb-a2c1d623e288",
+  "stage": "cleanup",
+  "result": "passed",
+  "environment": "local-isolated",
+  "projectId": "bachelor-trip-app-ir007",
+  "details": {
+    "exactProjectResources": "absent",
+    "consecutiveObservations": 2,
+    "observedAtAttempt": 2
+  }
+}

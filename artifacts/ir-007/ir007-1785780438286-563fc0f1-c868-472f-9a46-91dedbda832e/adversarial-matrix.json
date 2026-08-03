@@ -1,0 +1,255 @@
+{
+  "schemaVersion": 1,
+  "capability": "ir-007-rls-ownership",
+  "runId": "ir007-1785780438286-563fc0f1-c868-472f-9a46-91dedbda832e",
+  "stage": "adversarial-matrix",
+  "result": "passed",
+  "environment": "local-isolated",
+  "projectId": "bachelor-trip-app-ir007",
+  "details": {
+    "caseCount": 40,
+    "runner": "lane-b-import",
+    "results": [
+      {
+        "caseId": "IR007-RLS-001-anonymous-profile-denial",
+        "expected": "denied",
+        "actual": "denied",
+        "assertionCount": 1
+      },
+      {
+        "caseId": "IR007-RLS-002-own-profile-read",
+        "expected": "allowed",
+        "actual": "allowed",
+        "assertionCount": 1
+      },
+      {
+        "caseId": "IR007-RLS-003-own-profile-presentation-update",
+        "expected": "allowed",
+        "actual": "allowed",
+        "assertionCount": 1
+      },
+      {
+        "caseId": "IR007-RLS-004-cross-account-profile-denial",
+        "expected": "denied",
+        "actual": "denied",
+        "assertionCount": 1
+      },
+      {
+        "caseId": "IR007-RLS-005-no-profile-denial",
+        "expected": "denied",
+        "actual": "denied",
+        "assertionCount": 2
+      },
+      {
+        "caseId": "IR007-RLS-006-no-membership-denial",
+        "expected": "denied",
+        "actual": "denied",
+        "assertionCount": 2
+      },
+      {
+        "caseId": "IR007-RLS-007-active-same-group-read",
+        "expected": "allowed",
+        "actual": "allowed",
+        "assertionCount": 2
+      },
+      {
+        "caseId": "IR007-RLS-008-cross-group-denial",
+        "expected": "denied",
+        "actual": "denied",
+        "assertionCount": 2
+      },
+      {
+        "caseId": "IR007-RLS-009-inactive-membership-denial",
+        "expected": "denied",
+        "actual": "denied",
+        "assertionCount": 2
+      },
+      {
+        "caseId": "IR007-RLS-010-archived-group-denial",
+        "expected": "denied",
+        "actual": "denied",
+        "assertionCount": 2
+      },
+      {
+        "caseId": "IR007-RLS-011-direct-configuration-write-member-denial",
+        "expected": "denied",
+        "actual": "denied",
+        "assertionCount": 1
+      },
+      {
+        "caseId": "IR007-RLS-012-direct-configuration-write-owner-denial",
+        "expected": "denied",
+        "actual": "denied",
+        "assertionCount": 1
+      },
+      {
+        "caseId": "IR007-RLS-013-same-group-roster-projection",
+        "expected": "allowed",
+        "actual": "allowed",
+        "assertionCount": 3
+      },
+      {
+        "caseId": "IR007-RLS-014-cross-group-roster-denial",
+        "expected": "denied",
+        "actual": "denied",
+        "assertionCount": 1
+      },
+      {
+        "caseId": "IR007-RLS-015-direct-membership-insert-denial",
+        "expected": "denied",
+        "actual": "denied",
+        "assertionCount": 1
+      },
+      {
+        "caseId": "IR007-RLS-016-direct-membership-update-denial",
+        "expected": "denied",
+        "actual": "denied",
+        "assertionCount": 1
+      },
+      {
+        "caseId": "IR007-RLS-017-direct-membership-delete-denial",
+        "expected": "denied",
+        "actual": "denied",
+        "assertionCount": 1
+      },
+      {
+        "caseId": "IR007-RLS-018-raw-audit-insert-denial",
+        "expected": "denied",
+        "actual": "denied",
+        "assertionCount": 1
+      },
+      {
+        "caseId": "IR007-RLS-019-raw-audit-update-denial",
+        "expected": "denied",
+        "actual": "denied",
+        "assertionCount": 1
+      },
+      {
+        "caseId": "IR007-RLS-020-raw-audit-delete-denial",
+        "expected": "denied",
+        "actual": "denied",
+        "assertionCount": 1
+      },
+      {
+        "caseId": "IR007-RLS-021-active-owner-audit-summary-success",
+        "expected": "allowed",
+        "actual": "allowed",
+        "assertionCount": 2
+      },
+      {
+        "caseId": "IR007-RLS-022-ordinary-member-audit-summary-denial",
+        "expected": "denied",
+        "actual": "denied",
+        "assertionCount": 1
+      },
+      {
+        "caseId": "IR007-RLS-023-forged-group-id-denial",
+        "expected": "denied",
+        "actual": "denied",
+        "assertionCount": 1
+      },
+      {
+        "caseId": "IR007-RLS-024-forged-profile-id-denial",
+        "expected": "denied",
+        "actual": "denied",
+        "assertionCount": 1
+      },
+      {
+        "caseId": "IR007-RLS-025-forged-participant-id-denial",
+        "expected": "denied",
+        "actual": "denied",
+        "assertionCount": 1
+      },
+      {
+        "caseId": "IR007-RLS-026-anonymous-legacy-events-denial",
+        "expected": "denied",
+        "actual": "denied",
+        "assertionCount": 1
+      },
+      {
+        "caseId": "IR007-RLS-027-authenticated-legacy-events-denial",
+        "expected": "denied",
+        "actual": "denied",
+        "assertionCount": 1
+      },
+      {
+        "caseId": "IR007-RLS-028-anonymous-legacy-expenses-denial",
+        "expected": "denied",
+        "actual": "denied",
+        "assertionCount": 1
+      },
+      {
+        "caseId": "IR007-RLS-029-authenticated-legacy-expenses-denial",
+        "expected": "denied",
+        "actual": "denied",
+        "assertionCount": 1
+      },
+      {
+        "caseId": "IR007-RLS-030-anonymous-legacy-settlements-denial",
+        "expected": "denied",
+        "actual": "denied",
+        "assertionCount": 1
+      },
+      {
+        "caseId": "IR007-RLS-031-authenticated-legacy-settlements-denial",
+        "expected": "denied",
+        "actual": "denied",
+        "assertionCount": 1
+      },
+      {
+        "caseId": "IR007-RLS-032-anonymous-legacy-exchange-rates-denial",
+        "expected": "denied",
+        "actual": "denied",
+        "assertionCount": 1
+      },
+      {
+        "caseId": "IR007-RLS-033-authenticated-legacy-exchange-rates-denial",
+        "expected": "denied",
+        "actual": "denied",
+        "assertionCount": 1
+      },
+      {
+        "caseId": "IR007-RLS-034-anonymous-legacy-todos-denial",
+        "expected": "denied",
+        "actual": "denied",
+        "assertionCount": 1
+      },
+      {
+        "caseId": "IR007-RLS-035-authenticated-legacy-todos-denial",
+        "expected": "denied",
+        "actual": "denied",
+        "assertionCount": 1
+      },
+      {
+        "caseId": "IR007-RLS-036-legacy-permissive-policy-absence",
+        "expected": "allowed",
+        "actual": "allowed",
+        "assertionCount": 1
+      },
+      {
+        "caseId": "IR007-RLS-037-no-recursive-rls-result",
+        "expected": "allowed",
+        "actual": "allowed",
+        "assertionCount": 2
+      },
+      {
+        "caseId": "IR007-RLS-038-no-raw-auth-user-id-in-roster",
+        "expected": "allowed",
+        "actual": "allowed",
+        "assertionCount": 1
+      },
+      {
+        "caseId": "IR007-RLS-039-anonymous-legacy-users-and-currency-denial",
+        "expected": "denied",
+        "actual": "denied",
+        "assertionCount": 2
+      },
+      {
+        "caseId": "IR007-RLS-040-authenticated-legacy-users-and-currency-denial",
+        "expected": "denied",
+        "actual": "denied",
+        "assertionCount": 2
+      }
+    ]
+  }
+}

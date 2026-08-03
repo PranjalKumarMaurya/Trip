@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "capability": "ir-007-rls-ownership",
+  "runId": "ir007-1785779215088-937d1756-8e29-4c16-9dcd-24965e95a9b5",
+  "stage": "schema-policy-function-grant-catalogue",
+  "result": "passed",
+  "environment": "local-isolated",
+  "projectId": "bachelor-trip-app-ir007",
+  "details": {
+    "tables": [
+      "profiles",
+      "groups",
+      "group_configurations",
+      "group_members",
+      "group_audit_events",
+      "users",
+      "iso_4217_currency_codes",
+      "events",
+      "expenses",
+      "settlements",
+      "exchange_rates",
+      "todos"
+    ],
+    "policies": [
+      "profiles_select_own_linked_profile",
+      "profiles_update_own_presentation",
+      "groups_select_active_member",
+      "group_configurations_select_active_member"
+    ],
+    "approvedFunctions": [
+      "ir007_private.current_profile_id",
+      "ir007_private.current_active_group_ids",
+      "ir007_private.current_active_owner_group_ids",
+      "public.get_group_roster",
+      "public.get_group_audit_summary"
+    ],
+    "grants": "authenticated-minimum-anon-none",
+    "legacyPermissivePolicies": "absent",
+    "triggersAdded": 0
+  }
+}
