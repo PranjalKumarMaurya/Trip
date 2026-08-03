@@ -1,0 +1,13 @@
+{
+  "binding": [
+    "operation",
+    "validated actor",
+    "relevant Group",
+    "request ID",
+    "immutable normalized request fingerprint"
+  ],
+  "sameKeySameRequest": "return-original-safe-result",
+  "sameKeyChangedPayload": "safe-conflict",
+  "unknownCompletionRetry": "converges-safely",
+  "transaction": "one-authoritative-all-or-nothing-transaction"
+}

@@ -1,0 +1,103 @@
+{
+  "physicalTrustedOperationsImplemented": 0,
+  "operationResults": [
+    {
+      "caseId": "TOP-001-physical-operation-absence",
+      "operation": "bootstrap_group",
+      "physicalOwner": "IR-003",
+      "expected": "not-implemented",
+      "actual": "not-implemented",
+      "executionClaimed": false
+    },
+    {
+      "caseId": "TOP-002-physical-operation-absence",
+      "operation": "create_invitation",
+      "physicalOwner": "IR-005",
+      "expected": "not-implemented",
+      "actual": "not-implemented",
+      "executionClaimed": false
+    },
+    {
+      "caseId": "TOP-003-physical-operation-absence",
+      "operation": "accept_invitation",
+      "physicalOwner": "IR-005",
+      "expected": "not-implemented",
+      "actual": "not-implemented",
+      "executionClaimed": false
+    },
+    {
+      "caseId": "TOP-004-physical-operation-absence",
+      "operation": "change_member_role",
+      "physicalOwner": "IR-005",
+      "expected": "not-implemented",
+      "actual": "not-implemented",
+      "executionClaimed": false
+    },
+    {
+      "caseId": "TOP-005-physical-operation-absence",
+      "operation": "transfer_ownership",
+      "physicalOwner": "IR-005",
+      "expected": "not-implemented",
+      "actual": "not-implemented",
+      "executionClaimed": false
+    },
+    {
+      "caseId": "TOP-006-physical-operation-absence",
+      "operation": "deactivate_membership",
+      "physicalOwner": "IR-005",
+      "expected": "not-implemented",
+      "actual": "not-implemented",
+      "executionClaimed": false
+    },
+    {
+      "caseId": "TOP-007-physical-operation-absence",
+      "operation": "set_group_archive_state",
+      "physicalOwner": "IR-005",
+      "expected": "not-implemented",
+      "actual": "not-implemented",
+      "executionClaimed": false
+    },
+    {
+      "caseId": "TOP-008-physical-operation-absence",
+      "operation": "claim_legacy_participant",
+      "physicalOwner": "IR-006",
+      "expected": "not-implemented",
+      "actual": "not-implemented",
+      "executionClaimed": false
+    },
+    {
+      "caseId": "TOP-009-physical-operation-absence",
+      "operation": "commit_expense",
+      "physicalOwner": "IR-014",
+      "expected": "not-implemented",
+      "actual": "not-implemented",
+      "executionClaimed": false
+    },
+    {
+      "caseId": "TOP-010-physical-operation-absence",
+      "operation": "record_settlement",
+      "physicalOwner": "IR-014",
+      "expected": "not-implemented",
+      "actual": "not-implemented",
+      "executionClaimed": false
+    },
+    {
+      "caseId": "TOP-011-physical-operation-absence",
+      "operation": "change_sensitive_configuration",
+      "physicalOwner": "IR-015",
+      "expected": "not-implemented",
+      "actual": "not-implemented",
+      "executionClaimed": false
+    },
+    {
+      "caseId": "TOP-012-physical-operation-absence",
+      "operation": "ingest_and_reconcile_document",
+      "physicalOwner": "IR-013, consuming IR-009",
+      "expected": "not-implemented",
+      "actual": "not-implemented",
+      "executionClaimed": false
+    }
+  ],
+  "migration010": "absent",
+  "performance": "not-run-not-applicable"
+}

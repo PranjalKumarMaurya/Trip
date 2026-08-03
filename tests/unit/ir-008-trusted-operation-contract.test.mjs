@@ -4,7 +4,9 @@ import test from 'node:test'
 import { fileURLToPath } from 'node:url'
 
 import {
+  buildTrustedOperationEvidenceStages,
   collectTrustedOperationPlanEvidence,
+  requiredEvidenceStages,
 } from '../database/ir-008/run-trusted-operation-plan-evidence.mjs'
 import {
   loadOperationContractMatrix,
@@ -27,6 +29,21 @@ const expectedOwners = Object.freeze([
   ['TOP-010', 'record_settlement', 'IR-014'],
   ['TOP-011', 'change_sensitive_configuration', 'IR-015'],
   ['TOP-012', 'ingest_and_reconcile_document', 'IR-013, consuming IR-009'],
+])
+const expectedAdversarialRequirements = Object.freeze([
+  'unauthenticated access',
+  'non-member access',
+  'inactive membership',
+  'archived Groups',
+  'wrong role',
+  'actor substitution',
+  'Group and target substitution',
+  'stale membership and role',
+  'duplicate request',
+  'same-key changed-payload conflict',
+  'replay',
+  'operation-specific concurrency races',
+  'last-active-Owner protection',
 ])
 
 test('IR-008 freezes the exact TOP inventory, owner map, and actor-free logical signatures', () => {
@@ -83,6 +100,8 @@ test('IR-008 static evidence proves absence without claiming operation execution
   assert.equal(matrix.evidenceRequirements.physicalTrustedOperationsImplemented, 0)
   assert.equal(matrix.evidenceRequirements.migration010, 'absent')
   assert.match(matrix.evidenceRequirements.migrationTreeSha256, /^[a-f0-9]{64}$/u)
+  assert.equal(Object.keys(matrix.evidenceRequirements.migrationFileSha256).length, 9)
+  assert.ok(Object.values(matrix.evidenceRequirements.migrationFileSha256).every((checksum) => /^[a-f0-9]{64}$/u.test(checksum)))
   assert.equal(matrix.evidenceRequirements.genericProxy, 'absent')
   assert.equal(matrix.evidenceRequirements.browserServiceRole, 'absent')
   assert.match(matrix.evidenceRequirements.knownUnresolvedParseDocumentSha256, /^[a-f0-9]{64}$/u)
@@ -94,20 +113,13 @@ test('IR-008 static evidence proves absence without claiming operation execution
   assert.equal(matrix.immutableEvidence.secretSafe, true)
   assert.ok(results.every((result) => result.expected === 'not-implemented' && result.actual === 'not-implemented'))
   assert.ok(results.every((result) => result.executionClaimed === false))
-  assert.deepEqual(matrix.adversarialRequirements, [
-    'replay',
-    'cross-Group substitution',
-    'inactive membership',
-    'archive state',
-    'stale authority',
-    'races',
-  ])
+  assert.deepEqual(matrix.adversarialRequirements, expectedAdversarialRequirements)
 })
 
 test('IR-008 plan evidence is static-only, secret-safe, and leaves no stack to clean up', () => {
   const evidence = collectTrustedOperationPlanEvidence()
   assert.equal(evidence.result, 'contract-verified')
-  assert.equal(evidence.implementationState, 'authorised-not-started')
+  assert.equal(evidence.implementationState, 'implemented-not-verified-contract-only')
   assert.equal(evidence.physicalTrustedOperationsImplemented, 0)
   assert.equal(evidence.migration010, 'absent')
   assert.equal(evidence.migrationDrift, 'none')
@@ -118,6 +130,13 @@ test('IR-008 plan evidence is static-only, secret-safe, and leaves no stack to c
   assert.equal(evidence.applicationAuthority, 'not-introduced')
   assert.equal(evidence.performance, 'not-run-not-applicable')
   assert.ok(evidence.operationResults.every((result) => result.executionClaimed === false))
+  const stages = buildTrustedOperationEvidenceStages(evidence)
+  assert.deepEqual(Object.keys(stages), requiredEvidenceStages.slice(0, -1))
+  assert.equal(stages['contract-inventory'].topCount, 12)
+  assert.equal(stages['adversarial-obligations'].obligationCount, 13)
+  assert.deepEqual(stages['adversarial-obligations'].obligations, expectedAdversarialRequirements)
+  assert.equal(stages['zero-physical-implementation'].performance, 'not-run-not-applicable')
+  assert.equal(stages.cleanup.databaseOrStackStarted, false)
 
   const runner = readText('tests/database/ir-008/run-trusted-operation-plan-evidence.mjs')
   const cleanup = readText('tests/database/ir-008/assert-cleanup.mjs')
@@ -125,7 +144,9 @@ test('IR-008 plan evidence is static-only, secret-safe, and leaves no stack to c
   assert.doesNotMatch(runner, /spawnSync|supabase\s+(?:start|stop)|docker\s+(?:compose|start|stop)/iu)
   assert.doesNotMatch(cleanup, /supabase\s+(?:start|stop)|docker\s+(?:compose|start|stop)/iu)
   assert.match(manifestWriter, /flag: 'wx'/u)
-  assert.match(manifestWriter, /chmodSync\(manifestPath, 0o444\)/u)
+  assert.match(manifestWriter, /chmodSync\(path, 0o444\)/u)
+  assert.match(manifestWriter, /sha256-per-stage/u)
+  assert.match(manifestWriter, /changed-ir008-evidence-artifact/u)
   assert.doesNotMatch(JSON.stringify(evidence), /postgres(?:ql)?:\/\//iu)
   assert.doesNotMatch(JSON.stringify(evidence), /(?:password|token|secret|api[_-]?key|service[_-]?role)["']?\s*[:=]/iu)
 })

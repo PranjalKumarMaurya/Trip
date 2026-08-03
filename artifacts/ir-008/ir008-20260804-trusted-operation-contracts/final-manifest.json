@@ -1,0 +1,238 @@
+{
+  "schemaVersion": 2,
+  "ir": "IR-008",
+  "runId": "ir008-20260804-trusted-operation-contracts",
+  "result": "contract-verified",
+  "operationExecution": "not-implemented",
+  "performance": "not-run-not-applicable",
+  "requiredStages": [
+    "contract-inventory",
+    "owner-mapping",
+    "logical-signatures",
+    "actor-authority-boundary",
+    "idempotency-and-transaction-contract",
+    "adversarial-obligations",
+    "zero-physical-implementation",
+    "repository-drift",
+    "privileged-path-boundary",
+    "secret-safety",
+    "cleanup",
+    "final-manifest"
+  ],
+  "stages": [
+    {
+      "stage": "contract-inventory",
+      "file": "contract-inventory.json",
+      "sha256": "c20e9cf6f2ac6989fdee7f89fa41e553888aa815343690be309e464356e006a2"
+    },
+    {
+      "stage": "owner-mapping",
+      "file": "owner-mapping.json",
+      "sha256": "ed6de771d1274e0105cf9e743a8041825c6fbf00aab9ed38fcf6519322db9873"
+    },
+    {
+      "stage": "logical-signatures",
+      "file": "logical-signatures.json",
+      "sha256": "53b4673103cb12128023f94b9d2bfa61e7189204a026f2ab77e7ef3b24587994"
+    },
+    {
+      "stage": "actor-authority-boundary",
+      "file": "actor-authority-boundary.json",
+      "sha256": "508375bdae0d68942a6b5833f7577d564cf13e5cfdd81164779e5ef457522b07"
+    },
+    {
+      "stage": "idempotency-and-transaction-contract",
+      "file": "idempotency-and-transaction-contract.json",
+      "sha256": "395e65990ad19005d6f24cb189be6edd0a44bcef1f2c89bda593fa14b8361e7c"
+    },
+    {
+      "stage": "adversarial-obligations",
+      "file": "adversarial-obligations.json",
+      "sha256": "486ffa0532bc8b7014ad1aefd5f0f6b7c5b21a1c8e01e1a5598a3d976c65756b"
+    },
+    {
+      "stage": "zero-physical-implementation",
+      "file": "zero-physical-implementation.json",
+      "sha256": "4d101d4839f181f959e30b700a8bdd539afc79c3777230b04965e5c00a1d88f2"
+    },
+    {
+      "stage": "repository-drift",
+      "file": "repository-drift.json",
+      "sha256": "9cff6e137612b170b5c5fd4b15a9a6914fce64dae942efc1795ffbb4869172d4"
+    },
+    {
+      "stage": "privileged-path-boundary",
+      "file": "privileged-path-boundary.json",
+      "sha256": "2f82320570ee472ed3ece4efa83465ad0c719319ce52debaedba18fcd1020367"
+    },
+    {
+      "stage": "secret-safety",
+      "file": "secret-safety.json",
+      "sha256": "2c32c0932171be6821e500ce59ca5dc4805c4a360c5bc308e8d60bde06329782"
+    },
+    {
+      "stage": "cleanup",
+      "file": "cleanup.json",
+      "sha256": "03788bccecf6d4ffdeeb426e62b199c82761eb703b489e59068bca9872e33676"
+    }
+  ],
+  "finalManifest": {
+    "stage": "final-manifest",
+    "integrity": "sha256-canonical-manifest-payload",
+    "result": "contract-verified"
+  },
+  "evidence": {
+    "schemaVersion": 1,
+    "capability": "ir-008-trusted-operation-plan",
+    "result": "contract-verified",
+    "implementationState": "implemented-not-verified-contract-only",
+    "physicalTrustedOperationsImplemented": 0,
+    "migration010": "absent",
+    "migrationDrift": "none",
+    "migrationFileSha256": {
+      "001_initial.sql": "370f0e89c718645b0d419a476fa4404f2d9339df5f2286ba2184264f67912b79",
+      "002_tickets_bucket.sql": "055abed5cf8a04ef04030b5f34ae3e1b2e3e2caa4efe4b8054f6d4d40cb3ff0a",
+      "003_gmap_url.sql": "f3d0c67e74bc5ef015bcac0f6292c156d00a414501fdadd32634c6c218007ba7",
+      "004_paid_by_splits.sql": "8042533554f97ae6e929bef784d2a9b43531abd3af846b7d1317297733f40f41",
+      "005_todos.sql": "96181aeb519d2ad723fae0300a7ecb0f0067fbbb757fef06631b3fda22b0c601",
+      "006_ir002_tenant_root.sql": "cb330e8b9f993bd3f8a633b4c9a931cd82af8438b384c4156e50ddf6dd214c26",
+      "007_ir002_configuration_archive_audit.sql": "17ad0e96bc2597b59cd31325cb4f4ce2968048bc8a511de93ffb6fc4e88bb338",
+      "008_ir004_profile_auth.sql": "fd8775bc1a666d01424e4537ef4b5e6715dd2c171199f7d34d12fb5f9be40190",
+      "009_ir007_base_rls_ownership.sql": "b4be413120833b6be6aa282bd5a02d5c3dcdf9c25b50e9e0e388921516a45873"
+    },
+    "genericProxy": "absent",
+    "browserElevatedCredential": "absent",
+    "generatedTypeDrift": "none",
+    "applicationSourceDrift": "none",
+    "applicationAuthority": "not-introduced",
+    "performance": "not-run-not-applicable",
+    "operationResults": [
+      {
+        "caseId": "TOP-001-physical-operation-absence",
+        "operation": "bootstrap_group",
+        "physicalOwner": "IR-003",
+        "expected": "not-implemented",
+        "actual": "not-implemented",
+        "executionClaimed": false
+      },
+      {
+        "caseId": "TOP-002-physical-operation-absence",
+        "operation": "create_invitation",
+        "physicalOwner": "IR-005",
+        "expected": "not-implemented",
+        "actual": "not-implemented",
+        "executionClaimed": false
+      },
+      {
+        "caseId": "TOP-003-physical-operation-absence",
+        "operation": "accept_invitation",
+        "physicalOwner": "IR-005",
+        "expected": "not-implemented",
+        "actual": "not-implemented",
+        "executionClaimed": false
+      },
+      {
+        "caseId": "TOP-004-physical-operation-absence",
+        "operation": "change_member_role",
+        "physicalOwner": "IR-005",
+        "expected": "not-implemented",
+        "actual": "not-implemented",
+        "executionClaimed": false
+      },
+      {
+        "caseId": "TOP-005-physical-operation-absence",
+        "operation": "transfer_ownership",
+        "physicalOwner": "IR-005",
+        "expected": "not-implemented",
+        "actual": "not-implemented",
+        "executionClaimed": false
+      },
+      {
+        "caseId": "TOP-006-physical-operation-absence",
+        "operation": "deactivate_membership",
+        "physicalOwner": "IR-005",
+        "expected": "not-implemented",
+        "actual": "not-implemented",
+        "executionClaimed": false
+      },
+      {
+        "caseId": "TOP-007-physical-operation-absence",
+        "operation": "set_group_archive_state",
+        "physicalOwner": "IR-005",
+        "expected": "not-implemented",
+        "actual": "not-implemented",
+        "executionClaimed": false
+      },
+      {
+        "caseId": "TOP-008-physical-operation-absence",
+        "operation": "claim_legacy_participant",
+        "physicalOwner": "IR-006",
+        "expected": "not-implemented",
+        "actual": "not-implemented",
+        "executionClaimed": false
+      },
+      {
+        "caseId": "TOP-009-physical-operation-absence",
+        "operation": "commit_expense",
+        "physicalOwner": "IR-014",
+        "expected": "not-implemented",
+        "actual": "not-implemented",
+        "executionClaimed": false
+      },
+      {
+        "caseId": "TOP-010-physical-operation-absence",
+        "operation": "record_settlement",
+        "physicalOwner": "IR-014",
+        "expected": "not-implemented",
+        "actual": "not-implemented",
+        "executionClaimed": false
+      },
+      {
+        "caseId": "TOP-011-physical-operation-absence",
+        "operation": "change_sensitive_configuration",
+        "physicalOwner": "IR-015",
+        "expected": "not-implemented",
+        "actual": "not-implemented",
+        "executionClaimed": false
+      },
+      {
+        "caseId": "TOP-012-physical-operation-absence",
+        "operation": "ingest_and_reconcile_document",
+        "physicalOwner": "IR-013, consuming IR-009",
+        "expected": "not-implemented",
+        "actual": "not-implemented",
+        "executionClaimed": false
+      }
+    ],
+    "immutableEvidence": {
+      "writeOnce": true,
+      "secretSafe": true,
+      "operationExecutionStatus": "not-implemented"
+    },
+    "adversarialRequirements": [
+      "unauthenticated access",
+      "non-member access",
+      "inactive membership",
+      "archived Groups",
+      "wrong role",
+      "actor substitution",
+      "Group and target substitution",
+      "stale membership and role",
+      "duplicate request",
+      "same-key changed-payload conflict",
+      "replay",
+      "operation-specific concurrency races",
+      "last-active-Owner protection"
+    ]
+  },
+  "evidenceControls": [
+    "write-once-artifacts",
+    "sha256-per-stage",
+    "secret-safety-scan",
+    "no-stack-required"
+  ],
+  "finalManifestIntegrity": {
+    "algorithm": "sha256",
+    "canonicalPayloadSha256": "0a71a2df338805c9d8b9925f306a8cfd399a369483db144e5218a55af7fbc0a5"
+  }
+}

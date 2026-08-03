@@ -193,11 +193,26 @@ no browser service-role use; no generated-type drift; no application authority
 introduced; no fake performance result; and no successful execution claim for
 an absent TOP operation. It must also prove that adversarial requirements exist
 for replay, substitution, inactive membership, archive state, stale authority,
-and races, while preserving immutable evidence and secret safety. No Docker or
-Supabase stack is required.
+and races, while preserving immutable evidence and secret safety. The
+adversarial obligations are unauthenticated and non-member access, inactive
+membership, archived Groups, wrong role, actor substitution, Group and target
+substitution, stale membership and role, duplicate request, same-key
+changed-payload conflict, replay, operation-specific concurrency races, and
+last-active-Owner protection. Evidence is static-only, write-once, and records
+SHA-256 for every stage artifact; it cannot report a physical TOP as executed
+or a performance result. No Docker or Supabase stack is required.
+
+## Implementation completion record
+
+IR-008 has implemented only the frozen contract validation and immutable
+evidence record. It implemented zero physical trusted operations and owns no
+DBM unit or migration. Physical TOP implementations remain with IR-003,
+IR-005, IR-006, IR-013, IR-014, and IR-015; IR-003 remains unauthorised. This
+record does not authorise deployment or cutover and does not alter the original
+authorisation-time decision above.
 
 ```text
-IR-008: Authorised, implementation not started
+IR-008: Implemented, not Verified
 GATE-013: Not satisfied
 W2: In progress
 IR-003 and physical owner packets: Not authorised

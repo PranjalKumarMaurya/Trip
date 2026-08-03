@@ -1,0 +1,124 @@
+{
+  "signatures": [
+    {
+      "id": "TOP-001",
+      "logicalSignature": "bootstrap_group(group_request, configuration_request, request_id)",
+      "requestFields": [
+        "group_request",
+        "configuration_request",
+        "request_id"
+      ]
+    },
+    {
+      "id": "TOP-002",
+      "logicalSignature": "create_invitation(group_id, recipient_request, invitation_request, request_id)",
+      "requestFields": [
+        "group_id",
+        "recipient_request",
+        "invitation_request",
+        "request_id"
+      ]
+    },
+    {
+      "id": "TOP-003",
+      "logicalSignature": "accept_invitation(invitation_proof, continuation_context, request_id)",
+      "requestFields": [
+        "invitation_proof",
+        "continuation_context",
+        "request_id"
+      ]
+    },
+    {
+      "id": "TOP-004",
+      "logicalSignature": "change_member_role(group_id, target_membership_id, requested_role, request_id)",
+      "requestFields": [
+        "group_id",
+        "target_membership_id",
+        "requested_role",
+        "request_id"
+      ]
+    },
+    {
+      "id": "TOP-005",
+      "logicalSignature": "transfer_ownership(group_id, successor_membership_id, prior_owner_outcome, request_id)",
+      "requestFields": [
+        "group_id",
+        "successor_membership_id",
+        "prior_owner_outcome",
+        "request_id"
+      ]
+    },
+    {
+      "id": "TOP-006",
+      "logicalSignature": "deactivate_membership(group_id, target_membership_id, action, confirmation, request_id)",
+      "requestFields": [
+        "group_id",
+        "target_membership_id",
+        "action",
+        "confirmation",
+        "request_id"
+      ]
+    },
+    {
+      "id": "TOP-007",
+      "logicalSignature": "set_group_archive_state(group_id, desired_archive_state, request_id)",
+      "requestFields": [
+        "group_id",
+        "desired_archive_state",
+        "request_id"
+      ]
+    },
+    {
+      "id": "TOP-008",
+      "logicalSignature": "claim_legacy_participant(group_id, claim_proof, claim_reference, request_id)",
+      "requestFields": [
+        "group_id",
+        "claim_proof",
+        "claim_reference",
+        "request_id"
+      ]
+    },
+    {
+      "id": "TOP-009",
+      "logicalSignature": "commit_expense(group_id, ledger_payload, request_id)",
+      "requestFields": [
+        "group_id",
+        "ledger_payload",
+        "request_id"
+      ]
+    },
+    {
+      "id": "TOP-010",
+      "logicalSignature": "record_settlement(group_id, settlement_payload, request_id)",
+      "requestFields": [
+        "group_id",
+        "settlement_payload",
+        "request_id"
+      ]
+    },
+    {
+      "id": "TOP-011",
+      "logicalSignature": "change_sensitive_configuration(group_id, configuration_change, expected_version, request_id)",
+      "requestFields": [
+        "group_id",
+        "configuration_change",
+        "expected_version",
+        "request_id"
+      ]
+    },
+    {
+      "id": "TOP-012",
+      "logicalSignature": "ingest_and_reconcile_document(group_id, object_reference, metadata, extraction_result, association_request, reconciliation_key, request_id)",
+      "requestFields": [
+        "group_id",
+        "object_reference",
+        "metadata",
+        "extraction_result",
+        "association_request",
+        "reconciliation_key",
+        "request_id"
+      ]
+    }
+  ],
+  "actorParameter": "forbidden"
+}

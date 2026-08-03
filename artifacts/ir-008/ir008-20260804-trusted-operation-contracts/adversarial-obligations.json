@@ -1,0 +1,19 @@
+{
+  "obligationCount": 13,
+  "obligations": [
+    "unauthenticated access",
+    "non-member access",
+    "inactive membership",
+    "archived Groups",
+    "wrong role",
+    "actor substitution",
+    "Group and target substitution",
+    "stale membership and role",
+    "duplicate request",
+    "same-key changed-payload conflict",
+    "replay",
+    "operation-specific concurrency races",
+    "last-active-Owner protection"
+  ],
+  "status": "future-owner-obligations-only"
+}

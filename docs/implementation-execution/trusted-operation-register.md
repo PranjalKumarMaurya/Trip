@@ -81,7 +81,7 @@ access, uploads to public Storage, and inserts legacy global Events. IR-008
 does not modify it and does not designate it as a TOP implementation.
 
 ```text
-IR-008: Authorised, implementation not started
+IR-008: Implemented, not Verified
 GATE-013: Not satisfied
 W2: In progress
 IR-003 and physical owner packets: Not authorised

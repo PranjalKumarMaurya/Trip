@@ -27,6 +27,21 @@ const forbiddenActorFields = new Set([
   'recorder_id',
   'uploader_id',
 ])
+const expectedAdversarialRequirements = Object.freeze([
+  'unauthenticated access',
+  'non-member access',
+  'inactive membership',
+  'archived Groups',
+  'wrong role',
+  'actor substitution',
+  'Group and target substitution',
+  'stale membership and role',
+  'duplicate request',
+  'same-key changed-payload conflict',
+  'replay',
+  'operation-specific concurrency races',
+  'last-active-Owner protection',
+])
 
 export function loadOperationContractMatrix() {
   return JSON.parse(readFileSync(matrixPath, 'utf8'))
@@ -37,11 +52,16 @@ export function validateOperationContractMatrix(matrix) {
     throw new Error('invalid-ir008-operation-contract-matrix')
   }
   if (
-    matrix.implementationState !== 'authorised-not-started' ||
+    matrix.implementationState !== 'implemented-not-verified-contract-only' ||
     matrix.executionEnvironment !== 'static-only-no-docker-or-supabase-stack' ||
     matrix.evidenceRequirements?.physicalTrustedOperationsImplemented !== 0 ||
     matrix.evidenceRequirements?.migration010 !== 'absent' ||
     !/^[a-f0-9]{64}$/u.test(matrix.evidenceRequirements?.migrationTreeSha256 ?? '') ||
+    !matrix.evidenceRequirements?.migrationFileSha256 ||
+    Object.keys(matrix.evidenceRequirements.migrationFileSha256).length !== 9 ||
+    Object.entries(matrix.evidenceRequirements.migrationFileSha256).some(([name, checksum]) =>
+      !/^00[1-9]_[a-z0-9_]+\.sql$/u.test(name) || !/^[a-f0-9]{64}$/u.test(checksum),
+    ) ||
     matrix.evidenceRequirements?.genericProxy !== 'absent' ||
     matrix.evidenceRequirements?.browserServiceRole !== 'absent' ||
     !/^[a-f0-9]{64}$/u.test(matrix.evidenceRequirements?.knownUnresolvedParseDocumentSha256 ?? '') ||
@@ -71,9 +91,12 @@ export function validateOperationContractMatrix(matrix) {
       throw new Error(`invalid-ir008-operation-${id}`)
     }
   }
-  const adversarial = new Set(matrix.adversarialRequirements)
-  for (const requirement of ['replay', 'cross-Group substitution', 'inactive membership', 'archive state', 'stale authority', 'races']) {
-    if (!adversarial.has(requirement)) throw new Error(`missing-ir008-adversarial-${requirement.replaceAll(' ', '-')}`)
+  if (
+    !Array.isArray(matrix.adversarialRequirements) ||
+    matrix.adversarialRequirements.length !== expectedAdversarialRequirements.length ||
+    matrix.adversarialRequirements.some((requirement, index) => requirement !== expectedAdversarialRequirements[index])
+  ) {
+    throw new Error('invalid-ir008-adversarial-requirements')
   }
   return matrix
 }

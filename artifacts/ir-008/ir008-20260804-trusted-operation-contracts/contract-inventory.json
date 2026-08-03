@@ -1,0 +1,54 @@
+{
+  "topCount": 12,
+  "operations": [
+    {
+      "id": "TOP-001",
+      "operation": "bootstrap_group"
+    },
+    {
+      "id": "TOP-002",
+      "operation": "create_invitation"
+    },
+    {
+      "id": "TOP-003",
+      "operation": "accept_invitation"
+    },
+    {
+      "id": "TOP-004",
+      "operation": "change_member_role"
+    },
+    {
+      "id": "TOP-005",
+      "operation": "transfer_ownership"
+    },
+    {
+      "id": "TOP-006",
+      "operation": "deactivate_membership"
+    },
+    {
+      "id": "TOP-007",
+      "operation": "set_group_archive_state"
+    },
+    {
+      "id": "TOP-008",
+      "operation": "claim_legacy_participant"
+    },
+    {
+      "id": "TOP-009",
+      "operation": "commit_expense"
+    },
+    {
+      "id": "TOP-010",
+      "operation": "record_settlement"
+    },
+    {
+      "id": "TOP-011",
+      "operation": "change_sensitive_configuration"
+    },
+    {
+      "id": "TOP-012",
+      "operation": "ingest_and_reconcile_document"
+    }
+  ],
+  "operationExecution": "not-implemented"
+}

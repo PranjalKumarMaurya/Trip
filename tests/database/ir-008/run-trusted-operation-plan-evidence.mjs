@@ -11,6 +11,21 @@ const proxyPattern = /\bexecute_operation\s*\(/iu
 const browserServiceRolePattern = /(?:SUPABASE_SERVICE_ROLE_KEY|service[_ -]?role)/iu
 const unsafeEvidencePattern = /(?:postgres(?:ql)?:\/\/|\beyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]+\b|(?:password|token|secret|api[_-]?key|service[_-]?role)["']?\s*[:=]|(?:^|[^A-Za-z])(?:\/home\/|\/Users\/|[A-Za-z]:\\))/iu
 
+export const requiredEvidenceStages = Object.freeze([
+  'contract-inventory',
+  'owner-mapping',
+  'logical-signatures',
+  'actor-authority-boundary',
+  'idempotency-and-transaction-contract',
+  'adversarial-obligations',
+  'zero-physical-implementation',
+  'repository-drift',
+  'privileged-path-boundary',
+  'secret-safety',
+  'cleanup',
+  'final-manifest',
+])
+
 function readText(relativePath) {
   return readFileSync(resolve(repositoryRoot, relativePath), 'utf8')
 }
@@ -48,6 +63,11 @@ export function collectTrustedOperationPlanEvidence() {
   assert(!migrationFiles.some((name) => /^010_/u.test(name)), 'ir008-migration-010-present')
   assert(migrationFiles.every((name) => !operationPattern.test(readText(`supabase/migrations/${name}`))), 'ir008-physical-operation-in-migration')
   assert(treeSha256('supabase/migrations') === matrix.evidenceRequirements.migrationTreeSha256, 'ir008-migration-tree-modified')
+  const expectedMigrationFiles = matrix.evidenceRequirements.migrationFileSha256
+  assert(Object.keys(expectedMigrationFiles).length === migrationFiles.length, 'ir008-migration-file-count-modified')
+  for (const migrationFile of migrationFiles) {
+    assert(sha256(`supabase/migrations/${migrationFile}`) === expectedMigrationFiles[migrationFile], `ir008-migration-file-modified-${migrationFile}`)
+  }
 
   const functionFiles = listFiles('supabase/functions')
   assert(functionFiles.length === 1 && functionFiles[0] === 'supabase/functions/parse-document/index.ts', 'ir008-unexpected-function-path')
@@ -77,7 +97,7 @@ export function collectTrustedOperationPlanEvidence() {
     'No operation may accept an actor parameter',
     'No generic `execute_operation(name, payload)` proxy',
     'IR-008 must not modify it',
-    'IR-008: Authorised, implementation not started',
+    'IR-008: Implemented, not Verified',
   ]) {
     assert(authorisation.includes(requiredText) || packet.includes(requiredText) || register.includes(requiredText), 'ir008-document-contract-missing')
   }
@@ -90,6 +110,7 @@ export function collectTrustedOperationPlanEvidence() {
     physicalTrustedOperationsImplemented: matrix.evidenceRequirements.physicalTrustedOperationsImplemented,
     migration010: matrix.evidenceRequirements.migration010,
     migrationDrift: 'none',
+    migrationFileSha256: expectedMigrationFiles,
     genericProxy: matrix.evidenceRequirements.genericProxy,
     browserElevatedCredential: matrix.evidenceRequirements.browserServiceRole,
     generatedTypeDrift: matrix.evidenceRequirements.generatedTypeDrift,
@@ -102,6 +123,73 @@ export function collectTrustedOperationPlanEvidence() {
   })
   assertSecretSafe(JSON.stringify(result))
   return result
+}
+
+export function buildTrustedOperationEvidenceStages(evidence = collectTrustedOperationPlanEvidence()) {
+  const matrix = loadOperationContractMatrix()
+  const stages = Object.freeze({
+    'contract-inventory': Object.freeze({
+      topCount: matrix.operations.length,
+      operations: matrix.operations.map(({ id, operation }) => ({ id, operation })),
+      operationExecution: 'not-implemented',
+    }),
+    'owner-mapping': Object.freeze({
+      owners: matrix.operations.map(({ id, physicalOwner }) => ({ id, physicalOwner })),
+      exactlyOneOwnerPerTop: true,
+    }),
+    'logical-signatures': Object.freeze({
+      signatures: matrix.operations.map(({ id, logicalSignature, requestFields }) => ({ id, logicalSignature, requestFields })),
+      actorParameter: 'forbidden',
+    }),
+    'actor-authority-boundary': Object.freeze({
+      derivation: matrix.actorDerivation,
+      requestId: 'correlation-and-idempotency-only',
+      groupAndTargetIds: 'selectors-not-authority',
+      clientSuppliedAuthority: 'forbidden',
+    }),
+    'idempotency-and-transaction-contract': Object.freeze({
+      binding: ['operation', 'validated actor', 'relevant Group', 'request ID', 'immutable normalized request fingerprint'],
+      sameKeySameRequest: 'return-original-safe-result',
+      sameKeyChangedPayload: 'safe-conflict',
+      unknownCompletionRetry: 'converges-safely',
+      transaction: 'one-authoritative-all-or-nothing-transaction',
+    }),
+    'adversarial-obligations': Object.freeze({
+      obligationCount: matrix.adversarialRequirements.length,
+      obligations: matrix.adversarialRequirements,
+      status: 'future-owner-obligations-only',
+    }),
+    'zero-physical-implementation': Object.freeze({
+      physicalTrustedOperationsImplemented: evidence.physicalTrustedOperationsImplemented,
+      operationResults: evidence.operationResults,
+      migration010: evidence.migration010,
+      performance: evidence.performance,
+    }),
+    'repository-drift': Object.freeze({
+      migrationDrift: evidence.migrationDrift,
+      migrationFileSha256: evidence.migrationFileSha256,
+      generatedTypeDrift: evidence.generatedTypeDrift,
+      applicationSourceDrift: evidence.applicationSourceDrift,
+      applicationAuthority: evidence.applicationAuthority,
+    }),
+    'privileged-path-boundary': Object.freeze({
+      genericProxy: evidence.genericProxy,
+      browserElevatedCredential: evidence.browserElevatedCredential,
+      unresolvedLegacyPath: 'parse-document remains owned by IR-013 and IR-009',
+    }),
+    'secret-safety': Object.freeze({
+      secretSafe: evidence.immutableEvidence.secretSafe,
+      prohibitedContent: matrix.auditProhibitions,
+      localHomePath: 'forbidden',
+    }),
+    cleanup: Object.freeze({
+      databaseOrStackStarted: false,
+      physicalTrustedOperationsImplemented: evidence.physicalTrustedOperationsImplemented,
+      result: 'passed',
+    }),
+  })
+  for (const stage of Object.values(stages)) assertSecretSafe(JSON.stringify(stage))
+  return stages
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

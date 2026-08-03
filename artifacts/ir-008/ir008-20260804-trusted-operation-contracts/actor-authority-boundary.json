@@ -1,0 +1,14 @@
+{
+  "derivation": [
+    "auth.uid()",
+    "profiles.auth_user_id",
+    "profiles.id",
+    "current group_members relationship",
+    "active status",
+    "required Group-scoped role",
+    "current Group archive state"
+  ],
+  "requestId": "correlation-and-idempotency-only",
+  "groupAndTargetIds": "selectors-not-authority",
+  "clientSuppliedAuthority": "forbidden"
+}

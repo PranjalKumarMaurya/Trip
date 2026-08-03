@@ -1,0 +1,53 @@
+{
+  "owners": [
+    {
+      "id": "TOP-001",
+      "physicalOwner": "IR-003"
+    },
+    {
+      "id": "TOP-002",
+      "physicalOwner": "IR-005"
+    },
+    {
+      "id": "TOP-003",
+      "physicalOwner": "IR-005"
+    },
+    {
+      "id": "TOP-004",
+      "physicalOwner": "IR-005"
+    },
+    {
+      "id": "TOP-005",
+      "physicalOwner": "IR-005"
+    },
+    {
+      "id": "TOP-006",
+      "physicalOwner": "IR-005"
+    },
+    {
+      "id": "TOP-007",
+      "physicalOwner": "IR-005"
+    },
+    {
+      "id": "TOP-008",
+      "physicalOwner": "IR-006"
+    },
+    {
+      "id": "TOP-009",
+      "physicalOwner": "IR-014"
+    },
+    {
+      "id": "TOP-010",
+      "physicalOwner": "IR-014"
+    },
+    {
+      "id": "TOP-011",
+      "physicalOwner": "IR-015"
+    },
+    {
+      "id": "TOP-012",
+      "physicalOwner": "IR-013, consuming IR-009"
+    }
+  ],
+  "exactlyOneOwnerPerTop": true
+}

@@ -2,7 +2,8 @@
 
 ## 1. Status and ownership
 
-- Status: **Authorised — implementation not started**.
+- Status: **Implemented, not Verified** (contract validation and immutable
+  evidence only).
 - Wave: W2.
 - Authorisation: [`../authorisations/IR-008-authorisation.md`](../authorisations/IR-008-authorisation.md)
   is the sole bounded IR-008 scope and contract.
@@ -26,8 +27,9 @@ future owner.
 Security model §10; ADR-0008; roadmap IR-008; accepted operation-dependent
 design contracts; verified IR-007/DBM-006; and the IR-008 authorisation.
 
-The accepted documents govern. This packet neither restates an implementation
-as complete nor amends a physical owner's future schema or delivery decision.
+The accepted documents govern. This packet does not represent a physical-owner
+implementation as complete or amend a physical owner's future schema or
+delivery decision.
 
 ## 4. Frozen TOP register and logical signatures
 
@@ -112,8 +114,10 @@ generic proxy; no browser service-role use; no generated-type drift; no new
 application authority; no fake performance result; and no success result for
 an absent operation. It also verifies the adversarial requirements for replay,
 substitution, inactive membership, archive state, stale authority, and races,
-plus immutable secret-safe evidence handling. No Docker or Supabase stack is
-required.
+plus immutable secret-safe evidence handling. The retained artifact has every
+required stage and SHA-256-validated file reference; it records future-owner
+obligations rather than a database or performance execution. No Docker or
+Supabase stack is required.
 
 It is authorisation-contract evidence, not operation execution evidence and
 not a GATE-013 exit result.
@@ -130,7 +134,7 @@ IR-001/002/004/007 evidence semantics are prohibited.
 ## 10. Exit and downstream boundary
 
 ```text
-IR-008: Authorised, implementation not started
+IR-008: Implemented, not Verified
 GATE-013: Not satisfied
 W2: In progress
 IR-003 and physical owner packets: Not authorised
@@ -138,5 +142,6 @@ Deployment and cutover: Not authorised
 ```
 
 IR-003 and every physical owner remain separately authorised work. IR-008
-cannot implement or verify their TOPs, nor can this contract-only result
-satisfy GATE-013, open W3, authorise Storage or Realtime, deploy, or cut over.
+implemented zero physical TOPs and cannot verify their TOPs, nor can this
+contract-only result satisfy GATE-013, open W3, authorise Storage or Realtime,
+deploy, or cut over.
