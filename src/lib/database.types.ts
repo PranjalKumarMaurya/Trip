@@ -475,6 +475,26 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_group_audit_summary: {
+        Args: { p_group_id: string; p_limit?: number }
+        Returns: {
+          actor_participant_id: string
+          audit_event_id: string
+          event_type: string
+          group_id: string
+          occurred_at: string
+        }[]
+      }
+      get_group_roster: {
+        Args: { p_group_id: string; p_limit?: number }
+        Returns: {
+          display_name: string
+          group_id: string
+          participant_id: string
+          role: string
+          status: string
+        }[]
+      }
       is_valid_iana_timezone: { Args: { candidate: string }; Returns: boolean }
     }
     Enums: {
