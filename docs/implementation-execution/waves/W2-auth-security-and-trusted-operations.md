@@ -2,10 +2,10 @@
 
 ## Status and authorisation
 
-- Status: In progress; IR-004 Verified; IR-007 Verified; IR-008 Implemented,
-  not Verified (contract validation and immutable evidence only)
+- Status: Complete; IR-004 Verified; IR-007 Verified; IR-008 Verified
+  (contract validation and immutable evidence only)
 - Physical owner packets: Not authorised
-- Wave complete: No
+- Wave complete: Yes
 
 ## Wave objective
 
@@ -85,10 +85,19 @@ Stop for a browser service-role route, client authority, policy gap, or cross-Gr
 IR-004 is independently verified in
 [`../ir-004-verification.md`](../ir-004-verification.md). IR-007 is independently
 Verified in [`../ir-007-verification.md`](../ir-007-verification.md) within its
-frozen authorisation. IR-008 is Implemented, not Verified for its common TOP
-and service-role contract evidence; no physical TOP, DBM unit, or migration is
-implemented. GATE-013 remains Not satisfied pending IR-008's unchanged
-independent verification, not physical owner-packet execution evidence. W2
-remains In progress. GATE-015 is unchanged and continues to block W3 entry.
-IR-003, Storage (IR-009), Realtime (IR-010), product conversion, deployment,
-and cutover remain unauthorised.
+frozen authorisation. IR-008 is independently Verified in
+[`../ir-008-verification.md`](../ir-008-verification.md) for its common TOP and
+service-role contract evidence only; no physical TOP, DBM unit, or migration is
+implemented. Corrected GATE-013 is Satisfied and every frozen W2 exit criterion
+passes, so W2 is Complete. This completion implements or verifies no physical
+TOP; all physical evidence remains at the separately authorised owner packet
+exit.
+
+GATE-015 remains Not satisfied and requires a separate W3-entry review; W2
+completion does not satisfy it automatically. IR-003 is next eligible for
+separate entry review and authorisation planning only, remains unauthorised,
+and is additionally subject to unsatisfied GATE-031. IR-003 has no recorded
+validated initial Owner Auth identity, reviewed bootstrap request/execution
+manifest, mandatory Group configuration evidence, or required product/data/
+security/architecture approvals. Storage (IR-009), Realtime (IR-010), product
+conversion, deployment, and cutover remain unauthorised.

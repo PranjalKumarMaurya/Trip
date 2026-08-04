@@ -249,3 +249,34 @@ Wave order, IR scope, repository change paths, database migration plan, RLS plan
   deployment, or cutover.
 - Rollback: revert this documentation-only correction to restore the prior
   GATE-013 ownership reading; no implementation state is altered.
+
+## CC-IR008-20260804-verification — Accepted independent verification closure
+
+- Decision: **VERIFIED** for evidence run
+  `ir008-20260804-trusted-operation-contracts`.
+- Accepted anchors: exactly 12 TOP contracts; exactly 13 adversarial
+  obligations; 12 evidence stages; 11 manifest-referenced artifacts; and every
+  SHA-256 validated. All required unit, contract, repository-test, type,
+  typecheck, and build commands passed; secret safety passed; and no blocking
+  defect or in-scope correction remains.
+- Boundary: verification confirms zero physical trusted-operation
+  implementations, DBM units, migrations, SQL/RPC/Edge Functions, application
+  changes, generated-type changes, package/dependency changes, or migration
+  `010`; no generic proxy and no browser service-role use. It verifies the
+  frozen common contract only and does not absorb physical-owner evidence.
+- Status/gate impact: IR-008 transitions from Implemented to Verified.
+  Corrected GATE-013 is Satisfied from verified IR-004, IR-007, and IR-008
+  common readiness evidence only; no physical TOP evidence is required. Every
+  frozen W2 exit criterion passes, so W2 transitions from In progress to
+  Complete.
+- Downstream boundary: GATE-015 remains Not satisfied and requires a separate
+  W3-entry review; it is not satisfied by W2 completion. IR-003 is the next
+  physical packet eligible for separate entry review and authorisation planning
+  only, and remains Not authorised. GATE-031 remains an additional IR-003
+  authorisation blocker pending validated initial Owner Auth identity, reviewed
+  bootstrap request/execution manifest, mandatory Group configuration, and
+  product/data/security/architecture approvals.
+- Other status boundary: IR-005 and later physical owners, Storage, Realtime,
+  product conversion, deployment, and cutover remain Not authorised.
+- Implementation impact: documentation-only governance. No physical TOP,
+  migration, function, source, database, deployment, or cutover work occurred.

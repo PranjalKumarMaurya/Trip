@@ -1,15 +1,16 @@
 # Execution Order
 
-IR-001, IR-002, IR-004, IR-007, and DBM-006 are Implemented and Verified; W1
-is complete. IR-008 is Implemented, not Verified for the common
-trusted-operation contract/register and static immutable evidence only; zero
-physical operations, DBM units, or migrations are implemented and all physical
-owners remain unauthorised. Under `CC-W2-GATE013-20260804`, GATE-013 is the W2
-common contract/readiness gate and remains Not satisfied pending IR-008's
-unchanged independent verification; physical owner-packet execution evidence
-is not its input. GATE-015 remains unchanged and blocks W3 entry. W2 remains
-in progress, and W3 through W7, deployment, and cutover remain unauthorised.
-The accepted roadmap order remains authoritative.
+IR-001, IR-002, IR-004, IR-007, DBM-006, and IR-008 are Verified; W1 and W2
+are complete. IR-008 is verified only for the common trusted-operation
+contract/register and static immutable evidence: zero physical operations, DBM
+units, or migrations are implemented and all physical owners remain
+unauthorised. Under `CC-W2-GATE013-20260804`, GATE-013 is Satisfied from the
+verified common readiness inputs; physical owner-packet execution evidence is
+not its input. GATE-015 remains Not satisfied and requires a separate W3-entry
+review. IR-003 is next eligible for separate entry review and authorisation
+planning only, remains unauthorised, and is additionally blocked by GATE-031.
+W3 through W7, deployment, and cutover remain unauthorised. The accepted
+roadmap order remains authoritative.
 
 ## W1 — Evidence and tenant foundation
 
@@ -60,12 +61,21 @@ The accepted roadmap order remains authoritative.
   injected-failure rollback, idempotency/concurrency/audit execution, and
   operation-specific performance evidence are mandatory only at the owning
   physical packet exit.
+- Exit decision: all frozen W2 exit criteria passed through verified IR-004,
+  IR-007, and IR-008 common-contract evidence. GATE-013 is Satisfied and W2 is
+  Complete; this implements or verifies no physical TOP.
 - Rollback checkpoint: Target paths remain inaccessible until security evidence passes; no permissive fallback.
 - Stop conditions: Stop for a browser service-role route, client authority, policy gap, or cross-Group success.
 
 ## W3 — Group lifecycle, storage, and realtime
 
-- Mandatory entry gate: GATE-015 after W2 exit; its semantics are unchanged.
+- Mandatory entry gate: separate GATE-015 W3-entry review after W2 exit. It
+  remains Not satisfied and is not satisfied automatically by W2 completion.
+- IR-003 boundary: IR-003 is next eligible for separate entry review and
+  authorisation planning only. It remains Not authorised and cannot be
+  authorised until GATE-031 supplies validated initial Owner Auth identity, a
+  reviewed bootstrap request/execution manifest, mandatory Group configuration,
+  and product/data/security/architecture approvals.
 - Internal packet order: IR-003 bootstrap precedes IR-005 lifecycle; IR-005 precedes IR-006 claiming. IR-009 and IR-010 may run in parallel only after IR-005, IR-007, and IR-008 are satisfied.
 - Permitted parallel work: Private Storage and authorised Realtime may run in parallel after lifecycle and trusted-boundary gates. Claiming remains serial after membership.
 - Mandatory serial boundary: IR-003 bootstrap precedes IR-005 lifecycle; IR-005 precedes IR-006 claiming. IR-009 and IR-010 may run in parallel only after IR-005, IR-007, and IR-008 are satisfied.

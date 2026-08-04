@@ -232,3 +232,15 @@ belongs to the separately authorised owner packet. It does not rewrite this
 accepted authorisation, its authorised paths, or its independent-verification
 criteria; it records no verification, physical implementation, owner-packet
 authorisation, deployment, or cutover.
+
+## Accepted verification closure
+
+The accepted independent verification in
+`../ir-008-verification.md` records **VERIFIED** for the frozen contract-only
+scope. It does not revise this accepted authorisation or its paths: IR-008
+still owns no physical TOP, DBM unit, migration, SQL/RPC/Edge Function,
+application change, generated-type change, package/dependency change,
+deployment, or cutover. Corrected GATE-013 is Satisfied and W2 is Complete;
+GATE-015 remains Not satisfied pending separate W3-entry review. IR-003 and
+every physical owner remain Not authorised, and IR-003 remains additionally
+subject to GATE-031.

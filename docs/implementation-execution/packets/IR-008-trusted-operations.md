@@ -2,13 +2,12 @@
 
 ## 1. Status and ownership
 
-- Status: **Implemented, not Verified** (contract validation and immutable
-  evidence only).
+- Status: **Verified** (contract validation and immutable evidence only).
 - Wave: W2.
 - Authorisation: [`../authorisations/IR-008-authorisation.md`](../authorisations/IR-008-authorisation.md)
   is the sole bounded IR-008 scope and contract.
-- Entry: IR-007 and DBM-006 are Verified. GATE-013 remains Not satisfied and
-  W2 remains In progress.
+- Entry: IR-007 and DBM-006 are Verified. IR-008's accepted independent
+  verification satisfies corrected GATE-013; W2 is Complete.
 
 IR-008 owns no DBM unit, migration, SQL function, RPC, Edge Function, browser
 operation, generated database-type work, or physical TOP implementation. No
@@ -119,8 +118,10 @@ required stage and SHA-256-validated file reference; it records future-owner
 obligations rather than a database or performance execution. No Docker or
 Supabase stack is required.
 
-It is authorisation-contract evidence, not operation execution evidence and
-not a GATE-013 exit result.
+It is authorisation-contract evidence, not operation execution evidence. Under
+the corrected GATE-013 contract, its accepted independent verification is the
+common-readiness input; it remains neither physical-operation evidence nor a
+physical-owner packet exit result.
 
 ## 9. Authorised paths and prohibitions
 
@@ -134,17 +135,19 @@ IR-001/002/004/007 evidence semantics are prohibited.
 ## 10. Exit and downstream boundary
 
 ```text
-IR-008: Implemented, not Verified
-GATE-013: Not satisfied
-W2: In progress
+IR-008: Verified (contract-only)
+GATE-013: Satisfied
+W2: Complete
+GATE-015: Not satisfied; separate W3-entry review required
 IR-003 and physical owner packets: Not authorised
 Deployment and cutover: Not authorised
 ```
 
 IR-003 and every physical owner remain separately authorised work. IR-008
 implemented zero physical TOPs and cannot verify their TOPs, nor can this
-contract-only result satisfy GATE-013, open W3, authorise Storage or Realtime,
-deploy, or cut over.
+contract-only result authorise a physical TOP, open W3, authorise Storage or
+Realtime, deploy, or cut over. Its accepted verification is recorded in
+[`../ir-008-verification.md`](../ir-008-verification.md).
 
 ## 11. Prospective change-control supersession note
 
@@ -152,5 +155,6 @@ deploy, or cut over.
 consumes the common contract/readiness evidence, while each physical TOP owner
 retains its operation execution evidence at packet exit. This note does not
 rewrite this packet's accepted authorisation or independent-verification
-criteria, change IR-008's contract-only boundary, authorise a physical owner,
-or record IR-008 verification.
+criteria, change IR-008's contract-only boundary, or authorise a physical
+owner. The supersession note itself did not record verification; accepted
+verification is recorded separately in `../ir-008-verification.md`.

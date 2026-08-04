@@ -50,7 +50,7 @@ Schema dependencies flow from IR-002 to lifecycle/product work; Auth flows from 
 | IR-005 | IR-003, IR-004, IR-007, IR-008. | IR-003, IR-004, IR-007, IR-008. | See accepted roadmap parallel-class rules; no unlisted parallelism | IR-006, IR-009, IR-010, IR-011, IR-021, IR-022 | Draft |
 | IR-006 | IR-003, IR-005, IR-008. | IR-003, IR-005, IR-008. | See accepted roadmap parallel-class rules; no unlisted parallelism | IR-016, IR-021, IR-022 | Draft |
 | IR-007 | IR-002, IR-004. | IR-002, IR-004. | Four frozen lanes in `authorisations/IR-007-authorisation.md`; no unlisted parallelism. | IR-003, IR-005, IR-008, IR-009, IR-010, IR-011, IR-021, IR-022 | Verified |
-| IR-008 | IR-007. | IR-007. | Contract/register and static evidence paths only; no physical TOP work or unlisted parallelism. | IR-003, IR-005, IR-006, IR-009, IR-010, IR-012, IR-013, IR-014, IR-016, IR-021, IR-022 | Implemented, not Verified |
+| IR-008 | IR-007. | IR-007. | Contract/register and static evidence paths only; no physical TOP work or unlisted parallelism. | IR-003, IR-005, IR-006, IR-009, IR-010, IR-012, IR-013, IR-014, IR-016, IR-021, IR-022 | Verified |
 | IR-009 | IR-005, IR-007, IR-008. | IR-005, IR-007, IR-008. | See accepted roadmap parallel-class rules; no unlisted parallelism | IR-013, IR-021, IR-022 | Draft |
 | IR-010 | IR-005, IR-007, IR-008. | IR-005, IR-007, IR-008. | See accepted roadmap parallel-class rules; no unlisted parallelism | IR-011, IR-021, IR-022 | Draft |
 | IR-011 | IR-003, IR-005, IR-007, IR-010. | IR-003, IR-005, IR-007, IR-010. | See accepted roadmap parallel-class rules; no unlisted parallelism | IR-012, IR-013, IR-014, IR-015, IR-021, IR-022 | Draft |
@@ -80,9 +80,11 @@ entry, IR-003, and therefore the evidence itself. GATE-013 now consumes the W2
 common contract/readiness evidence; the physical evidence remains with the
 named TOP owners at their packet exits.
 
-IR-004 and IR-007 are independently Verified. IR-008 is Implemented, not
-Verified for the common trusted-operation contract/register and static immutable
-evidence; each physical owner remains unauthorised. GATE-013 is Not satisfied
-pending IR-008's unchanged independent verification. GATE-015 remains
-unchanged and blocks W3 entry. IR-003, Storage (IR-009), Realtime (IR-010),
-product conversion, deployment, and cutover remain unauthorised.
+IR-004, IR-007, and IR-008 are independently Verified. IR-008 verification
+confirms the common trusted-operation contract/register and static immutable
+evidence only; each physical owner remains unauthorised. Corrected GATE-013 is
+Satisfied and W2 is Complete. GATE-015 remains Not satisfied and requires a
+separate W3-entry review. IR-003 is next eligible for separate entry review and
+authorisation planning only, remains unauthorised, and is additionally blocked
+by GATE-031. Storage (IR-009), Realtime (IR-010), product conversion,
+deployment, and cutover remain unauthorised.

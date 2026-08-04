@@ -102,9 +102,20 @@ access, uploads to public Storage, and inserts legacy global Events. IR-008
 does not modify it and does not designate it as a TOP implementation.
 
 ```text
-IR-008: Implemented, not Verified
-GATE-013: Not satisfied
-W2: In progress
+IR-008: Verified (contract-only)
+GATE-013: Satisfied
+W2: Complete
+GATE-015: Not satisfied; separate W3-entry review required
 IR-003 and physical owner packets: Not authorised
 Deployment and cutover: Not authorised
 ```
+
+Accepted independent verification run
+`ir008-20260804-trusted-operation-contracts` confirms exactly 12 TOP
+contracts, exactly 13 adversarial obligations, 12 evidence stages, 11
+manifest-referenced artifacts, and SHA-256 validation for every artifact. It
+confirms zero physical TOP implementations, DBM units, migrations, SQL/RPC/Edge
+Functions, application changes, generated-type changes, package/dependency
+changes, or migration `010`; no generic proxy; no browser service-role use; and
+secret safety. Physical TOP evidence remains exclusively at its owner packet
+exit.
