@@ -18,6 +18,8 @@
 - IR-003, IR-005–006, and IR-009 through IR-022 authorised: No
 - W1 status: Complete; GATE-011 satisfied
 - W2 status: Complete; GATE-013 satisfied
+- W3 entry status: GATE-015 satisfied; implementation authorised: No
+- GATE-031 status: Not satisfied
 - Application implementation: IR-004 and IR-007 verified
 
 ## Purpose
@@ -67,8 +69,9 @@ TOP, migration, function, source, generated type, database action, deployment,
 or cutover. Corrected GATE-013 is Satisfied and W2 is Complete; physical
 implementation, rollback, idempotency, race, audit, secret-safe, and
 performance evidence remains with each separately authorised TOP owner.
-GATE-015 remains Not satisfied and requires a separate W3-entry review. IR-003
-is next eligible for separate entry review and authorisation planning only and
-remains unauthorised; GATE-031 evidence is still required. Storage (IR-009),
+The separate GATE-015 W3-entry review is Satisfied: W3 entry prerequisites
+from W2 have passed. IR-003 is eligible only for GATE-031 completion and
+separate authorisation, remains unauthorised, and GATE-031 remains Not
+satisfied. No physical trusted operation is authorised. Storage (IR-009),
 Realtime (IR-010), product conversion, deployment, and cutover remain
 unauthorised.

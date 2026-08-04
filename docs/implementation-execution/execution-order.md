@@ -6,10 +6,11 @@ contract/register and static immutable evidence: zero physical operations, DBM
 units, or migrations are implemented and all physical owners remain
 unauthorised. Under `CC-W2-GATE013-20260804`, GATE-013 is Satisfied from the
 verified common readiness inputs; physical owner-packet execution evidence is
-not its input. GATE-015 remains Not satisfied and requires a separate W3-entry
-review. IR-003 is next eligible for separate entry review and authorisation
-planning only, remains unauthorised, and is additionally blocked by GATE-031.
-W3 through W7, deployment, and cutover remain unauthorised. The accepted
+not its input. The separate GATE-015 W3-entry review is Satisfied: W3 entry
+prerequisites from W2 have passed. IR-003 is eligible only for GATE-031
+completion and separate authorisation; it remains unauthorised, and GATE-031
+remains Not satisfied. No physical trusted operation is authorised. W3 through
+W7 execution, deployment, and cutover remain unauthorised. The accepted
 roadmap order remains authoritative.
 
 ## W1 — Evidence and tenant foundation
@@ -69,13 +70,14 @@ roadmap order remains authoritative.
 
 ## W3 — Group lifecycle, storage, and realtime
 
-- Mandatory entry gate: separate GATE-015 W3-entry review after W2 exit. It
-  remains Not satisfied and is not satisfied automatically by W2 completion.
-- IR-003 boundary: IR-003 is next eligible for separate entry review and
-  authorisation planning only. It remains Not authorised and cannot be
-  authorised until GATE-031 supplies validated initial Owner Auth identity, a
-  reviewed bootstrap request/execution manifest, mandatory Group configuration,
-  and product/data/security/architecture approvals.
+- Mandatory entry gate: the separate GATE-015 W3-entry review after W2 exit is
+  Satisfied. It confirms the W2 exit prerequisites only; it does not authorise
+  a W3 packet or physical operation.
+- IR-003 boundary: IR-003 is eligible for GATE-031 completion and separate
+  authorisation only. It remains Not authorised and cannot be authorised until
+  GATE-031 supplies validated initial Owner Auth identity, a reviewed bootstrap
+  request/execution manifest, mandatory Group configuration, and product/data/
+  security/architecture approvals.
 - Internal packet order: IR-003 bootstrap precedes IR-005 lifecycle; IR-005 precedes IR-006 claiming. IR-009 and IR-010 may run in parallel only after IR-005, IR-007, and IR-008 are satisfied.
 - Permitted parallel work: Private Storage and authorised Realtime may run in parallel after lifecycle and trusted-boundary gates. Claiming remains serial after membership.
 - Mandatory serial boundary: IR-003 bootstrap precedes IR-005 lifecycle; IR-005 precedes IR-006 claiming. IR-009 and IR-010 may run in parallel only after IR-005, IR-007, and IR-008 are satisfied.

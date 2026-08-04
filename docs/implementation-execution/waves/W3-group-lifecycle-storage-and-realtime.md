@@ -2,7 +2,7 @@
 
 ## Status and authorisation
 
-- Status: Draft
+- Status: GATE-015 satisfied for W3 entry; implementation remains unauthorised
 - Implementation authorised: No
 - Wave complete: No
 
@@ -72,4 +72,13 @@ Stop for ownerless/unconfigured Group, invitation replay, claim ambiguity, publi
 
 ## Implementation-authorisation status
 
-No
+The separate GATE-015 W3-entry review is **Satisfied**. Every frozen W2 exit
+prerequisite has passed: IR-004, IR-007, and IR-008 are Verified; corrected
+GATE-013 is Satisfied; W2 is Complete; and no unresolved W2 implementation
+defect is recorded. GATE-014 remains a named IR-006 authorisation prerequisite
+only and does not block this W3-entry decision.
+
+IR-003 is eligible for GATE-031 completion and separate authorisation only; it
+remains **Not authorised**. GATE-031 remains **Not satisfied**. No W3 packet
+or physical trusted operation is authorised, and deployment and cutover remain
+unauthorised.

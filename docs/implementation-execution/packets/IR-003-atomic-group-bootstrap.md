@@ -19,12 +19,12 @@ The accepted documents govern; this Draft packet does not restate or amend their
 
 ## 4. Entry gate
 
-Verified exit evidence for IR-002, IR-004, IR-007, and IR-008; a separate
-GATE-015 W3-entry review; GATE-031 evidence before IR-003 authorisation; a clean
-repository; accepted design mapping; and no unresolved prerequisite security or
-architecture contradiction. W2 completion makes IR-003 eligible only for
-separate entry review and authorisation planning; it does not authorise or
-implement IR-003.
+Verified exit evidence for IR-002, IR-004, IR-007, and IR-008; the separate
+GATE-015 W3-entry review, which is Satisfied; GATE-031 evidence before IR-003
+authorisation; a clean repository; accepted design mapping; and no unresolved
+prerequisite security or architecture contradiction. The satisfied W3-entry
+review makes IR-003 eligible only for GATE-031 completion and separate
+authorisation; it does not authorise or implement IR-003.
 
 ## 5. Dependencies
 
