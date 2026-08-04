@@ -223,3 +223,12 @@ Stop and return to change control for a need to implement a TOP, reserve a
 migration, add a function/RPC/Edge Function, regenerate types, change source,
 broaden a service-role path, change prior evidence semantics, contact remote
 Supabase, deploy, or cut over.
+
+## Prospective change-control supersession note
+
+`CC-W2-GATE013-20260804` prospectively corrects only GATE-013 evidence
+ownership: common contract/readiness belongs to W2 and physical TOP evidence
+belongs to the separately authorised owner packet. It does not rewrite this
+accepted authorisation, its authorised paths, or its independent-verification
+criteria; it records no verification, physical implementation, owner-packet
+authorisation, deployment, or cutover.

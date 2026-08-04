@@ -49,7 +49,28 @@ boundary while deliberately excluding any actor input.
 | TOP-009 | `commit_expense(group_id, ledger_payload, request_id)` | IR-014 | Active same-Group Member; every payer/share resolves to same-Group stable Participant. Expense, contributions, shares, FX evidence, and audit commit atomically; retry/race cannot create partial children or alter deterministic remainder. | Contract frozen; not implemented |
 | TOP-010 | `record_settlement(group_id, settlement_payload, request_id)` | IR-014 | Active same-Group debtor/recording Member; payer, receiver, and recorder are same Group. Exact configured-accounting-currency settlement and audit write atomically; concurrent finance state is revalidated. | Contract frozen; not implemented |
 | TOP-011 | `change_sensitive_configuration(group_id, configuration_change, expected_version, request_id)` | IR-015 | Current active Owner; accounting-history safety is revalidated. Validated configuration/audit update is atomic; stale version yields a safe conflict and cannot reinterpret history. | Contract frozen; not implemented |
-| TOP-012 | `ingest_and_reconcile_document(group_id, object_reference, metadata, extraction_result, association_request, reconciliation_key, request_id)` | IR-013, consuming IR-009 | Active same-Group initiating Member; a continuation revalidates recorded Group/object relationship before finalization. One reconciled result or durable quarantine; parse/object/database races cannot create duplicate or orphan authority. | Contract frozen; not implemented |
+| TOP-012 | `ingest_and_reconcile_document(group_id, object_reference, metadata, extraction_result, association_request, reconciliation_key, request_id)` | IR-013, consuming IR-009 private-object evidence | Active same-Group initiating Member; a continuation revalidates recorded Group/object relationship before finalization. One reconciled result or durable quarantine; parse/object/database races cannot create duplicate or orphan authority. | Contract frozen; not implemented |
+
+## GATE-013 readiness and physical-evidence boundary
+
+Under `CC-W2-GATE013-20260804`, GATE-013 is the W2 common
+trusted-operation contract/readiness gate. It requires verified Auth/session
+and deny-by-default ownership RLS boundaries; the verified common contract;
+this frozen TOP inventory and physical-owner map; `auth.uid()`-first actor
+derivation; current membership, role, and archive revalidation; transaction,
+idempotency, concurrency, audit, secret-safety, no-generic-proxy, and
+no-browser-service-role requirements.
+
+GATE-013 does not require a TOP implementation, physical operation execution,
+injected-failure rollback execution, actual idempotency/concurrency/audit
+execution, or operation-specific performance evidence. Those remain mandatory
+at each physical owner packet exit: TOP-001 → IR-003; TOP-002–TOP-007 →
+IR-005; TOP-008 → IR-006; TOP-009–TOP-010 → IR-014; TOP-011 → IR-015; and
+TOP-012 → IR-013, consuming IR-009 private-object evidence. Every owner packet
+must retain actual implementation, authorization, authoritative transaction,
+all-or-nothing mutation, injected-failure rollback, idempotency,
+concurrency/race evidence, audit emission, secret-safe evidence, and
+operation-specific performance evidence.
 
 ## Required common behaviours
 

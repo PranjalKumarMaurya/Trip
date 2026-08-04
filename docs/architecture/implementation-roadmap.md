@@ -628,7 +628,19 @@ verification capabilities are known, rollback and approval boundaries are
 identified, and deferred-scope review passes. This Accepted roadmap by itself
 satisfies none of those execution conditions.
 
-## 22. Phase 7 acceptance checklist
+## 22. Prospective change-control supersession
+
+`CC-W2-GATE013-20260804` prospectively corrects the W2 GATE-013 evidence
+ownership reading. GATE-013 is the common trusted-operation contract/readiness
+gate; physical TOP implementation, rollback, idempotency, concurrency, audit,
+secret-safe, and operation-specific performance evidence remains with the
+separately authorised physical owner packet. This resolves the prior
+GATE-013 → GATE-015/W3 → IR-003 → TOP-001 → GATE-013 execution cycle. It does
+not alter this Accepted roadmap's architecture, ADR-0008, IR-008's accepted
+authorisation or independent-verification criteria, GATE-015 semantics, or any
+current status or implementation authority.
+
+## 23. Phase 7 acceptance checklist
 
 - [x] Accepted-input completeness is verified.
 - [x] Source precedence is explicit and preserved.

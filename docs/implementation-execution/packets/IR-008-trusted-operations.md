@@ -50,7 +50,7 @@ TOP-008 claim_legacy_participant — IR-006
 TOP-009 commit_expense — IR-014
 TOP-010 record_settlement — IR-014
 TOP-011 change_sensitive_configuration — IR-015
-TOP-012 ingest_and_reconcile_document — IR-013, consuming IR-009
+TOP-012 ingest_and_reconcile_document — IR-013, consuming IR-009 private-object evidence
 ```
 
 ## 5. Actor, selector, and service-role boundary
@@ -145,3 +145,12 @@ IR-003 and every physical owner remain separately authorised work. IR-008
 implemented zero physical TOPs and cannot verify their TOPs, nor can this
 contract-only result satisfy GATE-013, open W3, authorise Storage or Realtime,
 deploy, or cut over.
+
+## 11. Prospective change-control supersession note
+
+`CC-W2-GATE013-20260804` prospectively corrects GATE-013 ownership: W2's gate
+consumes the common contract/readiness evidence, while each physical TOP owner
+retains its operation execution evidence at packet exit. This note does not
+rewrite this packet's accepted authorisation or independent-verification
+criteria, change IR-008's contract-only boundary, authorise a physical owner,
+or record IR-008 verification.

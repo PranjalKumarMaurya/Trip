@@ -62,8 +62,10 @@ and `lock-record.md`; neither record authorises implementation.
 IR-008 has implemented only the trusted-operation contract, TOP ownership
 register, and static immutable evidence; it implements no physical TOP,
 migration, function, source, generated type, database action, deployment, or
-cutover. IR-007's
-accepted independent verification remains final, and GATE-013 is still Not
-satisfied pending physical-owner trusted-operation/service-role evidence.
-IR-003, Storage (IR-009), Realtime (IR-010), product conversion, deployment,
-and cutover remain unauthorised.
+cutover. Under `CC-W2-GATE013-20260804`, GATE-013 is the W2 common-contract
+readiness gate and remains Not satisfied pending IR-008's unchanged independent
+verification. Physical implementation, rollback, idempotency, race, audit,
+secret-safe, and performance evidence remains with each separately authorised
+TOP owner. GATE-015 is unchanged and continues to block W3 entry. IR-003,
+Storage (IR-009), Realtime (IR-010), product conversion, deployment, and
+cutover remain unauthorised.

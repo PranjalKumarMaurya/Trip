@@ -62,6 +62,13 @@ No policy is written by this Draft. The implementation plan must define same-Gro
 
 ## 12. Trusted operations
 
+Physical TOP ownership: TOP-012 `ingest_and_reconcile_document`, consuming
+IR-009 private-object evidence. The separately authorised implementation packet
+must retain actual implementation and authorization, one authoritative
+all-or-nothing transaction, injected-failure rollback, idempotency,
+concurrency/race evidence, audit emission, secret-safe evidence, and
+operation-specific performance evidence.
+
 Candidates: validated document intake/review commit and document reconciliation. Session actor and current Group/member relationship are authoritative; extraction output is review input only.
 
 For every applicable operation, record caller, validated Auth actor, validated current Group relationship and role, transaction boundary, idempotency key, replay/concurrency result, failure response, audit output, service-role use, test evidence, and reconciliation/rollback path.

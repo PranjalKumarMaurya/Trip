@@ -62,6 +62,12 @@ No policy is written by this Draft. The implementation plan must define same-Gro
 
 ## 12. Trusted operations
 
+Physical TOP ownership: TOP-011 `change_sensitive_configuration`. The
+separately authorised implementation packet must retain actual implementation
+and authorization, one authoritative all-or-nothing transaction,
+injected-failure rollback, idempotency, concurrency/race evidence, audit
+emission, secret-safe evidence, and operation-specific performance evidence.
+
 Sensitive configuration changes consume IR-008 boundary where role/locking/transaction is required. No ordinary Owner accounting conversion operation.
 
 For every applicable operation, record caller, validated Auth actor, validated current Group relationship and role, transaction boundary, idempotency key, replay/concurrency result, failure response, audit output, service-role use, test evidence, and reconciliation/rollback path.

@@ -68,11 +68,21 @@ Schema dependencies flow from IR-002 to lifecycle/product work; Auth flows from 
 
 ## Cycle review
 
-No dependency cycle was found in the accepted roadmap graph. The table preserves IR-022's gate inputs from IR-001–IR-016; the diagram consolidates that already-serial upstream set at IR-016 rather than drawing sixteen redundant arrows. IR-022 joins IR-016/IR-021 at IR-017 and is not treated as a circular prerequisite for its own evidence.
+No structural dependency cycle exists in the accepted roadmap graph. The table
+preserves IR-022's gate inputs from IR-001–IR-016; the diagram consolidates
+that already-serial upstream set at IR-016 rather than drawing sixteen
+redundant arrows. IR-022 joins IR-016/IR-021 at IR-017 and is not treated as a
+circular prerequisite for its own evidence.
 
-IR-004's verified output made IR-007 the next serial W2 packet. IR-007 is
-independently Verified. IR-008 is Implemented, not Verified for the common
-trusted-operation contract/register and static immutable evidence; each
-physical owner is still unauthorised. Its future trusted-operation/service-role evidence remains
-the frozen GATE-013 requirement. IR-003, Storage (IR-009), Realtime (IR-010),
+`CC-W2-GATE013-20260804` corrects a separate execution-gate cycle: requiring
+TOP-001 physical rollback evidence at GATE-013 prevented W2 exit, GATE-015/W3
+entry, IR-003, and therefore the evidence itself. GATE-013 now consumes the W2
+common contract/readiness evidence; the physical evidence remains with the
+named TOP owners at their packet exits.
+
+IR-004 and IR-007 are independently Verified. IR-008 is Implemented, not
+Verified for the common trusted-operation contract/register and static immutable
+evidence; each physical owner remains unauthorised. GATE-013 is Not satisfied
+pending IR-008's unchanged independent verification. GATE-015 remains
+unchanged and blocks W3 entry. IR-003, Storage (IR-009), Realtime (IR-010),
 product conversion, deployment, and cutover remain unauthorised.

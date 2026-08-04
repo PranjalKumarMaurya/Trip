@@ -62,7 +62,10 @@ No policy is written by this Draft. The implementation plan must define same-Gro
 
 ## 12. Trusted operations
 
-Document reconciliation operation candidate consumes IR-008 boundary; no direct public-object assumption.
+IR-009 owns the private-object evidence consumed by IR-013's TOP-012
+`ingest_and_reconcile_document`; it owns no TOP and cannot implement or verify
+TOP-012. Document reconciliation consumes the IR-008 boundary; no direct
+public-object assumption.
 
 For every applicable operation, record caller, validated Auth actor, validated current Group relationship and role, transaction boundary, idempotency key, replay/concurrency result, failure response, audit output, service-role use, test evidence, and reconciliation/rollback path.
 

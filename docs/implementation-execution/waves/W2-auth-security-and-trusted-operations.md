@@ -9,7 +9,9 @@
 
 ## Wave objective
 
-Session-derived actor identity, deny-by-default policy design, secret handling, service-role confinement, and two-Group security evidence.
+Session-derived actor identity, deny-by-default policy design, secret handling,
+service-role confinement, two-Group security evidence, and the common
+trusted-operation contract/readiness boundary.
 
 ## IR packets
 
@@ -57,7 +59,14 @@ Target paths remain inaccessible until security evidence passes; no permissive f
 
 ## Required evidence and Wave exit gate
 
-Auth/session privacy, matrix, rollback, secret, and two-Group evidence design; no incomplete authoritative atomic operation.
+GATE-013 requires verified Auth/session and deny-by-default ownership RLS
+boundaries, the verified common trusted-operation contract, frozen TOP
+inventory/physical-owner map, `auth.uid()`-first current membership/role/archive
+revalidation requirements, transaction/idempotency/concurrency/audit/
+secret-safety obligations, and the no-generic-proxy/no-browser-service-role
+prohibitions. It does not require physical TOP execution or its rollback,
+idempotency, concurrency, audit, or performance evidence; each remains at the
+separately authorised physical owner packet exit.
 
 ## Downstream consumers
 
@@ -78,7 +87,8 @@ IR-004 is independently verified in
 Verified in [`../ir-007-verification.md`](../ir-007-verification.md) within its
 frozen authorisation. IR-008 is Implemented, not Verified for its common TOP
 and service-role contract evidence; no physical TOP, DBM unit, or migration is
-implemented. GATE-013 remains Not satisfied because owner-packet trusted-
-operation/service-role rollback evidence is absent. W2 remains In progress.
+implemented. GATE-013 remains Not satisfied pending IR-008's unchanged
+independent verification, not physical owner-packet execution evidence. W2
+remains In progress. GATE-015 is unchanged and continues to block W3 entry.
 IR-003, Storage (IR-009), Realtime (IR-010), product conversion, deployment,
 and cutover remain unauthorised.

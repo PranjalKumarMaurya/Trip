@@ -62,6 +62,13 @@ No policy is written by this Draft. The implementation plan must define same-Gro
 
 ## 12. Trusted operations
 
+Physical TOP ownership: TOP-009 `commit_expense` and TOP-010
+`record_settlement`. The separately authorised implementation packet must retain
+actual implementation and authorization, one authoritative all-or-nothing
+transaction, injected-failure rollback, idempotency, concurrency/race evidence,
+audit emission, secret-safe evidence, and operation-specific performance
+evidence for each owned TOP.
+
 Candidates: commit_expense and record_settlement, with session actor, Group/role validation, exact input, transaction, idempotency key, replay/race behavior, audit output, and safe whole-unit failure.
 
 For every applicable operation, record caller, validated Auth actor, validated current Group relationship and role, transaction boundary, idempotency key, replay/concurrency result, failure response, audit output, service-role use, test evidence, and reconciliation/rollback path.

@@ -209,3 +209,43 @@ Wave order, IR scope, repository change paths, database migration plan, RLS plan
 - Boundary: this is a verification-status record, not a correction packet or a
   scope-changing change-control action. It creates no implementation, database
   execution, deployment, or cutover authority.
+
+## CC-W2-GATE013-20260804 — Trusted-operation evidence ownership correction
+
+- Reason: the prior GATE-013 reading demanded physical trusted-operation
+  rollback evidence before W2 could exit. W2 therefore could not exit,
+  GATE-015 prevented W3 entry, IR-003 could not begin, TOP-001 physical
+  evidence could not exist, and GATE-013 could not be satisfied.
+- Decision: prospectively redefine GATE-013 as the W2 common
+  trusted-operation contract/readiness gate. It requires verified Auth/session
+  and deny-by-default ownership RLS boundaries; the verified common contract;
+  frozen TOP inventory and physical-owner map; `auth.uid()`-first actor
+  derivation; current membership, role, and archive revalidation;
+  transaction, idempotency, concurrency, audit, and secret-safety obligations;
+  and the prohibitions on a generic trusted-operation proxy and browser
+  service-role authority.
+- Exclusion: GATE-013 does not require an implemented TOP, physical operation
+  execution, injected-failure rollback execution, actual idempotency,
+  concurrency, or audit execution, or operation-specific performance evidence.
+  Those requirements are neither deleted nor weakened; they move with their
+  physical operation to its owner packet exit.
+- Physical evidence ownership: TOP-001 → IR-003; TOP-002–TOP-007 → IR-005;
+  TOP-008 → IR-006; TOP-009–TOP-010 → IR-014; TOP-011 → IR-015; TOP-012 →
+  IR-013, consuming IR-009 private-object evidence. Every owner packet retains
+  actual implementation, authorization, authoritative transaction,
+  all-or-nothing mutation, injected-failure rollback, idempotency,
+  concurrency/race evidence, audit emission, secret-safe evidence, and
+  operation-specific performance evidence.
+- IR-008 boundary: IR-008 remains contract-only. Its accepted authorisation
+  and independent-verification criteria are unchanged; this is only a
+  prospective change-control supersession of the GATE-013 ownership reading.
+- Gate/status impact: GATE-015 is semantically unchanged and remains the
+  separate W3-entry gate after W2 exit; GATE-014 continues to apply to IR-006
+  where recorded. No current status transitions: IR-008 remains Implemented,
+  not Verified; GATE-013 remains Not satisfied; W2 remains In progress;
+  GATE-015 remains Not satisfied; and IR-003 remains Not authorised.
+- Implementation impact: documentation only. This record authorises and
+  implements no IR, TOP, migration, function, generated type, test, artifact,
+  deployment, or cutover.
+- Rollback: revert this documentation-only correction to restore the prior
+  GATE-013 ownership reading; no implementation state is altered.

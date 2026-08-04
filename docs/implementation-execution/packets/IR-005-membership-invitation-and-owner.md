@@ -64,6 +64,14 @@ No policy is written by this Draft. The implementation plan must define same-Gro
 
 ## 12. Trusted operations
 
+Physical TOP ownership: TOP-002–TOP-007 (`create_invitation`,
+`accept_invitation`, `change_member_role`, `transfer_ownership`,
+`deactivate_membership`, and `set_group_archive_state`). The separately
+authorised implementation packet must retain actual implementation and
+authorization, one authoritative all-or-nothing transaction, injected-failure
+rollback, idempotency, concurrency/race evidence, audit emission, secret-safe
+evidence, and operation-specific performance evidence for every owned TOP.
+
 Candidates: create_invitation, inspect_invitation, revoke_invitation, accept_invitation, change_member_role, transfer_ownership, remove_member, leave_group, archive_group, restore_group. Each needs session actor, Group/role validation, atomicity, idempotency/replay/race behavior, audit output, and safe denial.
 
 For every applicable operation, record caller, validated Auth actor, validated current Group relationship and role, transaction boundary, idempotency key, replay/concurrency result, failure response, audit output, service-role use, test evidence, and reconciliation/rollback path.
