@@ -331,6 +331,10 @@ Wave order, IR scope, repository change paths, database migration plan, RLS plan
 
 ## CC-IR003-20260812-bootstrap-success-blocker — ONB-06 correction record
 
+**Historical proposal/blocker record.** Its current disposition is recorded by
+the status-synchronisation record below; this retained text
+preserves the finding and proposal history.
+
 - Decision authority: documentation-only correction record. It does not accept
   a design change, authorise IR-003, satisfy GATE-031, or create a physical
   operation.
@@ -365,3 +369,30 @@ Wave order, IR scope, repository change paths, database migration plan, RLS plan
 - Rollback: this correction records no physical state. Reverting it removes
   only the documentation pointer; it cannot be used to bypass the locked
   design decision or undo a later implementation.
+
+## Status synchronisation — DCC-IR003-FREEZE-001 acceptance
+
+- Source decision authority: Product owner.
+- Source decision: `DCC-IR003-FREEZE-001 — Accepted` on 2026-08-12. This
+  record accepts no additional DCC, implementation scope, or authorisation.
+- Scope: W3 only; existing `ONB-06` only; primary affected packets IR-003 and
+  IR-005. State A is IR-003/TOP-001's committed, server-confirmed **Group
+  created, Invitation not issued** terminal confirmation. State B is
+  IR-005/TOP-002's separately committed **Group created, Invitation issued**
+  state. No Screen ID, Component ID, visual-system, responsive, navigation,
+  tenant-model, W4+, architecture, security, product-feature, database, or
+  TOP ownership changes.
+- Export decision: the existing ONB-06 clean and annotated PNGs remain
+  byte-identical and are documented as State B evidence. State A is accepted
+  in the screen contract and manifests; no unreviewed image asset is created
+  or claimed to depict it.
+- Status impact: `BLK-IR003-FREEZE-001` and `OE-006` are Resolved; the IR-003
+  pre-authorisation design freeze is Complete. GATE-015 remains Satisfied.
+  GATE-031 remains **Not satisfied**; IR-003 and IR-005 remain **Not
+  authorised**; no physical TOP, migration 010, W3 implementation, deployment,
+  or cutover is authorised.
+- Next activity: prepare the controlled GATE-031 evidence package and redacted
+  Git record.
+- Rollback: this documentation-only accepted amendment changes no physical
+  state. Any future replacement of the staged ONB-06 contract requires a new
+  bounded design change decision.

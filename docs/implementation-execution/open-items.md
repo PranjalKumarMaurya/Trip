@@ -11,9 +11,10 @@
 - W2: Complete; GATE-012 and GATE-013: Satisfied
 - GATE-015: Satisfied; W3 entry prerequisites from W2: passed
 - GATE-031: Not satisfied; IR-003 and physical owner packets: Not authorised
-- BLK-IR003-FREEZE-001: pending Accepted-design decision for the committed
-  bootstrap confirmation state; it blocks IR-003 onboarding completion and
-  controlled GATE-031 package preparation
+- IR-003 pre-authorisation design freeze: Complete
+- DCC-IR003-FREEZE-001: Accepted
+- BLK-IR003-FREEZE-001: Resolved by DCC-IR003-FREEZE-001 — Accepted
+- OE-006: Resolved by DCC-IR003-FREEZE-001 — Accepted
 - Deployment and cutover: Not authorised
 - R-02: Specified; implementation verification required
 - later-Wave prerequisites: unchanged
@@ -40,7 +41,7 @@ package-level blocker, and none is a prerequisite merely to begin IR-001.
 | OE-004-D | Configuration exceptions: Bali title/date/timezone/currency/guide conflicts. | M18 target rules and safe non-global scope are accepted. | Source conflict inventory and approved interpretation. | IR-015, consumed by IR-016 | GATE-020. | None. | None. | Blocks IR-016 authorisation and affected rehearsal/cutover units. | Product/data reviewers. | Required before named IR authorisation |
 | OE-004-E | Rehearsal exception disposition. | Quarantine/forward-fix rule is documented. | Verified resolution or containment for every exception selected for rehearsal. | IR-017 | GATE-022. | None. | None. | Blocks W6 entry/rehearsal of affected units. | Data/security/release reviewers. | Required before Wave entry |
 | OE-005 | Initial Owner Auth identity and bootstrap execution manifest. | Accepted S04/S05 rule requires a verified identity, mandatory configuration, and approvals; no real identity is present in the repository. | Reviewed non-secret execution manifest and approvals. | IR-003 | GATE-031. | None. | None. | Blocks IR-003 authorisation only; does not block W1/W2 planning. | Product/data/security/architecture reviewers. | Required before named IR authorisation |
-| OE-006 | **BLK-IR003-FREEZE-001:** truthful post-bootstrap confirmation without an Invitation. | The locked ONB-06 success contract/manifest assert an issued Invitation link and copy/share interaction; ONB-09 and ONB-10 belong to IR-006 and IR-011. `DCC-IR003-FREEZE-001` records the smallest staged-state proposal. | Accepted or bounded replacement design decision that supplies a deterministic committed TOP-001 → Group-created/no-Invitation outcome; then the approved contract/manifest/export update. | IR-003, consuming IR-005/IR-011 boundaries | IR-003 authorisation, in addition to GATE-031 | None; accepted design remains locked until its own change control decides. | None. | Blocks controlled GATE-031 package preparation and IR-003 onboarding implementation; does not change GATE-015 or block W1/W2. | Product owner, UI/UX design, architecture, security reviewers. | Required before named IR authorisation |
+| OE-006 | **BLK-IR003-FREEZE-001:** truthful post-bootstrap confirmation without an Invitation. | `DCC-IR003-FREEZE-001 — Accepted` supplies the deterministic committed TOP-001 → ONB-06 State A Group-created/no-Invitation outcome and preserves IR-005/TOP-002-issued State B. The contract, manifests, interaction record, traceability, and acceptance amendment are updated; existing PNGs remain unchanged State B evidence. | None for this design-freeze item. GATE-031 controlled identity/request/approval evidence remains separately required. | IR-003, with preserved IR-005/IR-011 boundaries | GATE-031 preparation, then separate IR-003 authorisation | None; accepted design lock is amended only through the DCC. | None. | Does not change GATE-015 or W1/W2; removes the design blocker from controlled GATE-031 package preparation. | Product owner, UI/UX design, architecture, security reviewers. | Resolved — DCC-IR003-FREEZE-001 — Accepted |
 | R-02 | Running-build accessibility verification. | Accepted specification, locked Screen/Component IDs, and R02-01–10 ownership plan. | Measured browser/device/screen-reader and selected automated evidence. | IR-004, IR-010–015; IR-021 rollup | GATE-028. | None; static design remains accepted/locked. | None. | Blocks only the relevant implementation/Wave exit and W5/W7 evidence consumption. | Design/implementation reviewers. | Required before Wave exit |
 
 ## Final disposition
@@ -53,3 +54,7 @@ package-level blocker, and none is a prerequisite merely to begin IR-001.
 - OE-004 separates Participant, finance, document/Storage, configuration, and
   rehearsal exception evidence. Source unknowns are quarantined rather than
   silently repaired.
+- OE-006 is resolved by the Accepted W3-only ONB-06 staged lifecycle amendment.
+  The next IR-003 activity is preparation of the controlled GATE-031 evidence
+  package and redacted Git record; GATE-031 and IR-003 authorisation remain
+  unsatisfied/not authorised.

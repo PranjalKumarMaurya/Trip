@@ -456,23 +456,65 @@ Fields dim and become inert, back is disabled, the button states what is happeni
 |---|---|
 | Flow | B -> E Members |
 | Group | — |
-| State | Success |
+| State | Lifecycle-staged success — State A: Group created, Invitation not issued; State B: Group created, Invitation issued |
 | Viewport | 393x852 |
-| Components | Group header, success pill, invite-link block with copy control, primary + ghost + secondary buttons |
-| Loading / success / failure | Back does not return to the form: the Group already exists. |
+| Components | State A: confirmed Group header, success pill, explicit noninteractive Invitation-not-issued area. State B: existing Group header, success pill, issued Invitation/link block with copy control, and accepted primary + ghost + secondary action region. |
+| Loading / success / failure | Neither state is optimistic. State A follows only a server-confirmed TOP-001 commit; State B follows only a separately server-confirmed TOP-002 Invitation commit. Back does not return to the creation form: the Group already exists. |
 | Validation | See interactionNotes; validation is on blur and on submit, never per keystroke. |
 | Permission | Pre-authentication or first-run; no Group permissions apply yet. |
 | Responsive | 480px capped column; centred on tablet 768 and desktop 1440 with the base background around it. Sheets cap at 480px with a dark blurred backdrop. No layout changes between viewports. |
-| Architecture reference | Group created + invitation link issued |
-| IR owner | IR-003 |
+| Architecture reference | State A: atomic Group bootstrap only. State B: separately issued Invitation only; the two trusted operations are not merged. |
+| IR owner | Screen identity / State A: IR-003. State B Invitation issuance and issued-state transition: IR-005. |
 | Wave | W3 |
 | Related IR items | IR-004, IR-005, IR-007, IR-008 |
 | Exceptions | E-01, E-03, E-04, E-05, E-06 |
 | Clean export | `screens/mobile/clean/ONB-06-group-creation-success.png` |
 | Annotated export | `screens/mobile/annotated/ONB-06-group-creation-success-annotated.png` |
-| Status | Accepted — revised against decisions O-01 to O-06 |
+| Status | Accepted — lifecycle staging amended by `DCC-IR003-FREEZE-001` |
 
-Header has already become the Group. Success stated once, then turned into the next action. Copy swaps to a confirmed state for two seconds and is announced. Skipping is always available.
+### State A — Group created, Invitation not issued
+
+**Owner and entry.** IR-003 / TOP-001 owns this W3 state. It is entered only
+after TOP-001 has committed successfully and returned the server-confirmed
+Group result; no optimistic result may render it.
+
+**Visible truth.** The header uses the newly confirmed Group identity/name and
+the existing success treatment confirms that the Group was created. The
+Invitation area says that no Invitation has been issued yet and is
+noninteractive.
+
+**Controls and prohibitions.** There are no interactive controls in this
+state. It renders no Invitation link, code, secret, verifier, recipient,
+copy/share action, fabricated usable-looking placeholder, or claim that
+another Member can join. It introduces no live Group shell, IR-005 action,
+IR-006 action, IR-010 action, IR-011 action, or other product continuation.
+Back cannot return to the creation form.
+
+**Allowed continuation.** None is introduced by this state: it is a completed
+terminal confirmation until a separately authorised IR-005/TOP-002 operation
+has actually issued an Invitation.
+
+### State B — Group created, Invitation issued
+
+**Owner and entry.** IR-005 / TOP-002 owns this W3 state. It is entered only
+when the Group already exists and TOP-002 has separately committed an
+authorised Invitation. IR-003 cannot enter or render State B solely because
+TOP-001 succeeded.
+
+**Visible truth and controls.** This is the existing accepted Invitation-issued
+ONB-06 behaviour: the Group header, success treatment, real Invitation/link
+block, copy action (with its existing two-second confirmed/announced state),
+and already accepted share action and Invitation-lifecycle handoff remain
+available only here.
+
+**Prohibitions and boundary.** State B does not transfer TOP-002 or any
+Invitation verifier, secret, record, link, copy/share behaviour, or lifecycle
+ownership to IR-003. It does not transfer the IR-011 live Group shell to either
+state.
+
+**Export note.** The existing clean and annotated ONB-06 PNG exports depict
+State B only. They remain byte-identical under the design package's SHA-256
+binary-asset policy; no export claims to depict State A.
 
 ## ONB-07 — Group creation error
 

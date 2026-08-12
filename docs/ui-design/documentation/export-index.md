@@ -22,7 +22,7 @@
 | ONB-03 | Create Group | `ONB-03-create-group-default.png` | `ONB-03-create-group-default-annotated.png` |
 | ONB-04 | Invalid Group name | `ONB-04-invalid-group-name-validation.png` | `ONB-04-invalid-group-name-validation-annotated.png` |
 | ONB-05 | Creating Group | `ONB-05-creating-group-in-progress.png` | `ONB-05-creating-group-in-progress-annotated.png` |
-| ONB-06 | Group creation success | `ONB-06-group-creation-success.png` | `ONB-06-group-creation-success-annotated.png` |
+| ONB-06 | Group creation success — State B, Invitation issued | `ONB-06-group-creation-success.png` | `ONB-06-group-creation-success-annotated.png` |
 | ONB-07 | Group creation error | `ONB-07-group-creation-error.png` | `ONB-07-group-creation-error-annotated.png` |
 | ONB-08 | Join using invitation | `ONB-08-join-using-invitation-validating.png` | `ONB-08-join-using-invitation-validating-annotated.png` |
 | ONB-09 | First Group setup, participants | `ONB-09-first-group-setup-participants.png` | `ONB-09-first-group-setup-participants-annotated.png` |

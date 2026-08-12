@@ -699,24 +699,24 @@
       "batch": "1",
       "board": "09",
       "flow": "B -> E Members",
-      "state": "Success",
+      "state": "Lifecycle-staged success",
       "viewport": "393x852",
       "cleanExport": "screens/mobile/clean/ONB-06-group-creation-success.png",
       "annotatedExport": "screens/mobile/annotated/ONB-06-group-creation-success-annotated.png",
       "reusedComponents": [
         "Group header",
         "success pill",
-        "invite-link block with copy control",
-        "primary + ghost + secondary buttons"
+        "invite-link block: State A not-issued/inert; State B issued with copy control",
+        "State B primary + ghost + secondary buttons"
       ],
       "newComponents": [],
-      "architectureReference": "Group created + invitation link issued",
+      "architectureReference": "DCC-IR003-FREEZE-001: State A is atomic Group bootstrap only; State B is separately issued Invitation only. The trusted operations are not merged.",
       "irOwner": "IR-003",
       "wave": "W3",
-      "interactionNotes": "Header has already become the Group. Success stated once, then turned into the next action. Copy swaps to a confirmed state for two seconds and is announced. Skipping is always available.",
+      "interactionNotes": "State A follows only server-confirmed TOP-001: confirmed Group header and success treatment, explicit noninteractive Invitation-not-issued area, and no onward control. State B follows only separately server-confirmed IR-005/TOP-002: real Invitation/link, copy confirmed for two seconds and announced, accepted share action, and Invitation-lifecycle handoff. IR-003 cannot render State B.",
       "validationBehaviour": "See interactionNotes; validation is on blur and on submit, never per keystroke.",
       "permissionBehaviour": "Pre-authentication or first-run; no Group permissions apply yet.",
-      "loadingErrorSuccessBehaviour": "Back does not return to the form: the Group already exists.",
+      "loadingErrorSuccessBehaviour": "Neither lifecycle state is optimistic. State A renders only after committed TOP-001; State B renders only after separately committed TOP-002. Back does not return to the form: the Group already exists.",
       "responsiveBehaviour": "480px capped column; centred on tablet 768 and desktop 1440 with the base background around it. Sheets cap at 480px with a dark blurred backdrop. No layout changes between viewports.",
       "exceptionIds": [
         "E-01",
@@ -725,12 +725,60 @@
         "E-05",
         "E-06"
       ],
-      "status": "Accepted — revised against decisions O-01 to O-06",
+      "status": "Accepted — lifecycle staging amended by DCC-IR003-FREEZE-001",
       "relatedIrItems": [
         "IR-004",
         "IR-005",
         "IR-007",
         "IR-008"
+      ],
+      "lifecycleStates": [
+        {
+          "name": "State A — Group created, Invitation not issued",
+          "ownerIr": "IR-003",
+          "owningTop": "TOP-001",
+          "wave": "W3",
+          "entryCondition": "TOP-001 committed successfully and returned a server-confirmed Group result.",
+          "visibleComponents": [
+            "confirmed Group header using the returned identity/name",
+            "existing Group-created success treatment",
+            "explicit noninteractive Invitation-not-issued area"
+          ],
+          "interactiveControls": [],
+          "forbiddenClaimsAndActions": [
+            "Invitation issuance",
+            "Invitation record, verifier, secret, link, code, recipient, copy control, share action, or usable-looking placeholder",
+            "claim that another Member can join",
+            "IR-005, IR-006, IR-010, IR-011, or later-operation continuation",
+            "live Group shell"
+          ],
+          "allowedContinuation": "None introduced by State A; it is a completed terminal confirmation until a separately authorised TOP-002 has actually issued an Invitation.",
+          "exportDepiction": "No existing PNG depicts State A."
+        },
+        {
+          "name": "State B — Group created, Invitation issued",
+          "ownerIr": "IR-005",
+          "owningTop": "TOP-002",
+          "wave": "W3",
+          "entryCondition": "The Group already exists and TOP-002 has separately committed an authorised Invitation.",
+          "visibleComponents": [
+            "existing Group header and success treatment",
+            "real issued Invitation/link block",
+            "copy control and already accepted share/action region"
+          ],
+          "interactiveControls": [
+            "copy real Invitation link",
+            "already accepted share action",
+            "already accepted Invitation-lifecycle handoff"
+          ],
+          "forbiddenClaimsAndActions": [
+            "IR-003 rendering State B merely because Group creation succeeded",
+            "transfer of Invitation record, verifier, secret, link, copy/share, or lifecycle ownership to IR-003",
+            "transfer of IR-011 live Group shell behaviour"
+          ],
+          "allowedContinuation": "Existing accepted Invitation lifecycle only, backed by the real separately committed Invitation.",
+          "exportDepiction": "Existing clean and annotated ONB-06 PNGs depict State B."
+        }
       ]
     },
     {

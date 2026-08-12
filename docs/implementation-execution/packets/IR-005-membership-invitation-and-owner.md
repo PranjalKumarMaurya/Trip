@@ -13,7 +13,9 @@ Implement planned active/inactive Membership, Owner/Member-only roles, single-us
 
 ## 3. Authoritative inputs
 
-ADR-0007; auth/groups/invitations architecture; security model; roadmap IR-005; GRP/INV/MBR/PERM design contracts.
+ADR-0007; auth/groups/invitations architecture; security model; roadmap IR-005;
+GRP/INV/MBR/PERM design contracts; and the Accepted
+`DCC-IR003-FREEZE-001` ONB-06 State B contract.
 
 The accepted documents govern; this Draft packet does not restate or amend their decisions.
 
@@ -35,6 +37,12 @@ Verified exit evidence for IR-003, IR-004, IR-007, IR-008., clean repository, ac
 Draft lifecycle state transitions and trusted-operation contracts for invitation creation/inspection/revocation/acceptance, role change, ownership transfer, removal, leave, archive, and restore.
 
 Invitation planning retains opaque secrets only: the recipient-facing proof is never logged or exposed after its approved lifecycle. Invitation possession alone remains insufficient for membership.
+
+IR-005 / TOP-002 alone owns the ONB-06 State B transition: **Group created,
+Invitation issued**. It may render the real Invitation/link, copy/share,
+confirmation, and Invitation-lifecycle handoff only after its separately
+committed authorised Invitation. State A remains IR-003 / TOP-001-only and
+contains no IR-005 Invitation behaviour.
 
 ## 7. Explicitly out of scope
 
@@ -92,11 +100,16 @@ Lifecycle changes require later IR-010 authorization/reset behavior; no global l
 
 ## 15. Frontend implementation
 
-Map GRP, INV, MBR, and permission/read-only screen states. Invitation possession never grants membership; success appears only after server confirmation.
+Map GRP, INV, MBR, and permission/read-only screen states. Invitation
+possession never grants membership; success appears only after server
+confirmation. ONB-06 State B remains unavailable until TOP-002 has committed;
+this packet does not transfer IR-011 shell behaviour to either ONB-06 state.
 
 ## 16. Design traceability
 
-Affected Screen IDs are all IR-005-assigned GRP/INV/MBR and related PERM/MIG screens; exact list remains in the accepted manifest.
+Affected Screen IDs are all IR-005-assigned GRP/INV/MBR and related PERM/MIG
+screens, plus the IR-005-owned lifecycle behaviour within existing ONB-06
+State B; the exact primary Screen-ID list remains in the accepted manifest.
 
 No annotated export creates behavior beyond its accepted contract. Existing Screen IDs, Component IDs, tokens, navigation, and locked states remain stable unless their separate change-control process approves a change.
 

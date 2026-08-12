@@ -91,7 +91,12 @@ any operation.
 The complete DBM, persistence, privilege, performance, lane, evidence, and
 ONB reachability contract is frozen in
 [`IR-003-atomic-group-bootstrap.md`](packets/IR-003-atomic-group-bootstrap.md).
-TOP-002–TOP-012 ownership and physical evidence obligations are unchanged.
+`DCC-IR003-FREEZE-001` is Accepted: TOP-001 can reach only ONB-06 State A
+(Group created, Invitation not issued) after its server-confirmed commit;
+TOP-002/IR-005 alone can reach State B (Group created, Invitation issued) after
+its separately committed real Invitation. TOP-002–TOP-012 ownership and
+physical evidence obligations are unchanged. This design-freeze completion does
+not satisfy GATE-031 or authorise any physical TOP.
 
 ## GATE-013 readiness and physical-evidence boundary
 

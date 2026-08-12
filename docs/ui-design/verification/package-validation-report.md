@@ -48,6 +48,22 @@ W1 foundation and W7 separately authorised release have no primary UI screen by 
 
 The transport ZIP and temporary extraction files are not hashed or imported.
 
+## Post-lock lifecycle amendment validation
+
+Validated 2026-08-12 for `DCC-IR003-FREEZE-001 — Accepted`. The amendment
+retains 462 unique Screen IDs, all existing Component IDs and family counts,
+the responsive contract, and the 1,010-entry export checksum manifest. The
+existing clean and annotated ONB-06 PNGs are unchanged and depict the
+IR-005/TOP-002 Invitation-issued State B. The accepted IR-003/TOP-001
+Group-created/Invitation-not-issued State A is recorded only in the
+authoritative contract and manifests; no binary asset claims to depict it.
+
+The staging is W3-only: State A is IR-003/TOP-001, State B is IR-005/TOP-002;
+IR-003 cannot issue or claim an Invitation and no W4+ ownership is introduced.
+This static design amendment does not satisfy GATE-031 or authorise IR-003,
+IR-005, migration 010, a physical TOP, W3 implementation, deployment, or
+cutover.
+
 ## Architecture consistency
 
 No active imported design claim treats Viewer as a role, separates Group and Trip tenants, adds a sixth active AI tab, treats public documents as target behaviour, gives documents a separate audience, makes scan-created Events confidential, grants membership from Invitation possession, grants authority from names or emoji, permits permanent Group deletion, allows custom unequal-split authoring, lets live FX rewrite history, gives Owners accounting-currency conversion authority, creates a global notification centre, guesses migration values, or treats partial security activation as releasable.

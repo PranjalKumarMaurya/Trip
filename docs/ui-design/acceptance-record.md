@@ -72,6 +72,22 @@ affected IDs and tokens, architecture and traceability review, product-owner
 approval, and an acceptance-record amendment where needed. There is no silent
 visual or interaction drift.
 
+### Accepted post-lock amendment — DCC-IR003-FREEZE-001
+
+On 2026-08-12 the product owner accepted the bounded W3-only lifecycle staging
+of the existing `ONB-06` Screen identity. State A is the IR-003/TOP-001
+server-confirmed **Group created, Invitation not issued** terminal
+confirmation; State B is the IR-005/TOP-002 separately committed **Group
+created, Invitation issued** state. No Screen or Component ID, token,
+responsive contract, visual tone, architecture, security, product feature,
+navigation/tenant model, W4+ ownership, or binary design asset changes.
+
+The existing clean and annotated ONB-06 PNGs remain byte-identical and depict
+State B only. State A is recorded in the accepted screen contract and
+manifests; it must not be represented as an export that was not created. This
+amendment does not authorise either IR, a TOP, migration 010, GATE-031,
+deployment, or cutover.
+
 ## 6. Explicit exclusions
 
 This acceptance does not implement code, create migrations, authorise

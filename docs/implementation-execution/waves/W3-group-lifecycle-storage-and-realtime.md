@@ -70,7 +70,7 @@ Legacy persona state, public tickets bucket, public global channels, and name-ba
 
 Stop for ownerless/unconfigured Group, invitation replay, claim ambiguity, public object access, or stale realtime delivery.
 
-## IR-003 pre-authorisation coordination freeze
+## IR-003 pre-authorisation coordination freeze — complete
 
 IR-003 now has a documentation-only DBM-014/TOP-001 freeze. Its absent future
 migration is exactly `010_ir003_atomic_group_bootstrap.sql`; it may own only
@@ -88,14 +88,17 @@ fresh detached verifier independently accepts/rejects the candidate. Exact
 paths, prerequisites, artifacts, and prohibited paths are in the IR-003
 packet. No W3 packet is authorised by this coordination record.
 
-`F-IR003-FREEZE-001` records that the accepted composite ONB-06 visual state
-cannot supply IR-003's required committed-success destination: it asserts an
-issued Invitation link, while IR-003 cannot issue one. `ONB-09` and `ONB-10`
-are owned by IR-006 and IR-011, respectively. `BLK-IR003-FREEZE-001` / `OE-006`
-therefore blocks IR-003 onboarding completion and controlled GATE-031 package
-preparation pending the Proposed `DCC-IR003-FREEZE-001` staged ONB-06 decision.
-No linkless replacement may be implemented before the accepted-design process
-decides it; IR-005 retains every issued-Invitation link/copy/share behaviour.
+`F-IR003-FREEZE-001` records the former composite ONB-06 reachability defect.
+The product owner accepted `DCC-IR003-FREEZE-001`: the existing Screen identity
+now has State A, **Group created, Invitation not issued**, owned by
+IR-003/TOP-001 after a server-confirmed Group commit, and State B, **Group
+created, Invitation issued**, owned by IR-005/TOP-002 after a separately
+committed Invitation. State A has a noninteractive not-issued Invitation area
+and no Invitation data/copy/share/join claim or onward
+IR-005/IR-006/IR-010/IR-011 action; State B retains the real Invitation/link/
+copy/share behaviour. The existing ONB-06 PNG pair remains unchanged State B
+evidence. `BLK-IR003-FREEZE-001` and
+`OE-006` are resolved by `DCC-IR003-FREEZE-001 — Accepted`.
 
 ## Implementation-authorisation status
 
@@ -105,8 +108,9 @@ GATE-013 is Satisfied; W2 is Complete; and no unresolved W2 implementation
 defect is recorded. GATE-014 remains a named IR-006 authorisation prerequisite
 only and does not block this W3-entry decision.
 
-IR-003 remains **Not authorised**. GATE-031 remains **Not satisfied**. Resolve
-the bounded ONB-06 design decision before preparing its controlled GATE-031
-package; then a separate IR-003 authorisation remains required. No W3 packet
-or physical trusted operation is authorised, and deployment and cutover remain
-unauthorised.
+The IR-003 pre-authorisation design freeze is **Complete**. IR-003 remains
+**Not authorised** and GATE-031 remains **Not satisfied**. The next activity
+is to **prepare the controlled GATE-031 evidence package and redacted Git
+record**; a separate IR-003 authorisation remains required afterward. No W3
+packet or physical trusted operation is authorised, and deployment and cutover
+remain unauthorised.

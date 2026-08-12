@@ -11,6 +11,20 @@ Six ordered steps: unsubscribe the old Group's live updates, clear the old Group
 ## Invitation acceptance
 Group invitation links expire after 7 days and are single-use. Possession grants nothing until acceptance. Tokens are opaque and are never redisplayed after issue, including when an invitation is revoked or accepted (INV-04, INV-09, RT-40, MIG-82, MIG-83).
 
+## ONB-06 bootstrap and Invitation lifecycle staging
+`DCC-IR003-FREEZE-001` accepts two lifecycle states under the one existing
+`ONB-06` identity. State A, **Group created, Invitation not issued**, follows
+only a committed, server-confirmed IR-003/TOP-001 result. It shows the
+confirmed Group and a noninteractive not-issued Invitation area; it has no
+Invitation link, code, secret, recipient, copy/share control, usable-looking
+placeholder, join claim, live Group shell, or onward IR-005/IR-006/IR-010/IR-011
+action.
+State B, **Group created, Invitation issued**, follows only a separately
+committed IR-005/TOP-002 Invitation and retains the real Invitation/link,
+copy/share, confirmation, and Invitation-lifecycle behaviour. The existing
+ONB-06 PNG pair depicts State B, not State A. This staging does not authorise
+either operation or satisfy GATE-031.
+
 ## Ownership changes
 Promotion and demotion take effect in the UI only after a confirmed membership refresh. Owner-only controls are removed rather than disabled. Last-Owner protection refreshes from confirmed membership so nobody is blocked by a rule that no longer applies (MBR-*, GRP-12, RT-37, RT-38, RT-39).
 

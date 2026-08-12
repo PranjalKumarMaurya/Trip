@@ -2,8 +2,8 @@
 
 ## 1. Status and freeze boundary
 
-- Status: Draft — physical pre-authorisation freeze corrected; overall
-  onboarding freeze blocked by `BLK-IR003-FREEZE-001`
+- Status: Draft — pre-authorisation design freeze complete; physical
+  implementation remains not authorised
 - Wave: W3
 - Physical owner: IR-003 / W3 for DBM-014 and TOP-001 only
 - Implementation authorised: **No**
@@ -451,46 +451,39 @@ the final immutable manifest references its SHA-256.
 
 ## 9. ONB-06 invitation reachability boundary
 
-Finding `F-IR003-FREEZE-001` corrects the earlier reachability conclusion.
-The accepted `ONB-06` contract and manifest define one Success state only:
-“Group created + invitation link issued,” an invite-link copy control, and
-primary/ghost/secondary actions. The accepted `ONB-05` permits no destination
-revelation before a Group exists; `ONB-09` is IR-006 and `ONB-10` is IR-011.
-Neither is an IR-003 continuation. The accepted design exceptions contain no
-staged non-Invitation ONB-06 state. Therefore no existing accepted contract
-permits a truthful rendered result after TOP-001 without an Invitation.
+`F-IR003-FREEZE-001` recorded the former reachability defect: the prior
+composite ONB-06 success state asserted an issued Invitation link even though
+IR-003/TOP-001 creates no Invitation. `ONB-09` is IR-006 and `ONB-10` is
+IR-011, so neither supplies an IR-003 continuation.
 
-This is a formal W3 design-contract blocker, not an implementation-ownership
-clarification: **BLK-IR003-FREEZE-001**, tracked as
-`OE-006` and proposed design change `DCC-IR003-FREEZE-001`. Until the design
-proposal is Accepted, IR-003 must not implement a post-commit success visual,
-must not leave a user in ONB-05/loading after a committed result, and cannot
-be authorised as a complete onboarding implementation. The required future
-deterministic transition is instead frozen as:
+The product owner accepted `DCC-IR003-FREEZE-001` on 2026-08-12. The formal W3
+design-contract blocker **BLK-IR003-FREEZE-001** and open item `OE-006` are
+therefore resolved. The accepted lifecycle staging is:
 
 ```text
-TOP-001 committed -> approved non-Invitation ONB-06 state
-TOP-002 committed (IR-005) -> accepted issued-Invitation ONB-06 state
+TOP-001 committed (IR-003) -> ONB-06 State A: Group created, Invitation not issued
+TOP-002 committed (IR-005) -> ONB-06 State B: Group created, Invitation issued
 ```
 
-The pending proposal preserves the existing ONB-06 layout and visual tone but
-splits its Success state. Its smallest exact amendment is a new state of the
-existing Screen ID, **“Group created, invitation not issued”**: retain the
-Group header and success pill; give the existing invite-link block a
-noninteractive not-issued state; render no link, secret, copy/share control,
-Invitation action, or Invitation-derived navigation; and render no onward
-IR-006/IR-011 product action. It is a completed terminal confirmation, not a
-loading state. The existing accepted ONB-06 state becomes the later **“Group
-created, invitation issued”** state and remains reachable only after IR-005
-TOP-002 server-confirms the Invitation/link. This proposal is not Accepted and
-does not alter the screen contract, manifest, visual export, component
-catalogue, or IR ownership today.
+State A retains the confirmed Group header and success treatment and gives the
+Invitation area an explicit noninteractive not-issued state. It renders no
+Invitation record, verifier, secret, link, code, recipient, copy/share
+control, usable-looking placeholder, join claim, invitation-derived navigation,
+IR-005 action, IR-006 action, IR-010 action, IR-011 action, or live Group
+shell. It is a non-optimistic terminal confirmation. State B retains the
+existing real Invitation/link, copy/share, confirmation, and
+Invitation-lifecycle behaviour only after IR-005/TOP-002 has separately
+server-confirmed an Invitation. IR-003 cannot render State B merely because
+Group creation succeeded.
 
 IR-003 never creates an Invitation record, verifier, secret, link, copy/share
 behaviour, lifecycle action, or Invitation-derived navigation. IR-005 alone
-owns all of those and the issued-Invitation state. The design authority must
-accept, reject, or replace `DCC-IR003-FREEZE-001` before the controlled
-GATE-031 package is prepared; no agent may improvise a linkless ONB-06 variant.
+owns all of those and the issued-Invitation state. Existing clean and annotated
+ONB-06 PNGs remain byte-identical State B evidence; State A is accepted in the
+contract and manifest only. The pre-authorisation design freeze is complete.
+GATE-031 remains Not satisfied and IR-003 remains Not authorised; the next
+activity is to prepare the controlled GATE-031 evidence package and redacted
+Git record. No agent may improvise a different ONB-06 variant.
 
 ## 10. Future four-lane implementation allow-list
 
@@ -573,8 +566,8 @@ another lane's paths.
   documentation.
 - Prerequisites: authorised TOP-001 contract, generated types from integration
   before typed adapter completion, and an Accepted
-  `DCC-IR003-FREEZE-001` state contract before any committed-success route is
-  implemented.
+  `DCC-IR003-FREEZE-001` state contract, GATE-031 Satisfied, and separate
+  IR-003 authorisation before any committed-success route is implemented.
 - Output/handoff: anonymous-key client adapter with exactly the three RPC
   arguments; ONB-01–05/07 and only the then-Accepted non-Invitation ONB-06
   running-build behaviour and browser/static tests; safe retry/unknown-
@@ -645,8 +638,9 @@ Stop before implementation for a missing GATE-031 controlled package, an
 architecture/security contradiction, a non-ISO or missing accounting display
 set, inability to confine elevated capability, any client-supplied authority,
 a duplicate/partial outcome, a cross-Group success, a secret leak, a plan or
-latency regression, an unresolved `BLK-IR003-FREEZE-001`, an attempt to render
-a post-commit success visual before `DCC-IR003-FREEZE-001` is Accepted, or an
-attempt to render/alter the issued-Invitation ONB-06 state before IR-005. A
-post-commit visual success needed before IR-005 requires accepted-design change
-control; it cannot be improvised.
+latency regression, a contradiction of the Accepted
+`DCC-IR003-FREEZE-001` state contract, an attempt to render a post-commit
+success visual before GATE-031 is Satisfied and IR-003 is separately
+authorised, or an attempt to render/alter the issued-Invitation ONB-06 state before IR-005. A
+post-commit visual success before IR-005 must follow the Accepted staged
+ONB-06 contract and cannot be improvised.

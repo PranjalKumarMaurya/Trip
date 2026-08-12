@@ -70,10 +70,11 @@ or cutover. Corrected GATE-013 is Satisfied and W2 is Complete; physical
 implementation, rollback, idempotency, race, audit, secret-safe, and
 performance evidence remains with each separately authorised TOP owner.
 The separate GATE-015 W3-entry review is Satisfied: W3 entry prerequisites
-from W2 have passed. `BLK-IR003-FREEZE-001` / `OE-006` now requires an
-Accepted-design decision for the truthful committed Group-created outcome
-before the controlled GATE-031 package is prepared. IR-003 remains
-unauthorised, GATE-031 remains Not satisfied, and a separate authorisation
-would still be required after both prerequisites. No physical trusted operation
-is authorised. Storage (IR-009), Realtime (IR-010), product conversion,
-deployment, and cutover remain unauthorised.
+from W2 have passed. `DCC-IR003-FREEZE-001` is Accepted; it resolves
+`BLK-IR003-FREEZE-001` and `OE-006` and completes the IR-003 pre-authorisation
+design freeze. The next activity is to prepare the controlled GATE-031 evidence
+package and redacted Git record. IR-003 and IR-005 remain unauthorised,
+GATE-031 remains Not satisfied, and a separate IR-003 authorisation would
+still be required afterward. No physical trusted operation is authorised.
+Storage (IR-009), Realtime (IR-010), product conversion, deployment, and
+cutover remain unauthorised.

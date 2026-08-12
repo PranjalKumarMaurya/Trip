@@ -1,7 +1,38 @@
 {
  "package": "Trip multi-user pre-implementation UI/UX package",
  "batch": "Cumulative — batches 1 to 8 of 8",
- "note": "Required states from section 6 of the brief, mapped to the screens or component variants that represent them visually. No state is represented by prose alone. Tablet and desktop are represented in board 04 and 20 reference frames and in every screen's responsiveBehaviour; per-viewport image exports are not produced (user rule 4).",
+ "note": "Required states from section 6 of the brief, mapped to the screens or component variants that represent them visually. No state is represented by prose alone except the expressly accepted DCC-IR003-FREEZE-001 ONB-06 State A lifecycle clarification: its authoritative screen-contract and manifest state is textual because the retained PNG pair truthfully depicts State B, Invitation issued. Tablet and desktop are represented in board 04 and 20 reference frames and in every screen's responsiveBehaviour; per-viewport image exports are not produced (user rule 4).",
+ "acceptedLifecycleStateContracts": [
+  {
+   "screenId": "ONB-06",
+   "decision": "DCC-IR003-FREEZE-001 — Accepted",
+   "binaryExportRule": "Existing clean and annotated ONB-06 PNGs are unchanged SHA-256-inventoried State B (Invitation issued) evidence; no binary export depicts State A.",
+   "states": [
+    {
+     "name": "State A — Group created, Invitation not issued",
+     "owner": "IR-003 / TOP-001 / W3",
+     "entry": "Committed, server-confirmed TOP-001 Group result only.",
+     "visibleTruth": "Confirmed Group header/name, Group-created success treatment, and noninteractive Invitation-not-issued area.",
+     "interactiveControls": [],
+     "forbidden": "Invitation issuance or any Invitation record/verifier/secret/link/code/recipient/copy/share/usable placeholder; join claim; IR-006, IR-010, IR-011, or later continuation; live Group shell.",
+     "continuation": "None introduced; terminal confirmation until separately committed TOP-002."
+    },
+    {
+     "name": "State B — Group created, Invitation issued",
+     "owner": "IR-005 / TOP-002 / W3",
+     "entry": "Existing Group plus separately committed authorised TOP-002 Invitation only.",
+     "visibleTruth": "Existing issued Invitation/link, copy/share, confirmation, and Invitation-lifecycle behaviour.",
+     "interactiveControls": [
+      "copy real Invitation link",
+      "already accepted share action",
+      "Invitation-lifecycle handoff"
+     ],
+     "forbidden": "IR-003 rendering this state merely because TOP-001 succeeded; transfer of IR-005 Invitation operations or IR-011 live shell behaviour.",
+     "continuation": "Existing accepted Invitation lifecycle backed by the real Invitation."
+    }
+   ]
+  }
+ ],
  "requiredStates": [
   {
    "state": "Default",
@@ -594,7 +625,6 @@
    "state": "Success",
    "screens": [
     "AUTH-04",
-    "ONB-06",
     "GRP-10",
     "GRP-15",
     "INV-08",
@@ -602,6 +632,13 @@
     "MBR-12",
     "CLM-06"
    ]
+  },
+  {
+   "state": "Lifecycle-staged success",
+   "screens": [
+    "ONB-06"
+   ],
+   "note": "DCC-IR003-FREEZE-001 — Accepted: State A is IR-003/TOP-001 Group-created/Invitation-not-issued; State B is IR-005/TOP-002 Group-created/Invitation-issued."
   },
   {
    "state": "Success + server error",

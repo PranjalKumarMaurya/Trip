@@ -25,6 +25,24 @@
 
 R-01 is closed: validation confirms every Screen ID has one valid primary `irOwner`, a roadmap-consistent `wave`, and no invented active IR/Wave identifier. Static design acceptance and lock do not authorise application implementation.
 
+## Accepted ONB-06 lifecycle staging amendment
+
+`DCC-IR003-FREEZE-001` is Accepted as a W3-only clarification of the existing
+`ONB-06` Screen identity. It preserves the screen's primary manifest owner
+(`IR-003`) and its existing related `IR-005` reference while making the
+operation-owned lifecycle states explicit:
+
+| ONB-06 state | Owning operation | Owning IR / Wave | Traceability boundary |
+|---|---|---|---|
+| State A — Group created, Invitation not issued | TOP-001 | IR-003 / W3 | Server-confirmed Group bootstrap only; no Invitation object, secret, link, copy/share, join claim, IR-005/IR-006/IR-010 continuation, or IR-011 shell. |
+| State B — Group created, Invitation issued | TOP-002 | IR-005 / W3 | Separately committed Invitation only; retains the existing Invitation/link, copy/share, confirmation, and Invitation-lifecycle behaviour. |
+
+No Screen or Component ID, responsive behaviour, visual tone, navigation or
+tenant model, W4 ownership, or later-Wave mapping changes. The current ONB-06
+PNG exports remain State B evidence; State A is accepted in the authoritative
+textual and manifest state contract. This decision does not authorise IR-003
+or IR-005, satisfy GATE-031, or begin W3 implementation.
+
 ## Family mapping
 
 | Screen family | Screen count | Primary IR item(s) | Wave(s) | Related IR items | Security review | Status |
