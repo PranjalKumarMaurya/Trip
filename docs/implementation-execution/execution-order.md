@@ -9,11 +9,15 @@ verified common readiness inputs; physical owner-packet execution evidence is
 not its input. The separate GATE-015 W3-entry review is Satisfied: W3 entry
 prerequisites from W2 have passed. `DCC-IR003-FREEZE-001` is Accepted and
 resolves `BLK-IR003-FREEZE-001` / `OE-006`; the IR-003 pre-authorisation design
-freeze is Complete. Prepare the controlled GATE-031 evidence package and
-redacted Git record next. IR-003 remains unauthorised, and GATE-031 remains
-Not satisfied. No physical trusted operation is authorised. W3 through W7
-execution, deployment, and cutover remain unauthorised. The accepted roadmap
-order remains authoritative.
+freeze is Complete. Controlled GATE-031 evidence preparation is recorded in
+[`gate-031-evidence-preparation.md`](gate-031-evidence-preparation.md) and is
+incomplete: the selected eventual migrated-Bali initial Owner, its verification
+and exactly-one Profile linkage, reviewed configuration, and four approvals
+are absent. GATE-031 remains Not satisfied and IR-003 remains unauthorised.
+The next activity is to obtain that exact controlled evidence, then perform a
+separate GATE-031 evidence review and satisfaction decision. No physical
+trusted operation is authorised. W3 through W7 execution, deployment, and
+cutover remain unauthorised. The accepted roadmap order remains authoritative.
 
 ## W1 — Evidence and tenant foundation
 

@@ -72,9 +72,13 @@ performance evidence remains with each separately authorised TOP owner.
 The separate GATE-015 W3-entry review is Satisfied: W3 entry prerequisites
 from W2 have passed. `DCC-IR003-FREEZE-001` is Accepted; it resolves
 `BLK-IR003-FREEZE-001` and `OE-006` and completes the IR-003 pre-authorisation
-design freeze. The next activity is to prepare the controlled GATE-031 evidence
-package and redacted Git record. IR-003 and IR-005 remain unauthorised,
-GATE-031 remains Not satisfied, and a separate IR-003 authorisation would
-still be required afterward. No physical trusted operation is authorised.
-Storage (IR-009), Realtime (IR-010), product conversion, deployment, and
-cutover remain unauthorised.
+design freeze. Controlled GATE-031 preparation is recorded in
+[`gate-031-evidence-preparation.md`](gate-031-evidence-preparation.md) and is
+incomplete: the selected eventual migrated-Bali initial Owner, its verification
+and exactly-one Profile linkage, reviewed configuration, and four approvals
+are missing. The next activity is to obtain that exact controlled evidence,
+then perform a separate GATE-031 evidence review and satisfaction decision.
+IR-003 and IR-005 remain unauthorised, GATE-031 remains Not satisfied, and a
+separate IR-003 authorisation would still be required afterward. No physical
+trusted operation is authorised. Storage (IR-009), Realtime (IR-010), product
+conversion, deployment, and cutover remain unauthorised.

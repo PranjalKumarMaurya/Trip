@@ -109,8 +109,13 @@ defect is recorded. GATE-014 remains a named IR-006 authorisation prerequisite
 only and does not block this W3-entry decision.
 
 The IR-003 pre-authorisation design freeze is **Complete**. IR-003 remains
-**Not authorised** and GATE-031 remains **Not satisfied**. The next activity
-is to **prepare the controlled GATE-031 evidence package and redacted Git
-record**; a separate IR-003 authorisation remains required afterward. No W3
+**Not authorised** and GATE-031 remains **Not satisfied**. Controlled evidence
+preparation is recorded in
+[`gate-031-evidence-preparation.md`](../gate-031-evidence-preparation.md) and
+is incomplete: the selected eventual migrated-Bali initial Owner, verified
+identity and exactly-one Profile linkage, reviewed configuration, and four
+approvals remain absent. The next activity is to obtain that exact controlled
+evidence, then perform a separate GATE-031 evidence review and satisfaction
+decision; a separate IR-003 authorisation remains required afterward. No W3
 packet or physical trusted operation is authorised, and deployment and cutover
 remain unauthorised.
