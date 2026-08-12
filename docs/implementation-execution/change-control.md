@@ -280,3 +280,51 @@ Wave order, IR scope, repository change paths, database migration plan, RLS plan
   product conversion, deployment, and cutover remain Not authorised.
 - Implementation impact: documentation-only governance. No physical TOP,
   migration, function, source, database, deployment, or cutover work occurred.
+
+## CC-IR003-20260812-preauthorisation-freeze — Atomic bootstrap design freeze
+
+- Decision authority: documentation-only pre-authorisation freeze. This is not
+  an IR-003 implementation authorisation, GATE-031 approval, or reviewer exit
+  decision.
+- Reason: the verified W2/GATE-015 baseline left one valid next physical
+  packet, IR-003, blocked solely by GATE-031. Its physical DBM/RPC,
+  display-context, idempotency, privileged-execution, performance, evidence,
+  lane, integration, verification, and controlled-evidence contracts needed a
+  bounded future design before controlled identity/request evidence is prepared.
+- Scope: IR-003 / W3; DBM-014; TOP-001; proposed migration
+  `010_ir003_atomic_group_bootstrap.sql`; future IR-003-only test/evidence and
+  onboarding paths. Affected documents are the IR-003 packet, DBM/TOP
+  registers, repository change map, test/evidence plan, W3 record, and this
+  record. No accepted architecture or screen export is edited.
+- Decision: reserve DBM-014 for one absent migration 010 only; freeze the
+  minimum child display-currency set under the existing configuration authority;
+  freeze the exact three-argument `bootstrap_group(jsonb, jsonb, uuid)` RPC;
+  use a dedicated `NOLOGIN NOINHERIT BYPASSRLS` SECURITY DEFINER owner with
+  fixed `pg_catalog` search path and authenticated-only execute; and keep
+  idempotency TOP-001-specific. The future four lane write sets are disjoint,
+  generated types are integration-only after the authorised schema, and a
+  detached verifier is mandatory.
+- Design impact: none. ONB-06 remains an accepted composite screen. Its issued
+  Invitation link/copy/share behaviour stays unreachable and unimplemented
+  until IR-005/TOP-002. A linkless rendered successor would require separate
+  accepted-design change control; no replacement screen is created here.
+- Security/migration/rollback impact: forced RLS remains the base; browser
+  service-role and generic privileged proxy remain forbidden. The later owner
+  must prove atomic failure rollback, idempotent retry/race convergence,
+  privilege confinement, plans/performance, immutable secret-safe evidence,
+  and exact cleanup. No existing migration, RLS policy, function, role,
+  generated type, artifact, or remote state changes.
+- Gate/status impact: IR-001, IR-002, IR-004, IR-007, and IR-008 remain
+  Verified; GATE-013 remains Satisfied; W2 remains Complete; GATE-015 remains
+  Satisfied for W3 entry. GATE-031 remains **Not satisfied**; IR-003 and W3
+  implementation remain **Not authorised**; no physical TOP, deployment, or
+  cutover is authorised.
+- Controlled evidence rule: the future non-Git GATE-031 package holds real
+  Owner/Auth/Profile linkage evidence, reviewed configuration/request, four
+  approvals, checksums/hash, classification, and retention reference. Git can
+  retain only an opaque reference, manifest hash, approval result, and
+  non-sensitive status; it never receives IDs, email, credentials, tokens,
+  secrets, production configuration, or plaintext controlled manifest.
+- Rollback: reverting this documentation-only freeze removes no database or
+  product state. Any later implementation issue remains subject to the frozen
+  empty-target/forward-correction boundary and separate change control.

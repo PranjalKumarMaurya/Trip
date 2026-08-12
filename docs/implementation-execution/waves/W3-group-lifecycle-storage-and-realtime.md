@@ -70,6 +70,30 @@ Legacy persona state, public tickets bucket, public global channels, and name-ba
 
 Stop for ownerless/unconfigured Group, invitation replay, claim ambiguity, public object access, or stale realtime delivery.
 
+## IR-003 pre-authorisation coordination freeze
+
+IR-003 now has a documentation-only DBM-014/TOP-001 freeze. Its absent future
+migration is exactly `010_ir003_atomic_group_bootstrap.sql`; it may own only
+atomic new-Group bootstrap, the minimum display-currency child set,
+TOP-001-specific idempotency, and its narrowly dedicated executor/grants.
+TOP-002–TOP-007 remain IR-005, including every Invitation record, secret,
+link, copy/share action, and lifecycle result.
+
+If IR-003 is later separately authorised, work divides into four non-overlap
+lanes: A migration/TOP only; B database adversarial contract tests only; C
+isolated failure/rollback/performance/evidence only; D authenticated onboarding
+adapter/browser/static tests only. A future integration worktree alone merges
+those handoffs and writes generated types after the authorised migration; a
+fresh detached verifier independently accepts/rejects the candidate. Exact
+paths, prerequisites, artifacts, and prohibited paths are in the IR-003
+packet. No W3 packet is authorised by this coordination record.
+
+The accepted composite ONB-06 visual state remains unchanged but is
+unreachable before IR-005 because it asserts an issued invitation link. IR-003
+may return only its truthful server-confirmed Group-created result; it cannot
+invent a linkless ONB-06 variant. A rendered IR-003-only post-commit success
+state would require accepted design change control.
+
 ## Implementation-authorisation status
 
 The separate GATE-015 W3-entry review is **Satisfied**. Every frozen W2 exit
