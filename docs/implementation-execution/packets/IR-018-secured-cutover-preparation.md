@@ -40,7 +40,10 @@ Actual cutover, deployment, dual authority, silent stale-client handling, or tre
 
 ## 8. Current repository state
 
-vite.config.ts defines local dev host/port only. .env.example exposes browser-safe Supabase variables and notes Edge Function secrets; no CI/deployment/maintenance/backup config exists.
+`vite.config.ts` defines the local dev host/port and `.env.example` exposes
+browser-safe Supabase variable names with an Edge Function secret warning. The
+Verified IR-001 CI evidence workflow exists, but no deployment, maintenance, or
+backup configuration is present.
 
 ## 9. Target repository change map
 

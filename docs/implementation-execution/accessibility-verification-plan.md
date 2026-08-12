@@ -18,7 +18,7 @@ close a missing owning-packet check.
 | R02-09 safe-area and responsive shell | IR-011–015 | SHL, FIN, DOC, CFG; CMP-03/06 | Viewport assertions after browser capability selection. | Mobile safe-area, 480px cap, sheet interior scrolling, tablet/desktop centred shell, and keyboard overlap record. | W4 exit; blocks affected mobile flow acceptance. |
 | R02-10 native chooser boundaries | IR-013 | DOC scan/upload states; CMP-08/09 | Browser file-input assertions where possible. | Device/browser chooser, cancel/error return, permission denial, and no hidden file-content announcement record. | W4 exit; blocks document ingest acceptance. |
 
-The browser/device matrix, assistive technology versions, and any automated
-tool are **Not established by repository inspection**. IR-001 selects and
-records them before W1 exit; it is not a prerequisite to begin IR-001. R-02 is
-never marked closed by this Draft review.
+The Verified IR-001 capability includes the repository-pinned Playwright
+browser harness. The browser/device matrix, assistive-technology versions, and
+packet-specific automated checks remain to be selected and recorded by their
+owning packets. R-02 is never marked closed by this Draft review.

@@ -40,7 +40,10 @@ Production authority, production migration, deleting source evidence, or treatin
 
 ## 8. Current repository state
 
-No test harness, rehearsal environment config, migration runner, representative snapshots, backup/recovery record, CI workflow, or deployment configuration is present in the repository.
+The Verified IR-001 local test harness and CI evidence workflow exist, but no
+rehearsal environment configuration, authorised transform runner,
+representative snapshot, backup/recovery record, deployment configuration, or
+production authority is present in the repository.
 
 ## 9. Target repository change map
 

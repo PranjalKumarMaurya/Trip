@@ -3,12 +3,15 @@
 ## Package status
 
 - Package-level blockers: None
-- IR-001 entry blockers: None
 - Execution package acceptance: Complete
 - Execution package lock: Complete
-- IR-001 authorisation: Complete
-- IR-001 status: Authorised, Not started
-- W1 exit requirements: GATE-007 through GATE-010 remain open
+- IR-001, IR-002, IR-004, and IR-007: Verified
+- IR-008: Verified for common trusted-operation contract/static evidence only
+- W1: Complete; GATE-011: Satisfied
+- W2: Complete; GATE-012 and GATE-013: Satisfied
+- GATE-015: Satisfied; W3 entry prerequisites from W2: passed
+- GATE-031: Not satisfied; IR-003 and physical owner packets: Not authorised
+- Deployment and cutover: Not authorised
 - R-02: Specified; implementation verification required
 - later-Wave prerequisites: unchanged
 
@@ -18,11 +21,11 @@ package-level blocker, and none is a prerequisite merely to begin IR-001.
 
 | Final item ID | Description | Evidence currently available | Missing evidence | Exact owning IR | Exact consuming gate | Package acceptance impact | IR-001 authorisation impact | Later-Wave impact | Owner | Status |
 |---|---|---|---|---|---|---|---|---|---|---|
-| OE-001-A | Current test/RLS/browser/CI/build inventory. | `package.json`, `package-lock.json`, build configs, source tree, and no CI/test configuration inspected. | None for inventory. | IR-001 | GATE-006. | None; resolved review evidence. | None. | Reinspect only if baseline changes. | Architecture/test reviewer. | Resolved |
-| OE-001-B | Tooling/evidence/CI capability selection. | No test runner, browser runner, database/RLS harness, failure-injection capability, CI, or generated types exist. | Reviewed capability choice, dependency/config impact, removal path, retention rule. | IR-001 | GATE-007. | None. | Not required before authorisation; it is IR-001 work. | Blocks W1 exit and W2 entry until selected/reviewed. | Architecture/security/product reviewers. | Required before Wave exit |
-| OE-001-C | Reproducible two-account/two-Group, database/RLS, browser, and failure fixtures. | Requirement and current absence documented. | Isolated fixture execution, cleanup, deterministic clock, audit-safe output. | IR-001 | GATE-008, GATE-009. | None. | Not required before authorisation; it is IR-001 work. | Blocks W1 exit and later security evidence. | Security/database/test reviewers. | Required before Wave exit |
-| OE-002-A | Repository-visible environment and secret inventory. | `.env.example`, client boundary, Edge Function variable references, local scripts, absence of CI/deployment files inspected. | None for repository scope. | IR-001 | GATE-006. | None; resolved review evidence. | None. | Reinspect on baseline change. | Security reviewer. | Resolved |
-| OE-002-B | Isolated test-environment boundary and ownership. | No test project/harness configuration is in repository. | Project/category, permitted access, reset/cleanup, evidence retention owner. | IR-001 | GATE-010. | None. | Not required before authorisation; IR-001 obtains it before W1 exit. | Blocks W1 exit only. | Security/operations reviewers. | Required before Wave exit |
+| OE-001-A | Current test/RLS/browser/CI/build inventory. | `package.json` scripts, Playwright configuration, `tests/`, local database harness, CI workflow, and retained packet evidence are inspected. | None for inventory. | IR-001 | GATE-006. | None; resolved review evidence. | None. | Reinspect after a capability-affecting baseline change. | Architecture/test reviewer. | Resolved |
+| OE-001-B | Tooling/evidence/CI capability selection. | Verified IR-001 selected Node tests, Playwright, local Supabase CLI/Docker, controlled failure injection, manifest/checksum convention, CI evidence workflow, and generated-type provenance. | None for IR-001. | IR-001 | GATE-007. | None. | Closed by Verified IR-001 evidence. | Future packets consume only their authorised capability/evidence. | Architecture/security/product reviewers. | Resolved |
+| OE-001-C | Reproducible two-account/two-Group, database/RLS, browser, and failure fixtures. | Verified deterministic clock, two-account/two-Group fixtures, isolated execution, cleanup, and audit-safe output. | None for IR-001. | IR-001 | GATE-008, GATE-009. | None. | Closed by Verified IR-001 evidence. | Future security evidence remains packet-specific. | Security/database/test reviewers. | Resolved |
+| OE-002-A | Repository-visible environment and secret inventory. | `.env.example`, client/Edge Function boundaries, local scripts, verified CI evidence workflow, and absent deployment configuration are inspected. | None for repository scope. | IR-001 | GATE-006. | None; resolved review evidence. | None. | Reinspect on a relevant baseline change. | Security reviewer. | Resolved |
+| OE-002-B | Isolated test-environment boundary and ownership. | Verified local Supabase CLI/Docker test configuration, permitted local boundary, exact reset/cleanup, and evidence retention convention. | None for IR-001. | IR-001 | GATE-010. | None. | Closed by Verified IR-001 evidence. | Later packet environments remain separately governed. | Security/operations reviewers. | Resolved |
 | OE-002-C | Deployed target environment topology and state. | No project ID, deployed Auth/RLS/Storage/Realtime/schema state, deployment configuration, or secret owner in repository. | Read-only, timestamped environment/state inventory and access owner. | IR-016 | GATE-019. | None. | None. | Blocks W5 entry/IR-016 transform work, not W1–W4 foundation work. | Data/security/operations reviewers. | Required before Wave entry |
 | OE-002-D | Production access and secret/operational ownership. | Only server-variable names are repository-visible. | Production access owner, rotation/revocation, deployment/CI path, maintenance and recovery authority. | IR-018/IR-019 | GATE-025. | None. | None. | Blocks W7 cutover only. | Operations/security/release reviewers. | Required before W7 cutover |
 | OE-003-A | Production source inventory and immutable S01 manifest. | Legacy SQL/source code is available; no deployed row/object inventory or source version exists locally. | Reviewed source counts, checksums, row/object shape, writer facts, and read authorization. | IR-016 | GATE-019. | None. | None. | Blocks W5 entry; does not block W1. | Data/security reviewers. | Required before Wave entry |

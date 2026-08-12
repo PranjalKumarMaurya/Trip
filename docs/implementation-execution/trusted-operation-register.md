@@ -105,8 +105,10 @@ does not modify it and does not designate it as a TOP implementation.
 IR-008: Verified (contract-only)
 GATE-013: Satisfied
 W2: Complete
-GATE-015: Not satisfied; separate W3-entry review required
-IR-003 and physical owner packets: Not authorised
+GATE-015: Satisfied; W3 entry prerequisites from W2 passed
+GATE-031: Not satisfied
+IR-003 and every physical owner packet: Not authorised
+Physical trusted operations: none authorised
 Deployment and cutover: Not authorised
 ```
 

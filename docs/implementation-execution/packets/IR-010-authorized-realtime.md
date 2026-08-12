@@ -40,7 +40,11 @@ Global unscoped delivery, notification centre, stale previous-Group data, payloa
 
 ## 8. Current repository state
 
-useEvents, useExpenses, and useSettlements subscribe to global table channels; useTodos uses name-filtered channel. All refetch global table data. No Auth/Group lifecycle reset exists.
+`useEvents`, `useExpenses`, and `useSettlements` subscribe to global table
+channels; `useTodos` uses a name-filtered channel. All refetch global table
+data. Verified IR-004 supplies an Auth session boundary, but no active-Group
+lifecycle, Group-change reset, or authorised Realtime subscription cleanup
+exists.
 
 ## 9. Target repository change map
 

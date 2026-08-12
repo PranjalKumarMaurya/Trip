@@ -40,7 +40,11 @@ Ledger authority from live FX, global travel guide, automatic content, Owner acc
 
 ## 8. Current repository state
 
-src/tabs/FXTab.tsx and src/lib/currency.ts expose static conversion. src/lib/timezone.ts targets IST/WITA. src/App.tsx hardcodes Bali title/dates; no Group configuration model exists.
+`src/tabs/FXTab.tsx` and `src/lib/currency.ts` expose static conversion;
+`src/lib/timezone.ts` targets IST/WITA. The verified IR-002 data foundation
+includes `group_configurations`, but no Group configuration is created or read
+by the application. `src/App.tsx` is the verified Auth boundary rather than a
+hard-coded Bali workspace.
 
 ## 9. Target repository change map
 

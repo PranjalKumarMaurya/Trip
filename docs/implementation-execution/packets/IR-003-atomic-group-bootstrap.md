@@ -45,7 +45,13 @@ Ownerless or unconfigured Group, persona-based Owner authority, partial commits,
 
 ## 8. Current repository state
 
-src/App.tsx renders a fixed Bali header and PersonaPicker; no Group route, Group state, membership, configuration, or transaction exists. src/hooks/useCurrentUser.ts is component-local persona state.
+`src/App.tsx` now renders the verified IR-004 `AuthBoundary`, and
+`src/features/auth/` owns session/Profile resolution and its safe
+workspace-unavailable boundary. `PersonaPicker` and the component-local
+`useCurrentUser` compatibility code remain in the repository but are not on
+the active application entry path. No Group route or active-Group state,
+Membership lifecycle, Group configuration creation, or bootstrap transaction
+exists.
 
 ## 9. Target repository change map
 
@@ -109,7 +115,24 @@ S04–S07, TC-002, TC-009, UI onboarding mapping.
 
 ## 20. Automated tests
 
-Use current test tooling only where it exists. Repository inspection found no configured test, lint, database-test, browser-test, or CI runner; any new tooling is a proposed dependency for review under IR-001. Planned coverage may include unit, integration, database/RLS, browser, concurrency, idempotency, migration, rollback, visual-regression, and accessibility automation only after the selected tooling and environment capability are approved.
+IR-003 consumes the **Verified IR-001 evidence capability**; it does not reopen
+or reinterpret IR-001's accepted evidence. At this HEAD, `package.json`
+defines `test:types`, `test:unit`, `test:db`, `test:db:failure`,
+`test:db:cleanup`, `test:browser`, `test:browser:failure`, and
+`test:evidence:manifest`. The verified capability uses Node's test runner,
+the repository-pinned Playwright configuration, the local Supabase CLI/Docker
+database harness under `tests/database/`, deterministic-clock and
+two-account/two-Group fixtures, manifest/checksum writers, and the
+`.github/workflows/ir-001-evidence.yml` CI evidence workflow.
+
+Before any future IR-003 work, its executor must re-inspect and name the exact
+then-current scripts, tooling, and environment rather than assume this list is
+unchanged. IR-003 may add only test or evidence work allowed by its future
+packet-specific authorisation and allow-list. It must preserve the established
+deterministic clocks, fixtures, isolation, database/RLS/browser evidence
+conventions, controlled failure injection, manifest/checksum, secret-safety,
+and cleanup requirements. A genuinely new dependency or capability still
+requires the applicable review and change-control path.
 
 ## 21. Manual verification
 

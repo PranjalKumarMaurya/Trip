@@ -40,7 +40,13 @@ Production execution, invented mappings, silent repair, guessed missing values, 
 
 ## 8. Current repository state
 
-supabase/migrations/001_initial.sql through 005_todos.sql and supabase/seed.sql are the only confirmed legacy database artifacts. No migration runner, manifest generator, test fixture harness, production inventory, or representative snapshot is in the repository.
+`supabase/migrations/001_initial.sql` through `005_todos.sql` and
+`supabase/seed.sql` remain the confirmed legacy source artifacts. Verified
+IR-002, IR-004, and IR-007 added only `006_ir002_tenant_root.sql`,
+`007_ir002_configuration_archive_audit.sql`, `008_ir004_profile_auth.sql`, and
+`009_ir007_base_rls_ownership.sql`. The repository has the Verified IR-001
+fixture/harness and manifest capability, but no authorised transform runner,
+production inventory, or representative snapshot.
 
 ## 9. Target repository change map
 

@@ -42,7 +42,10 @@ There is no Owner review queue or manual Owner adjudication path for a contested
 
 ## 8. Current repository state
 
-src/constants/users.ts, src/constants/seedData.ts, src/lib/splitting.ts, and legacy SQL use display names. No stable group_members identity or claim flow exists.
+`src/constants/users.ts`, `src/constants/seedData.ts`, `src/lib/splitting.ts`,
+and legacy SQL use display names. Verified IR-002 supplies the stable
+`group_members.id` structural Participant identity; no claim/provenance flow or
+physical TOP-008 implementation exists.
 
 ## 9. Target repository change map
 

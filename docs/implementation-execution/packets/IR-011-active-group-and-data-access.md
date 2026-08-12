@@ -40,7 +40,10 @@ Client Active Group authority, global query, stale previous-Group display, actua
 
 ## 8. Current repository state
 
-src/App.tsx holds active tab only, renders fixed header and five tabs after persona selection. Existing hooks have no Group argument and query global tables. There is no router, app/, pages/, or services/ directory.
+`src/App.tsx` renders the verified IR-004 Auth boundary and does not open the
+legacy workspace for an authenticated account. Existing data hooks have no
+Group argument and still query global tables. There is no router, `app/`,
+`pages/`, or services directory, and no active-Group state exists.
 
 ## 9. Target repository change map
 

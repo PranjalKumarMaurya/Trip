@@ -8,14 +8,20 @@
 - UI/UX Design: Accepted and Locked
 - Execution Package: Accepted and Locked
 - Planning Freeze: Complete
-- IR-001: Authorised, Not started
-- IR-002 through IR-022: Not authorised
-- W1: Ready to start through IR-001 only
-- Application implementation: Not started
+- IR-001, IR-002, IR-004, and IR-007: Verified
+- IR-008: Verified for common trusted-operation contract/static evidence only
+- W1: Complete; GATE-011: Satisfied
+- W2: Complete; GATE-012 and GATE-013: Satisfied
+- GATE-015: Satisfied; W3 entry prerequisites from W2: passed
+- IR-003: Not authorised; GATE-031: Not satisfied
+- Physical trusted operations: none authorised
 - Deployment: Not authorised
-- Authorisation commit: Recorded by this commit
+- Production cutover: Not authorised
 
-## First implementation objective
+The remaining sections preserve the original IR-001 start handoff. They are
+historical instructions, not current implementation authority.
+
+## Historical first implementation objective
 
 IR-001 — Evidence Foundation.
 

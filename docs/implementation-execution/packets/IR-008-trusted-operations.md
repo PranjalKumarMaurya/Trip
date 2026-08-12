@@ -138,13 +138,15 @@ IR-001/002/004/007 evidence semantics are prohibited.
 IR-008: Verified (contract-only)
 GATE-013: Satisfied
 W2: Complete
-GATE-015: Not satisfied; separate W3-entry review required
+GATE-015: Satisfied; W3 entry prerequisites from W2 passed
+GATE-031: Not satisfied
 IR-003 and physical owner packets: Not authorised
+Physical trusted operations: none authorised
 Deployment and cutover: Not authorised
 ```
 
-IR-003 and every physical owner remain separately authorised work. IR-008
-implemented zero physical TOPs and cannot verify their TOPs, nor can this
+IR-003 and every physical owner remain work requiring separate authorisation.
+IR-008 implemented zero physical TOPs and cannot verify their TOPs, nor can this
 contract-only result authorise a physical TOP, open W3, authorise Storage or
 Realtime, deploy, or cut over. Its accepted verification is recorded in
 [`../ir-008-verification.md`](../ir-008-verification.md).

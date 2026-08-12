@@ -8,7 +8,7 @@ existing: it is labelled **Proposed path — verify at packet start**.
 |---|---|---|---|---|---|---|---|---|
 | `package.json`, `package-lock.json` | npm dependencies and scripts. | IR-002, IR-004, and authorised IR-007 may add only their own dedicated script aliases to `package.json`; `package-lock.json` is prohibited. | IR-001 / W1; bounded IR-002/IR-004/IR-007 exceptions | All test/evidence work | High: no packet changes dependencies or prior evidence semantics. | Dedicated local contract; existing build/type checks. | Remove/revert an unconsumed script; never hide a failing check. | Confirmed existing |
 | `vite.config.ts`, `tsconfig.json`, `tsconfig.node.json` | Vite and TypeScript build boundary. | Preserve until a reviewed tooling/routing decision requires an owned change. | IR-001 / W1 | IR-004, IR-011, IR-021 | High: IR-001 controls build/test config integration. | `npm run build`; selected-tool capability evidence. | Revert config without weakening type/build gate. | Confirmed existing |
-| `src/App.tsx` | Fixed five-tab shell, local tab state, 480px layout. | IR-004 may replace only the active entry with its Auth boundary and no-workspace holding state; IR-011 later owns Group shell/Active Group conversion. | IR-004 / W2; IR-011 / W4 | IR-012–015 | Critical shared foundation: IR-004 may not add Group/data behaviour; IR-011 merges Group shell first. | IR-004 AUTH/session evidence; later UI-01–03/TC-003. | Never roll back to persona/global-data fallback. | Confirmed existing |
+| `src/App.tsx` | Verified IR-004 Auth entry boundary and no-workspace holding state; no Group shell/Active Group conversion. | IR-011 later owns Group shell/Active Group conversion. | IR-004 / W2; IR-011 / W4 | IR-012–015 | Critical shared foundation: IR-004 did not add Group/data behaviour; IR-011 merges Group shell first. | IR-004 AUTH/session evidence; later UI-01–03/TC-003. | Never roll back to persona/global-data fallback. | Confirmed existing |
 | `src/lib/supabase.ts` | Sole shared browser Supabase client using Vite URL/anon-key values. | Establish reviewed client/session boundary; do not put service-role access here. | IR-004 / W2 | IR-007, IR-010–015 | Critical: IR-004 owns first edit; policy/data consumers cannot independently create clients. | TC-001, TC-013, browser-secret inspection. | Revert without reintroducing browser authority. | Confirmed existing |
 | `src/hooks/useCurrentUser.ts`, `src/components/PersonaPicker.tsx`, `src/constants/users.ts` | Local selectable persona identity. | IR-004 removes all active entry references; these source-preserving compatibility files are not edited/deleted by IR-004. | IR-004 / W2 | IR-011, IR-012, IR-014 | Critical identity foundation: IR-004 serially removes authority without claiming legacy conversion. | FP-001, TC-001, IPE-AUTH-001. | Safe signed-out/session-expired state; no persona fallback. | Confirmed existing |
 | `src/hooks/useEvents.ts`, `useExpenses.ts`, `useSettlements.ts`, `useTodos.ts` | Global/name-scoped queries and global Realtime channels. | Establish scoped data/subscription adapters and switch cleanup. | IR-010 / W3, then IR-011 / W4 | IR-012–014 | Critical: IR-010 owns authorization/subscription contract; IR-011 owns Active Group integration before feature conversions. | TC-015, TC-019, two-Group/stale-reconnect cases. | Unsubscribe and clear stale data; never restore global channels. | Confirmed existing |
@@ -50,14 +50,15 @@ existing: it is labelled **Proposed path — verify at packet start**.
   code, dependency, or prior-harness change.
 - IR-008 authorises only its named authorisation/packet/register/governance
   documents, dedicated static contract test/evidence paths, and optional
-  `artifacts/ir-008/**`. Its retained static contract evidence is Implemented,
-  not Verified; it reserves no `010_*` migration and must not modify
+  `artifacts/ir-008/**`. Its retained static contract evidence is Verified;
+  it reserves no `010_*` migration and must not modify
   `supabase/migrations/**`, `supabase/functions/**`, `src/**`, generated types,
   package files, Storage, Realtime, environment files, deployment, remote
   Supabase, or IR-001/002/004/007 evidence semantics. It creates no physical
   trusted operation; its register assigns every TOP to a future owner.
-- Deployment configuration and CI do not exist in the inspected repository.
-  They remain **Not established**, not missing paths to invent.
+- The IR-001 CI evidence workflow exists, but deployment configuration and
+  release CI do not. They remain **Not established**, not missing paths to
+  invent.
 - Shared file conflict order is: IR-004 for client/session identity and the
   pre-Group protected entry;
   IR-010 then IR-011 for hooks and Active Group; IR-011 before any W4 shared

@@ -40,7 +40,10 @@ Claiming a gate passed without evidence, scope drift, accepting/locking this Dra
 
 ## 8. Current repository state
 
-Accepted architecture, UI baseline, and UI design records exist under docs/. No implementation execution ledger, packet set, release runbook, or deployment record exists.
+Accepted architecture, UI baseline, UI design, and implementation-execution
+package records exist under `docs/`. The execution ledger, packet set, Wave
+records, verification records, and current status surfaces exist. No release
+runbook, deployment record, deployment authority, or cutover record exists.
 
 ## 9. Target repository change map
 

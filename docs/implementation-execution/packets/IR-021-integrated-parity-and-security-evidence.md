@@ -40,7 +40,12 @@ UI-only proof for security, waiving failed evidence, actual test execution claim
 
 ## 8. Current repository state
 
-No test scripts, test directories, browser-test config, database test harness, CI workflow, generated types, or evidence artifacts for application implementation are present.
+Verified IR-001 provides test scripts, `tests/`, the Playwright configuration,
+an isolated local database/RLS harness, CI evidence workflow, fixtures, and
+manifest/checksum conventions. Verified IR-002, IR-004, and IR-007 have
+generated-type and immutable packet evidence. No integrated application
+parity/security rollup, W3 physical-operation evidence, or release evidence is
+present.
 
 ## 9. Target repository change map
 

@@ -48,7 +48,13 @@ Feature implementation, production data, assuming a test framework, or claiming 
 
 ## 8. Current repository state
 
-package.json exposes only dev, build, start, and preview; no test, lint, or CI configuration was found. vite.config.ts and tsconfig.json are the confirmed build/type boundary. supabase/migrations/ and supabase/functions/ are present but no isolated database-test harness is established.
+The Verified IR-001 capability is present: `package.json` exposes build,
+typecheck, unit, database/RLS, controlled-failure, cleanup, browser, and
+evidence-manifest scripts; `playwright.config.ts`, `tests/`, and
+`.github/workflows/ir-001-evidence.yml` exist. The local Supabase CLI/Docker
+harness, deterministic-clock and two-account/two-Group fixtures, manifest
+writers, and exact cleanup controls are established. These capabilities do not
+authorise product, schema, or physical trusted-operation implementation.
 
 ## 9. Target repository change map
 

@@ -40,7 +40,10 @@ Production monitoring implementation, re-enabling permissive legacy access, sens
 
 ## 8. Current repository state
 
-No observability stack, CI/deployment configuration, release telemetry, incident runbook, retention configuration, or production environment record is present in the repository.
+No observability stack, deployment configuration, release telemetry, incident
+runbook, retention configuration, or production environment record is present
+in the repository. The Verified IR-001 CI evidence workflow exists but does not
+provide release monitoring or deployment authority.
 
 ## 9. Target repository change map
 

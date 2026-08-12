@@ -8,7 +8,8 @@
   executable scope, allow-list, DBM, evidence, rollback, and correction
   contract.
 - Entry: GATE-012 is satisfied by the recorded W1 exit and this separate
-  bounded authorisation. GATE-013 remains required before W3.
+  bounded authorisation. GATE-013 is now Satisfied from the verified W2
+  common-readiness inputs; this does not authorise W3 implementation.
 
 ## Objective
 

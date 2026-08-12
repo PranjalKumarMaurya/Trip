@@ -93,11 +93,11 @@ passes, so W2 is Complete. This completion implements or verifies no physical
 TOP; all physical evidence remains at the separately authorised owner packet
 exit.
 
-GATE-015 remains Not satisfied and requires a separate W3-entry review; W2
-completion does not satisfy it automatically. IR-003 is next eligible for
-separate entry review and authorisation planning only, remains unauthorised,
-and is additionally subject to unsatisfied GATE-031. IR-003 has no recorded
-validated initial Owner Auth identity, reviewed bootstrap request/execution
-manifest, mandatory Group configuration evidence, or required product/data/
-security/architecture approvals. Storage (IR-009), Realtime (IR-010), product
-conversion, deployment, and cutover remain unauthorised.
+The separate GATE-015 W3-entry review is Satisfied: W3 entry prerequisites
+from W2 have passed, but this decision does not authorise a W3 packet or
+physical operation. IR-003 remains unauthorised and is additionally blocked by
+unsatisfied GATE-031. No validated initial Owner Auth identity, reviewed
+bootstrap request/execution manifest, mandatory Group configuration evidence,
+or required product/data/security/architecture approvals are recorded. Storage
+(IR-009), Realtime (IR-010), product conversion, deployment, and cutover remain
+unauthorised.

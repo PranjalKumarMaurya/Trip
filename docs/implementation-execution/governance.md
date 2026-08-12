@@ -39,13 +39,32 @@ Implementation packet changes require product/reviewer approval; design divergen
 - Execution package acceptance: Complete
 - Execution package lock: Complete
 - Planning freeze: Complete
-- IR-001 has explicit bounded authorisation.
-- Implementation authority is limited to IR-001.
+- IR-001, IR-002, IR-004, and IR-007: Verified.
+- IR-008: Verified for common trusted-operation contract/static evidence only;
+  no physical owner packet is authorised.
+- GATE-011, GATE-012, GATE-013, and GATE-015: Satisfied; W1 and W2: Complete.
+- W3 entry prerequisites from W2: passed. W3 implementation: Not authorised.
+- GATE-031: Not satisfied; IR-003 and all physical owner packets: Not
+  authorised.
+- Deployment and production cutover: Not authorised.
 - Packet scope cannot expand silently; use change control.
-- IR-002 and later packets require separate authorisation.
-- GATE-004: Satisfied for IR-001 only.
 - W7 separate production authorisation: Mandatory
 
 Package acceptance and lock establish trusted planning authority. They do not
-authorise unbounded implementation work, IR-002 or later work, deployment, or
-cutover. W7 still requires separate production authorisation.
+authorise unbounded implementation work, a physical trusted operation,
+deployment, or cutover. W7 still requires separate production authorisation.
+
+## Current-state documentation synchronisation
+
+After every packet implementation, independent verification, gate decision,
+Wave transition, or other authoritative status change, perform a current-state
+documentation synchronisation before beginning the next execution unit. Check
+at least the execution README/current-next-activity, gate ledger, execution
+order, dependency graph, implementation traceability, relevant DBM/TOP
+register, owning packet, owning Wave, and active authorisation/status surface.
+
+These mutable current-status surfaces must be kept distinct from
+immutable/historical decision and evidence records. The synchronisation updates
+only the former; it does not rewrite the status, scope, evidence, or decision
+that was accurate at a recorded historical point. This maintenance step is not
+an authorisation requirement or an additional execution gate.

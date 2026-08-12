@@ -8,8 +8,9 @@
   executable scope, database-object, evidence, rollback, and parallel-ownership
   contract.
 - Entry: IR-002, IR-004, DBM-001–003, GATE-012, and the clean repository are
-  verified. GATE-013 remains Not satisfied and W2 remains In progress because
-  IR-008's separate trusted-operation evidence is absent.
+  verified. Together with verified IR-008 contract-only evidence, this packet
+  supplies the corrected GATE-013 common-readiness input; GATE-013 is
+  Satisfied and W2 is Complete. Neither result authorises a physical TOP.
 
 ## Objective
 
@@ -81,9 +82,9 @@ target problem remains fail closed and is corrected only by a forward migration.
 
 IR-007 is Verified under its frozen local security, performance, type,
 rollback/reapplication, cleanup, immutable-evidence, and independent-
-verification contract. It supplies the RLS/two-Group input to GATE-013 and
-IR-008. It does not satisfy GATE-013 without IR-008's separate service-role/
-trusted-operation evidence and does not authorise IR-003, Storage, Realtime,
-product conversion, deployment, or cutover. No later-packet requirement may
-reopen IR-007; only a reproducible defect violating its frozen contract may
-trigger correction or change control.
+verification contract. It supplies the RLS/two-Group input to GATE-013; with
+IR-008's separately verified contract-only evidence, GATE-013 is Satisfied.
+It does not authorise IR-003, Storage, Realtime, product conversion,
+deployment, or cutover. No later-packet requirement may reopen IR-007; only a
+reproducible defect violating its frozen contract may trigger correction or
+change control.

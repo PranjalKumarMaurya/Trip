@@ -11,9 +11,10 @@
 - IR-001 started: 2026-07-31
 - IR-001 implemented: Yes
 - IR-001 verified: Yes
-- W1 status: In progress; exit not achieved
-- IR-002 authorised: No
-- Application implementation scope: IR-001 only
+- W1 status: Complete; GATE-011 Satisfied
+- IR-002 status: Verified — separate authorisation closed
+- Application implementation scope: IR-001 only (historical authorisation
+  scope)
 - Authorisation date: 2026-07-30
 - Reviewer:
   Pranjal Kumar Maurya — product owner
@@ -122,7 +123,7 @@ application feature, target authority, schema, policy, or production change.
 ## 4. Dependency and package boundaries
 
 - IR-001 has no direct IR dependency.
-- IR-002 remains unauthorised.
+- IR-002 was outside this authorisation's scope.
 - Later Waves remain unauthorised.
 - Architecture and design remain locked inputs.
 - No scope may move into IR-001 without change control.

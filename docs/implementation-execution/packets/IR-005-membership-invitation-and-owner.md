@@ -42,7 +42,13 @@ Automatic Participant claim, Owner invite authority, secret disclosure, extra ro
 
 ## 8. Current repository state
 
-No Group, membership, invitation, or role data model exists. src/constants/users.ts has fixed names and src/App.tsx exposes persona switching. Existing legacy SQL has no Membership/Invitation table.
+Verified IR-002 migrations provide the structural `groups`,
+`group_configurations`, and `group_members` foundation, including structural
+Owner/Member roles and active/inactive status. No Invitation or membership
+lifecycle data model or physical trusted operation exists. `src/constants/users.ts`
+still contains fixed legacy names; the active `src/App.tsx` path is the verified
+IR-004 Auth boundary, not persona switching. Legacy SQL has no
+Membership/Invitation table.
 
 ## 9. Target repository change map
 
