@@ -26,21 +26,22 @@ not a substitute. No target environment was accessed during this preparation.
 
 | Required category | Status |
 | --- | --- |
+| Intended Owner selection | **INCOMPLETE — OWNER IDENTITY SOURCE REQUIRED** |
 | Owner Auth identity | Missing |
 | Verified Owner identity | Missing |
 | Exactly-one Profile linkage | Missing |
 | Bootstrap request ID | Present in controlled package; pending reviewed request approval |
-| Mandatory Group configuration | Pending approval |
-| Product approval | Missing |
+| Mandatory Group configuration | **Product-approved in controlled package** |
+| Product approval | **Complete for mandatory configuration only; intended Owner-selection scope remains incomplete** |
 | Data approval | Missing |
 | Security approval | Missing |
 | Architecture approval | Missing |
 | Baseline checksums, including migration-010 absence | Validated |
 | Secret-safety classification | Passed |
 
-The controlled package holds the raw request identifier, and would hold any
-identity, Profile, configuration, and approval evidence. None of those values
-is reproduced here. No final controlled-manifest SHA-256 exists because the
+The controlled package holds the raw request identifier and holds any identity,
+Profile, configuration, and approval evidence. None of those values is
+reproduced here. No final controlled-manifest SHA-256 exists because the
 package is incomplete.
 
 ## Evidence-completion pass — 2026-08-12
@@ -70,9 +71,11 @@ host Docker stack is not linked to this checkout; it was not queried. No remote
 Supabase service was accessed. Consequently no Auth, verification, or Profile
 linkage evidence was added.
 
-A protected Owner-selection intake now asks the Product Owner to select exactly
-one intended Auth identity. It contains no candidate identity because none was
-authorised for inspection during this pass.
+A protected Owner-selection intake asks the Product Owner to select exactly one
+intended Auth identity. It contains no legitimate candidate identity because
+none was authorised for inspection during this pass; its redacted decision
+status is **OWNER IDENTITY SOURCE REQUIRED**. No identity has been selected,
+inferred, or fabricated.
 
 ### Configuration discovery
 
@@ -82,18 +85,21 @@ candidates. The accepted migration plan records a historical date conflict and
 requires retained-source and deployed-version adjudication plus Product
 approval; legacy hardcoded, README, or seed material cannot decide it.
 
-Every mandatory configuration field remains `CANDIDATE REQUIRES PRODUCT
-APPROVAL`. A protected configuration-approval intake now holds the source
-disposition and requires a complete all-fields Product decision; it records no
-values in Git.
+The Product Owner has completed a bounded approval of every mandatory
+configuration field and explicitly adjudicated the historical date conflict.
+The protected intake retains the values, source dispositions, per-field
+adjudications, timestamp, and scope. Git records no value from that decision.
+The approval is limited to mandatory configuration; it does not select an
+Owner or issue Data, Security, or Architecture approval.
 
 ### Review sequencing
 
-Product selection and complete configuration approval are the first dependency.
-After authorised read-only Auth/verification/exactly-one-Profile evidence is
-attached to the protected request, Data, Security, and Architecture reviews may
-run in parallel against the same frozen controlled inputs. No approval has been
-issued by this preparation pass.
+Mandatory configuration is now Product-approved, but no legitimate initial
+Owner candidate source exists. After one intended Owner is selected and
+authorised read-only Auth-row, verification, and exactly-one-Profile-linkage
+evidence is attached to the protected request, Data, Security, and Architecture
+reviews may run in parallel against the same frozen controlled inputs. Their
+approvals remain missing.
 
 ## Baseline and safety
 
@@ -105,10 +111,10 @@ material.
 
 ## Next activity
 
-The Product Owner must select exactly one intended Owner identity and decide the
-complete mandatory configuration in the protected intakes. Then obtain
-authorised read-only identity, verification, and Profile-linkage evidence;
-capture four separate gate-specific approval records; and perform a separate
-GATE-031 evidence review and satisfaction decision. This record must be
-superseded by a new controlled-manifest hash only after every required field is
-final.
+Obtain a legitimate initial-Owner identity source. The Product Owner must then
+select exactly one intended Owner and record the corresponding bounded Product
+approval. Obtain authorised read-only Auth-row, verification, and
+exactly-one-Profile-linkage evidence; capture the remaining Data, Security, and
+Architecture approvals; and perform a separate GATE-031 evidence review and
+satisfaction decision. This record must be superseded by a new controlled-
+manifest hash only after every required field is final.
