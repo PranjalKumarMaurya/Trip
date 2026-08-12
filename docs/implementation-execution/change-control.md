@@ -328,3 +328,40 @@ Wave order, IR scope, repository change paths, database migration plan, RLS plan
 - Rollback: reverting this documentation-only freeze removes no database or
   product state. Any later implementation issue remains subject to the frozen
   empty-target/forward-correction boundary and separate change control.
+
+## CC-IR003-20260812-bootstrap-success-blocker — ONB-06 correction record
+
+- Decision authority: documentation-only correction record. It does not accept
+  a design change, authorise IR-003, satisfy GATE-031, or create a physical
+  operation.
+- Reason: review finding `F-IR003-FREEZE-001` proved the original
+  implementation-reachability clarification incomplete. The accepted ONB-06
+  is a composite “Group created + invitation link issued” state, while
+  Invitation issuance is TOP-002 / IR-005. IR-003 must show a committed
+  Group-created result without claiming an Invitation, but no current accepted
+  screen permits that rendering.
+- Scope: record `BLK-IR003-FREEZE-001`, open item `OE-006`, and proposed UI/UX
+  design record `DCC-IR003-FREEZE-001` only. The proposal adds a staged
+  non-Invitation success state to the existing ONB-06 Screen ID if Accepted;
+  it does not add a screen, change visual tone/layout beyond the necessary
+  state split, or alter TOP ownership.
+- Decision: Outcome B — existing accepted design does not resolve the
+  post-TOP-001 success transition. The proposal remains **Proposed** under the
+  locked-design process. No accepted screen contract, manifest, export,
+  component catalogue, architecture decision, database contract, or
+  application path is changed here.
+- Security and scope impact: IR-003 continues to create no Invitation row,
+  verifier, secret, link, copy/share behaviour, or Invitation-derived
+  navigation. TOP-002/IR-005 and ONB-10/IR-011 ownership remain unchanged.
+  `F-IR003-FREEZE-002` additionally makes the existing dedicated executor
+  model auditable through an exact object-by-object privilege matrix; it does
+  not alter DBM-014, the migration name, TOP-001 signature, persistence,
+  performance, lanes, or GATE-031 fields.
+- Gate/status impact: GATE-015 remains Satisfied. GATE-031 remains **Not
+  satisfied**. IR-003, every physical TOP, deployment, and cutover remain **Not
+  authorised**. `OE-006` blocks controlled GATE-031 package preparation and
+  IR-003 onboarding completion until the design decision is Accepted or a
+  bounded replacement is recorded.
+- Rollback: this correction records no physical state. Reverting it removes
+  only the documentation pointer; it cannot be used to bypass the locked
+  design decision or undo a later implementation.

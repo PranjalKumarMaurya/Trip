@@ -2,7 +2,8 @@
 
 ## 1. Status and freeze boundary
 
-- Status: Draft — pre-authorisation design freeze complete
+- Status: Draft — physical pre-authorisation freeze corrected; overall
+  onboarding freeze blocked by `BLK-IR003-FREEZE-001`
 - Wave: W3
 - Physical owner: IR-003 / W3 for DBM-014 and TOP-001 only
 - Implementation authorised: **No**
@@ -294,34 +295,74 @@ before every elevated write. The role has no login, no inherited path, no
 server credential, no dynamic SQL, no generic dispatcher, no role switching,
 and no capability outside TOP-001.
 
-Future migration-010 grants are exact and least-privilege:
+### 6.1 Exact executor privilege matrix
 
-- `ir003_top001_executor`: `USAGE` on schemas `auth` and `public`; `EXECUTE`
-  on `auth.uid()` only; `SELECT (id, auth_user_id)` on `public.profiles`;
-  `SELECT (id, email_confirmed_at)` on `auth.users`; `SELECT` on
-  `public.iso_4217_currency_codes`; `INSERT, SELECT (id)` on
-  `public.groups`; `INSERT` on `public.group_configurations`,
-  `public.group_configuration_display_currencies`, and
-  `public.group_audit_events`; `INSERT, SELECT (id)` on
-  `public.group_members`; and only `SELECT, INSERT, UPDATE` on
-  `public.ir003_bootstrap_requests`.
-- No sequence privilege is granted or required: all affected identities are
-  UUID/default-generated, not sequences. `CREATE`, `ALTER`, `DELETE`,
-  `TRUNCATE`, broad schema, Storage, Realtime, and legacy-table privileges are
-  absent.
-- The two new tables have RLS enabled and forced, no application-facing
-  policy, and explicit `REVOKE ALL` from `PUBLIC`, `anon`, `authenticated`,
-  and `service_role`. Existing Group primitive direct mutation grants remain
-  revoked by IR-007. The display child has no direct read grant in IR-003;
-  later read/update policy is separately owned, not silently supplied here.
-- Migration-010 must `REVOKE ALL ON FUNCTION
-  public.bootstrap_group(jsonb, jsonb, uuid) FROM PUBLIC, anon, service_role`
-  and grant `EXECUTE` only to `authenticated`. Database owners/superusers
-  retain unavoidable administrative control; no application role other than
-  `authenticated` receives an execute grant.
-- `search_path` is fixed to `pg_catalog`; the body schema-qualifies every
-  `public` and `auth` reference. It does not rely on caller `search_path`,
-  default object lookup, or a writable schema.
+Future migration-010 must grant `ir003_top001_executor` only the following
+object privileges. `YES` is a required privilege; `NONE` must not be granted.
+Column lists in **Other** are part of the freeze. `REFERENCES` is `NONE` for
+every table because TOP-001 creates no schema, foreign key, or other DDL.
+
+| Object | USAGE | SELECT | INSERT | UPDATE | DELETE | EXECUTE | Other |
+|---|---|---|---|---|---|---|---|
+| Schema `auth` | YES | NONE | NONE | NONE | NONE | NONE | No `CREATE`, ownership, or default-privilege change. |
+| Schema `public` | YES | NONE | NONE | NONE | NONE | NONE | No `CREATE`, ownership, or generic public-schema mutation capability. |
+| `auth.uid()` | NONE | NONE | NONE | NONE | NONE | YES | Only session-actor derivation; no ownership. |
+| `public.is_valid_iana_timezone(text)` | NONE | NONE | NONE | NONE | NONE | YES | Direct validation and the existing configuration check constraint; no ownership. |
+| `public.ir002_set_updated_at()` | NONE | NONE | NONE | NONE | NONE | NONE | Existing UPDATE-trigger helper is not invoked because TOP-001 performs no update of its trigger-bearing tables. |
+| `ir007_private.current_profile_id()` | NONE | NONE | NONE | NONE | NONE | NONE | TOP-001 resolves the Profile directly from `auth.uid()`; it receives no `USAGE` on schema `ir007_private`. |
+| `ir007_private.current_active_group_ids()` | NONE | NONE | NONE | NONE | NONE | NONE | No active-Group lookup is an input to bootstrap authority. |
+| `ir007_private.current_active_owner_group_ids()` | NONE | NONE | NONE | NONE | NONE | NONE | No existing-Owner lookup is an input to bootstrap authority. |
+| `pg_catalog.gen_random_uuid()` | NONE | NONE | NONE | NONE | NONE | YES | Only the existing bound UUID defaults on `groups`, `group_members`, and `group_audit_events`; no sequence or extension ownership. |
+| `pg_catalog.pg_timezone_names` | NONE | YES | NONE | NONE | NONE | NONE | Read only through `public.is_valid_iana_timezone(text)`; no system-catalog mutation or ownership. |
+| `auth.users` | NONE | YES | NONE | NONE | NONE | NONE | `SELECT (id, email_confirmed_at)` only; no `REFERENCES`, ownership, or Auth mutation. |
+| `public.profiles` | NONE | YES | NONE | NONE | NONE | NONE | `SELECT (id, auth_user_id)` only; no `REFERENCES`, ownership, or presentation update. |
+| `public.groups` | NONE | YES | YES | NONE | NONE | NONE | `SELECT (id)` for `RETURNING`; `INSERT` only; no `REFERENCES` or ownership. |
+| `public.group_configurations` | NONE | NONE | YES | NONE | NONE | NONE | `INSERT (group_id, trip_name, destination, start_date, end_date, timezone, accounting_currency)` only; no `REFERENCES` or ownership. |
+| `public.group_members` | NONE | YES | YES | NONE | NONE | NONE | `SELECT (id)` for `RETURNING`; `INSERT (group_id, profile_id, role, status)` only; no `REFERENCES` or ownership. |
+| `public.group_audit_events` | NONE | NONE | YES | NONE | NONE | NONE | `INSERT (group_id, actor_group_member_id, event_type, request_id, details, occurred_at)` only; no `REFERENCES` or ownership. |
+| `public.iso_4217_currency_codes` | NONE | YES | NONE | NONE | NONE | NONE | `SELECT (code)` only for ISO validation; no ISO mutation, `REFERENCES`, or ownership. |
+| `public.group_configuration_display_currencies` (future DBM-014) | NONE | NONE | YES | NONE | NONE | NONE | `INSERT (group_id, currency_code)` only; no direct application read, `REFERENCES`, or ownership. |
+| `public.ir003_bootstrap_requests` (future DBM-014) | NONE | YES | YES | YES | NONE | NONE | `SELECT (operation, actor_profile_id, request_id, request_fingerprint, status, group_id, result, completed_at)`; `INSERT (operation, actor_profile_id, request_id, request_fingerprint, status)`; `UPDATE (status, group_id, result, completed_at)` only. No `DELETE`, `REFERENCES`, or ownership. |
+| `public.bootstrap_group(jsonb, jsonb, uuid)` (future TOP-001) | NONE | NONE | NONE | NONE | NONE | NONE | **Owner:** `ir003_top001_executor`; ownership is required for SECURITY DEFINER. The executor needs no self-`EXECUTE` grant. |
+| All sequences | NONE | NONE | NONE | NONE | NONE | NONE | No sequence exists in the TOP-001 write path; all affected identities are UUID/default-generated. |
+
+No ISO helper exists beyond `public.iso_4217_currency_codes`, and TOP-001 may
+not introduce one. No other project-defined function, table, view, extension,
+sequence, policy helper, or schema is a TOP-001 dependency. Fixed
+`pg_catalog` JSONB/text/date operators are language/runtime built-ins under the
+fixed search path; they receive no additional project privilege, ownership, or
+search-path grant.
+
+`BYPASSRLS` bypasses RLS policy evaluation only; it does **not** grant schema,
+table, column, function, sequence, or ownership privileges. The executor must
+therefore receive exactly the `YES` privileges above and no other object
+privilege. In particular it receives no `DELETE`, no broad `ALL PRIVILEGES`,
+no table/schema/database ownership, no role membership, no `CREATE`, `ALTER`,
+`TRUNCATE`, Storage, Realtime, legacy-table, or generic proxy privilege. The
+future DBM-014 tables must be RLS-enabled and FORCE RLS with no
+application-facing policy; direct application grants remain revoked.
+
+### 6.2 Function and caller execution boundary
+
+`ir003_top001_executor` remains the function owner, is `NOLOGIN`,
+`NOINHERIT`, and `BYPASSRLS`, has no memberships, and owns no database, schema,
+or table. The migration administrative owner retains every table/schema
+ownership and all DDL. `public.bootstrap_group(jsonb, jsonb, uuid)` is
+`SECURITY DEFINER` with fixed `search_path = pg_catalog`; its body
+schema-qualifies every `auth` and `public` reference and never relies on the
+caller search path or a writable schema.
+
+The future migration must revoke `EXECUTE` on that exact three-argument
+function from `PUBLIC`, `anon`, and `service_role`, then grant it only to
+`authenticated`. The `service_role` revoke is intentional even though no
+browser receives that credential: it prevents this user-facing operation from
+becoming an alternate privileged server route. `authenticated` requires its
+existing `USAGE` on schema `public` solely to resolve the RPC; it receives no
+`USAGE` on `auth`, no executor-role membership, and no direct table privilege
+through TOP-001. Invocation is not business authority: the function still
+derives `auth.uid()` and revalidates verification, Profile, request, and
+idempotency prerequisites. No browser service-role credential or reusable
+elevated-operation proxy is introduced.
 
 No browser receives a service-role credential. Calling the RPC is not itself
 business authority; the same authenticated caller is denied if session,
@@ -410,27 +451,46 @@ the final immutable manifest references its SHA-256.
 
 ## 9. ONB-06 invitation reachability boundary
 
-The accepted ONB-06 contract remains unchanged. It explicitly depicts “Group
-created + invitation link issued,” an invite-link copy control, and actions
-whose actual link/Invitation must be created by TOP-002, owned solely by
-IR-005. The accepted Screen ID's current IR-003 primary label does not transfer
-TOP-002 ownership.
+Finding `F-IR003-FREEZE-001` corrects the earlier reachability conclusion.
+The accepted `ONB-06` contract and manifest define one Success state only:
+“Group created + invitation link issued,” an invite-link copy control, and
+primary/ghost/secondary actions. The accepted `ONB-05` permits no destination
+revelation before a Group exists; `ONB-09` is IR-006 and `ONB-10` is IR-011.
+Neither is an IR-003 continuation. The accepted design exceptions contain no
+staged non-Invitation ONB-06 state. Therefore no existing accepted contract
+permits a truthful rendered result after TOP-001 without an Invitation.
 
-This is resolvable as an implementation-ownership/reachability clarification,
-not a design change: before IR-005, the full accepted ONB-06 screen is
-**unreachable and unimplemented**. IR-003 may expose only a truthful
-server-confirmed Group-created result from TOP-001; it must not render or
-assert that an Invitation exists. It may not create an Invitation record,
-secret, verifier, link, share/copy action, invitation lifecycle action, or
-Invitation-derived navigation. Its current reachable onboarding states are
-ONB-01 through ONB-05 and ONB-07; a committed success is a safe operation
-handoff, not permission to substitute a linkless visual variant for ONB-06.
+This is a formal W3 design-contract blocker, not an implementation-ownership
+clarification: **BLK-IR003-FREEZE-001**, tracked as
+`OE-006` and proposed design change `DCC-IR003-FREEZE-001`. Until the design
+proposal is Accepted, IR-003 must not implement a post-commit success visual,
+must not leave a user in ONB-05/loading after a committed result, and cannot
+be authorised as a complete onboarding implementation. The required future
+deterministic transition is instead frozen as:
 
-IR-005 owns making the accepted composite ONB-06 state reachable after
-TOP-002 has server-confirmed the Invitation/link. If an IR-003-only release
-requires a rendered post-commit success screen before IR-005, that would be a
-new or changed accepted screen contract and is a stop condition requiring
-design change control. No such design change is made by this freeze.
+```text
+TOP-001 committed -> approved non-Invitation ONB-06 state
+TOP-002 committed (IR-005) -> accepted issued-Invitation ONB-06 state
+```
+
+The pending proposal preserves the existing ONB-06 layout and visual tone but
+splits its Success state. Its smallest exact amendment is a new state of the
+existing Screen ID, **“Group created, invitation not issued”**: retain the
+Group header and success pill; give the existing invite-link block a
+noninteractive not-issued state; render no link, secret, copy/share control,
+Invitation action, or Invitation-derived navigation; and render no onward
+IR-006/IR-011 product action. It is a completed terminal confirmation, not a
+loading state. The existing accepted ONB-06 state becomes the later **“Group
+created, invitation issued”** state and remains reachable only after IR-005
+TOP-002 server-confirms the Invitation/link. This proposal is not Accepted and
+does not alter the screen contract, manifest, visual export, component
+catalogue, or IR ownership today.
+
+IR-003 never creates an Invitation record, verifier, secret, link, copy/share
+behaviour, lifecycle action, or Invitation-derived navigation. IR-005 alone
+owns all of those and the issued-Invitation state. The design authority must
+accept, reject, or replace `DCC-IR003-FREEZE-001` before the controlled
+GATE-031 package is prepared; no agent may improvise a linkless ONB-06 variant.
 
 ## 10. Future four-lane implementation allow-list
 
@@ -512,11 +572,14 @@ another lane's paths.
   database tests/harness/artifacts, generated types, package/CI, and
   documentation.
 - Prerequisites: authorised TOP-001 contract, generated types from integration
-  before typed adapter completion, and the ONB reachability rule in §9.
+  before typed adapter completion, and an Accepted
+  `DCC-IR003-FREEZE-001` state contract before any committed-success route is
+  implemented.
 - Output/handoff: anonymous-key client adapter with exactly the three RPC
-  arguments; ONB-01–05/07 running-build behaviour and browser/static tests;
-  safe retry/unknown-completion handling; no reachable ONB-06 invitation
-  capability. It hands only source/test changes to integration.
+  arguments; ONB-01–05/07 and only the then-Accepted non-Invitation ONB-06
+  running-build behaviour and browser/static tests; safe retry/unknown-
+  completion handling; no reachable Invitation capability. It hands only
+  source/test changes to integration.
 
 The write sets above are disjoint. `src/lib/database.types.ts` is the one
 cross-lane-consumed file and is writable by **integration only**, never A/B/C/D;
@@ -582,6 +645,8 @@ Stop before implementation for a missing GATE-031 controlled package, an
 architecture/security contradiction, a non-ISO or missing accounting display
 set, inability to confine elevated capability, any client-supplied authority,
 a duplicate/partial outcome, a cross-Group success, a secret leak, a plan or
-latency regression, or an attempt to render/alter ONB-06 before IR-005. A
+latency regression, an unresolved `BLK-IR003-FREEZE-001`, an attempt to render
+a post-commit success visual before `DCC-IR003-FREEZE-001` is Accepted, or an
+attempt to render/alter the issued-Invitation ONB-06 state before IR-005. A
 post-commit visual success needed before IR-005 requires accepted-design change
 control; it cannot be improvised.

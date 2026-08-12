@@ -52,10 +52,12 @@ authorise Docker/Supabase execution now.
   run, 10 committed warm-ups, 100 distinct calls at 10-way concurrency, and a
   10-way same-key race. The binding limits are p95 <= 40 ms and p99/max <= 75
   ms; plans must follow the packet's index/no-scan/no-spill/no-row-loop rules.
-- Lane D owns only browser/static ONB-01–05/07 and safe-retry evidence. It
-  must prove no Invitation record/link/secret/copy/share behaviour and no
-  reachable ONB-06 before IR-005. R-02 remains running-build work, not a
-  static completion claim.
+- Lane D is blocked by `BLK-IR003-FREEZE-001` until
+  `DCC-IR003-FREEZE-001` is Accepted. It then owns only browser/static
+  ONB-01–05/07 plus that Accepted non-Invitation ONB-06 state and safe-retry
+  evidence. It must prove no Invitation record/link/secret/copy/share
+  behaviour and no reachable issued-Invitation ONB-06 before IR-005. R-02
+  remains running-build work, not a static completion claim.
 - The fresh detached verifier independently re-runs/inspects the authorised
   diff, checksum, object/privilege catalogue, failure/rollback, replay/race,
   performance, types, cleanup, secret safety, and ONB reachability evidence.

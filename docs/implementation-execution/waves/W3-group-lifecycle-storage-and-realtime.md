@@ -88,11 +88,14 @@ fresh detached verifier independently accepts/rejects the candidate. Exact
 paths, prerequisites, artifacts, and prohibited paths are in the IR-003
 packet. No W3 packet is authorised by this coordination record.
 
-The accepted composite ONB-06 visual state remains unchanged but is
-unreachable before IR-005 because it asserts an issued invitation link. IR-003
-may return only its truthful server-confirmed Group-created result; it cannot
-invent a linkless ONB-06 variant. A rendered IR-003-only post-commit success
-state would require accepted design change control.
+`F-IR003-FREEZE-001` records that the accepted composite ONB-06 visual state
+cannot supply IR-003's required committed-success destination: it asserts an
+issued Invitation link, while IR-003 cannot issue one. `ONB-09` and `ONB-10`
+are owned by IR-006 and IR-011, respectively. `BLK-IR003-FREEZE-001` / `OE-006`
+therefore blocks IR-003 onboarding completion and controlled GATE-031 package
+preparation pending the Proposed `DCC-IR003-FREEZE-001` staged ONB-06 decision.
+No linkless replacement may be implemented before the accepted-design process
+decides it; IR-005 retains every issued-Invitation link/copy/share behaviour.
 
 ## Implementation-authorisation status
 
@@ -102,7 +105,8 @@ GATE-013 is Satisfied; W2 is Complete; and no unresolved W2 implementation
 defect is recorded. GATE-014 remains a named IR-006 authorisation prerequisite
 only and does not block this W3-entry decision.
 
-IR-003 is eligible for GATE-031 completion and separate authorisation only; it
-remains **Not authorised**. GATE-031 remains **Not satisfied**. No W3 packet
+IR-003 remains **Not authorised**. GATE-031 remains **Not satisfied**. Resolve
+the bounded ONB-06 design decision before preparing its controlled GATE-031
+package; then a separate IR-003 authorisation remains required. No W3 packet
 or physical trusted operation is authorised, and deployment and cutover remain
 unauthorised.
