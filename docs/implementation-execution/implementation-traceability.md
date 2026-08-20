@@ -14,7 +14,7 @@ integrated evidence where named; no row is a completion claim.
 
 | Accepted requirement set | Owning IR / Wave | Draft document(s) | Required evidence | Review result |
 |---|---|---|---|---|
-| IR-001–IR-022 | Exact packet and Wave mapping | Packets, execution order, dependency graph, gate ledger | Entry/exit decision, owned test/security/rollback evidence | IR-001/IR-002/IR-004/IR-007 and DBM-006 Implemented and Verified; IR-008 is Verified for static contract evidence only; IR-003 and physical owner packets remain unauthorised |
+| IR-001–IR-022 | Exact packet and Wave mapping | Packets, execution order, dependency graph, gate ledger | Entry/exit decision, owned test/security/rollback evidence | IR-001/IR-002/IR-004/IR-007 and DBM-006 Implemented and Verified; IR-008 is Verified for static contract evidence only; IR-003 is Authorised but not Implemented or Verified; other physical owner packets remain unauthorised |
 | W1–W7 | Exact Wave mapping | Wave documents, execution order, gate ledger | Entry, serial/parallel, integration, rollback, exit evidence | W1 complete/GATE-011 satisfied; W2 complete/GATE-013 satisfied; GATE-015 satisfied for W3 entry; W3 implementation and W4–W7 remain unauthorised |
 | TOP-001–TOP-012 physical evidence | IR-003, IR-005, IR-006, IR-013 (consuming IR-009 private-object evidence), IR-014, IR-015 | Trusted-operation register and owner packets | Actual implementation/authorization, authoritative all-or-nothing transaction, injected-failure rollback, idempotency, concurrency/race, audit emission, secret-safe, and operation-specific performance evidence | `CC-W2-GATE013-20260804` retains this evidence at physical owner packet exit; it is not a GATE-013 input |
 | Tenant, Profile, Group Member/Participant, configuration, ownership invariants | IR-002–008 / W1–W3 | DBM/TOP/security/registers | DBM-001 structural membership, DBM-002 configuration/audit, DBM-003 Auth link/privacy, lifecycle, two-Group evidence | IR-002 and DBM-003 independently verified; later lifecycle and policy ownership remains deferred |
@@ -55,8 +55,8 @@ foundations; IR-008 freezes the trusted-operation contract and ownership
 register only, with zero physical operations implemented. Its accepted
 contract-only verification satisfies the corrected GATE-013 input; physical TOP
 proof remains with its owner packet. W2 is complete and the separate GATE-015
-review is Satisfied for W3 entry and GATE-031 is Satisfied, but IR-003 remains
-Not authorised pending separate authorisation. IR-019 is a separately
+review is Satisfied for W3 entry and GATE-031 is Satisfied. IR-003 is
+Authorised but not Implemented or Verified; IR-019 is a separately
 authorised cutover gate, and IR-020 owns post-release containment. They have
 limited or no primary screen ownership, but each remains traceable to packet
 security, test, rollback, observability, and gate evidence. The absence of a

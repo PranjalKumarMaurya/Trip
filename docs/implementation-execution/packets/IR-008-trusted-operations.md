@@ -140,12 +140,12 @@ GATE-013: Satisfied
 W2: Complete
 GATE-015: Satisfied; W3 entry prerequisites from W2 passed
 GATE-031: Satisfied (evidence gate only)
-IR-003 and physical owner packets: Not authorised
-Physical trusted operations: none authorised
+IR-003/TOP-001: Authorised — not implemented
+Every other physical owner packet: Not authorised
 Deployment and cutover: Not authorised
 ```
 
-IR-003 and every physical owner remain work requiring separate authorisation.
+Every other physical owner remains work requiring separate authorisation.
 IR-008 implemented zero physical TOPs and cannot verify their TOPs, nor can this
 contract-only result authorise a physical TOP, open W3, authorise Storage or
 Realtime, deploy, or cut over. Its accepted verification is recorded in

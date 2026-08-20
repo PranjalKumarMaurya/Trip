@@ -14,8 +14,9 @@ freeze is Complete. Controlled GATE-031 evidence preparation is recorded in
 the separate decision in [`gate-031-decision.md`](gate-031-decision.md) is
 **Satisfied**. It confirms validated Owner, request, configuration, approval,
 baseline, provenance, secret-safety, and no-premature-state evidence only.
-IR-003 remains unauthorised pending a separate bounded authorisation decision.
-No physical trusted operation is authorised. W3 through W7 execution,
+IR-003 is Authorised by the recorded separate bounded decision, but remains
+not Implemented or Verified. No other physical trusted operation is authorised.
+W3 through W7 execution beyond IR-003,
 deployment, and cutover remain unauthorised. The accepted roadmap order remains
 authoritative.
 
@@ -82,8 +83,8 @@ authoritative.
 - IR-003 boundary: the Accepted `DCC-IR003-FREEZE-001` supplies the committed
   TOP-001 → ONB-06 State A destination while preserving the IR-005/TOP-002
   State B boundary. GATE-031 is Satisfied by its controlled evidence package
-  and separate decision record. A separate bounded IR-003 authorisation is
-  still required; IR-003 remains Not authorised throughout.
+  and separate decision record. The separate bounded IR-003 authorisation is
+  recorded; implementation remains unstarted and unverified.
 - Internal packet order: IR-003 bootstrap precedes IR-005 lifecycle; IR-005 precedes IR-006 claiming. IR-009 and IR-010 may run in parallel only after IR-005, IR-007, and IR-008 are satisfied.
 - Permitted parallel work: Private Storage and authorised Realtime may run in parallel after lifecycle and trusted-boundary gates. Claiming remains serial after membership.
 - Mandatory serial boundary: IR-003 bootstrap precedes IR-005 lifecycle; IR-005 precedes IR-006 claiming. IR-009 and IR-010 may run in parallel only after IR-005, IR-007, and IR-008 are satisfied.

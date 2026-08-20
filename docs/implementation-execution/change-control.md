@@ -396,3 +396,25 @@ preserves the finding and proposal history.
 - Rollback: this documentation-only accepted amendment changes no physical
   state. Any future replacement of the staged ONB-06 contract requires a new
   bounded design change decision.
+
+## CC-IR003-20260821-authorisation — Atomic Group bootstrap implementation entry
+
+- Decision authority: Product owner / separate bounded IR-003 authorisation
+  authority.
+- Decision timestamp: `2026-08-21T02:21:46+05:30`.
+- Prerequisites: GATE-015 and GATE-031 are Satisfied. The GATE-031 decision is
+  `gate-031-decision.md`; its controlled canonical evidence SHA-256 is
+  `b255c36c8249db35f5cf711054dfee28fca0858904a2900426e2e0951dc65e2a`.
+- Decision: IR-003 is **Authorised — implementation not started**. The
+  authority is recorded in `authorisations/IR-003-authorisation.md` and is
+  limited to its frozen DBM-014/TOP-001 scope and four non-overlapping lanes.
+- Boundary: Atomic Group/configuration/display-currency/initial-Owner/audit/
+  TOP-001 idempotency work and ONB-06 State A only. Invitation issuance and
+  State B remain IR-005/TOP-002; IR-006, IR-009, IR-010, IR-014, IR-015,
+  IR-016, TOP-002–TOP-012, deployment, and cutover remain unauthorised.
+- Integration and verification: a later integration owner alone merges lane
+  outputs and refreshes generated types; a fresh independent verifier must
+  assess the candidate before any Verified decision.
+- Status impact: IR-003 is Authorised, not Implemented, and not Verified.
+  Migration `010`, TOP-001, and IR-003 Group/configuration/member state remain
+  absent. No remote mutation, deployment, or push is authorised by this record.

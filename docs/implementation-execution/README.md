@@ -7,19 +7,20 @@
 - Package lock complete: Yes
 - Implementation Planning Freeze: Complete
 - Implementation readiness review: Approved
-- Implementation authorisation scope: IR-004, IR-007, and IR-008 common
-  contract-only evidence verified; no physical owner packet is authorised
+- Implementation authorisation scope: IR-003 atomic Group bootstrap is
+  authorised but not started; IR-004, IR-007, and IR-008 are verified
 - IR-001 authorised: Yes
 - IR-001 status: Implemented and Verified
 - IR-002 authorised: closed — Implemented and Verified
 - IR-004 status: Verified
 - IR-007 status: Verified
 - IR-008 status: Verified (contract validation and immutable evidence only)
-- IR-003, IR-005–006, and IR-009 through IR-022 authorised: No
+- IR-003 authorised: Yes — not Implemented or Verified
+- IR-005–006 and IR-009 through IR-022 authorised: No
 - W1 status: Complete; GATE-011 satisfied
 - W2 status: Complete; GATE-013 satisfied
-- W3 entry status: GATE-015 satisfied; implementation authorised: No
-- GATE-031 status: Satisfied (evidence gate only; IR-003 remains not authorised)
+- W3 entry status: GATE-015 satisfied; IR-003 implementation authorised only
+- GATE-031 status: Satisfied (evidence prerequisite to the separate IR-003 authorisation)
 - Application implementation: IR-004 and IR-007 verified
 
 ## Purpose
@@ -77,8 +78,10 @@ design freeze. The protected GATE-031 package is recorded in
 the separate satisfaction decision is recorded in
 [`gate-031-decision.md`](gate-031-decision.md). GATE-031 is Satisfied on its
 validated Owner, request, mandatory configuration, approval, baseline,
-provenance, secret-safety, and no-premature-state evidence. The next activity
-is a separate bounded IR-003 authorisation decision. IR-003 and IR-005 remain
-unauthorised; GATE-031 satisfaction is not implementation authority. No
-physical trusted operation is authorised. Storage (IR-009), Realtime (IR-010),
-product conversion, deployment, and cutover remain unauthorised.
+provenance, secret-safety, and no-premature-state evidence. The separate
+bounded authorisation is recorded in
+[`authorisations/IR-003-authorisation.md`](authorisations/IR-003-authorisation.md).
+IR-003 alone is Authorised and remains not Implemented or Verified; its four
+frozen lanes, later integration, and independent verification are mandatory.
+IR-005 and later packets, Storage (IR-009), Realtime (IR-010), product
+conversion, deployment, and cutover remain unauthorised.

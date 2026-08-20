@@ -13,11 +13,13 @@
 - W1: Complete; GATE-011: Satisfied
 - W2: Complete; GATE-012 and GATE-013: Satisfied
 - GATE-015: Satisfied; W3 entry prerequisites from W2: passed
-- IR-003: Not authorised; GATE-031: Satisfied
+- IR-003: Authorised — implementation not started or verified; GATE-031: Satisfied
 - GATE-031 decision: recorded in `gate-031-decision.md`; protected evidence,
   Product, Data, Security, and Architecture approvals passed the separate
   gate decision
-- Physical trusted operations: none authorised
+- IR-003 authority: `authorisations/IR-003-authorisation.md`; only its frozen
+  DBM-014/TOP-001 lanes may begin
+- Other physical trusted operations: none authorised
 - Deployment: Not authorised
 - Production cutover: Not authorised
 

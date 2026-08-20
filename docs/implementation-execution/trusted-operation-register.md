@@ -38,7 +38,7 @@ boundary while deliberately excluding any actor input.
 
 | ID | Exact logical signature | Physical owner | Validation, transaction, and operation-specific concurrency boundary | Status |
 |---|---|---|---|---|
-| TOP-001 | `bootstrap_group(group_request, configuration_request, request_id)` | IR-003 | Authenticated verified creator; create Group, mandatory configuration, stable member/Participant identity, first active Owner, and audit in one transaction. Duplicate/retry returns one complete result; concurrency cannot create duplicate logical Groups. | Contract frozen; not implemented |
+| TOP-001 | `bootstrap_group(group_request, configuration_request, request_id)` | IR-003 | Authenticated verified creator; create Group, mandatory configuration, stable member/Participant identity, first active Owner, and audit in one transaction. Duplicate/retry returns one complete result; concurrency cannot create duplicate logical Groups. | Authorised — not implemented |
 | TOP-002 | `create_invitation(group_id, recipient_request, invitation_request, request_id)` | IR-005 | Current active Owner in target active Group; recipient-bound expiring Invitation and audit commit atomically. Keyed administrative retry cannot create duplicate live secret/Invitation outcome. | Contract frozen; not implemented |
 | TOP-003 | `accept_invitation(invitation_proof, continuation_context, request_id)` | IR-005 | Valid authenticated recipient; revalidate Group, recipient binding, expiry, revocation, and prior membership. Membership activation/reactivation and single-use consumption are one transaction; recipient mismatch/replay/race cannot mint authority. | Contract frozen; not implemented |
 | TOP-004 | `change_member_role(group_id, target_membership_id, requested_role, request_id)` | IR-005 | Current Owner and active same-Group target; only Owner/Member roles. Atomic role/audit update revalidates ownership continuity; serialized changes prevent self-promotion or zero Owners. | Contract frozen; not implemented |
@@ -154,8 +154,8 @@ GATE-013: Satisfied
 W2: Complete
 GATE-015: Satisfied; W3 entry prerequisites from W2 passed
 GATE-031: Satisfied (evidence gate only)
-IR-003 and every physical owner packet: Not authorised
-Physical trusted operations: none authorised
+IR-003/TOP-001: Authorised — not implemented
+Every other physical owner packet: Not authorised
 Deployment and cutover: Not authorised
 ```
 

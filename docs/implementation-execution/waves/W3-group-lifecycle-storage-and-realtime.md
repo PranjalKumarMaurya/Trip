@@ -2,8 +2,8 @@
 
 ## Status and authorisation
 
-- Status: GATE-015 satisfied for W3 entry; implementation remains unauthorised
-- Implementation authorised: No
+- Status: GATE-015 satisfied for W3 entry; IR-003 alone is authorised
+- Implementation authorised: IR-003 only — not started, Implemented, or Verified
 - Wave complete: No
 
 ## Wave objective
@@ -79,14 +79,14 @@ TOP-001-specific idempotency, and its narrowly dedicated executor/grants.
 TOP-002–TOP-007 remain IR-005, including every Invitation record, secret,
 link, copy/share action, and lifecycle result.
 
-If IR-003 is later separately authorised, work divides into four non-overlap
+The separately authorised IR-003 work divides into four non-overlap
 lanes: A migration/TOP only; B database adversarial contract tests only; C
 isolated failure/rollback/performance/evidence only; D authenticated onboarding
 adapter/browser/static tests only. A future integration worktree alone merges
 those handoffs and writes generated types after the authorised migration; a
 fresh detached verifier independently accepts/rejects the candidate. Exact
 paths, prerequisites, artifacts, and prohibited paths are in the IR-003
-packet. No W3 packet is authorised by this coordination record.
+packet. No other W3 packet is authorised by this coordination record.
 
 `F-IR003-FREEZE-001` records the former composite ONB-06 reachability defect.
 The product owner accepted `DCC-IR003-FREEZE-001`: the existing Screen identity
@@ -110,8 +110,10 @@ only and does not block this W3-entry decision.
 
 The IR-003 pre-authorisation design freeze is **Complete**. GATE-031 is
 **Satisfied** by the separate decision in
-[`gate-031-decision.md`](../gate-031-decision.md); IR-003 remains **Not
-authorised**. Controlled evidence preparation is recorded in
+[`gate-031-decision.md`](../gate-031-decision.md); the separate bounded
+IR-003 authority is recorded in
+[`authorisations/IR-003-authorisation.md`](../authorisations/IR-003-authorisation.md).
+Controlled evidence preparation is recorded in
 [`gate-031-evidence-preparation.md`](../gate-031-evidence-preparation.md) and
 is complete: the approved configuration and
 historical-date adjudication, Product approval, selected initial Owner,
@@ -119,9 +121,9 @@ verified Auth identity, exactly-one Profile linkage, target-baseline evidence,
 and Data/Security/Architecture approvals are complete in the protected
 package. The current controlled manifest hash is referenced only in the
 redacted preparation record. Existing Auth/Profile evidence is an input, not
-an IR-003-created Group or Owner membership. The next activity is a separate
-bounded IR-003 authorisation decision; a separate IR-003 authorisation remains
-required afterward. No W3 packet or physical trusted operation is authorised,
+an IR-003-created Group or Owner membership. The next activity is the
+authorised IR-003 four-lane implementation, then integration and independent
+verification. No other W3 packet or physical trusted operation is authorised,
 and deployment and cutover remain unauthorised.
 
 ### 2026-08-20 authorised database prerequisite baseline
@@ -130,5 +132,5 @@ The exact controlled target now has the accepted migration prefix `001`–`009`
 and a fresh remote audit has passed the 006–009 tenant/Profile/Auth/RLS
 baseline. This was prerequisite realization only: no `010`, TOP, Owner Auth
 user, Group, configuration, deployment, or cutover occurred. The later
-separate GATE-031 decision is Satisfied; IR-003 remains Not authorised. The
-immediate next action is a separate bounded IR-003 authorisation decision.
+separate GATE-031 decision is Satisfied; IR-003 is now Authorised but not
+Implemented or Verified. The immediate next action is its frozen lane work.

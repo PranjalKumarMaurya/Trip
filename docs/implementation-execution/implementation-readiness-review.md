@@ -12,10 +12,12 @@
 - W1: Complete; GATE-011: Satisfied
 - W2: Complete; GATE-012 and GATE-013: Satisfied
 - GATE-015: Satisfied; W3 entry prerequisites from W2: passed
-- W3 implementation and IR-003: Not authorised; GATE-031: Satisfied
+- IR-003: Authorised — implementation not started or verified; GATE-031: Satisfied
+- Remaining W3 implementation: Not authorised
 - GATE-031 decision: the protected evidence and Product, Data, Security, and
   Architecture approvals passed the separate decision in `gate-031-decision.md`
-- No physical trusted operation, deployment, or cutover is authorised.
+- No physical trusted operation other than authorised future TOP-001 work,
+  deployment, or cutover is authorised.
 
 ## Package review result
 
@@ -38,8 +40,8 @@ bring the locked package to 51 Markdown documents.
   work.
 - GATE-015: Satisfied for W3 entry prerequisites from W2; it authorises no W3
   implementation.
-- GATE-031: Satisfied; a separate IR-003 authorisation decision still blocks
-  IR-003 implementation.
+- GATE-031: Satisfied; the separate IR-003 authorisation is recorded in
+  `authorisations/IR-003-authorisation.md`.
 - Verified IR-001 capability, fixture, and environment evidence closed the W1
   exit requirements without authorising later work.
 - External target/source evidence first blocks W5; representative rehearsal
@@ -66,8 +68,8 @@ test-environment evidence first affects W1 exit; neither blocks IR-001 entry.
 
 ## Recommendation
 
-The next planned activity is a separate bounded IR-003 authorisation decision.
-GATE-031 satisfaction is not IR-003 implementation authority.
+The next planned activity is authorised IR-003 implementation in the frozen
+non-overlapping lanes, followed by integration and independent verification.
 
 The implementation package is accepted and locked. IR-003 and every other
 unauthorised packet require separate authority. R-02 remains implementation

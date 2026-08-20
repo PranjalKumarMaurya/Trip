@@ -2,25 +2,26 @@
 
 ## 1. Status and freeze boundary
 
-- Status: Draft — pre-authorisation design freeze complete; physical
-  implementation remains not authorised
+- Status: Authorised — pre-authorisation design freeze complete; physical
+  implementation not started
 - Wave: W3
 - Physical owner: IR-003 / W3 for DBM-014 and TOP-001 only
-- Implementation authorised: **No**
-- GATE-031: **Satisfied** — evidence gate only; IR-003 remains not authorised
-- Physical trusted operation: **Not authorised and not implemented**
+- Implementation authorised: **Yes** —
+  [`IR-003 authorisation`](../authorisations/IR-003-authorisation.md)
+- GATE-031: **Satisfied** — evidence prerequisite; separate IR-003 authority recorded
+- Physical trusted operation: **Authorised and not implemented**
 - Future migration reservation only:
   `supabase/migrations/010_ir003_atomic_group_bootstrap.sql`
 
-This is a documentation-only, prospective freeze. It does not create the
+The completed freeze and authority record do not create the
 reserved migration, a role, a function, a table, generated types, application
-code, tests, artifacts, remote state, deployment, or a Group. It does not
-satisfy GATE-031, authorise IR-003, or change any Verified packet or gate.
+code, tests, artifacts, remote state, deployment, or a Group. The record does
+not itself implement any of them or change a Verified packet or gate.
 
 The verified inputs are IR-001, IR-002, IR-004, IR-007, and IR-008; GATE-013
 is Satisfied, W2 is Complete, and the separate W3 entry decision GATE-015 is
-Satisfied. Those facts make this packet eligible only for the controlled
-GATE-031 evidence package and a later separate authorisation.
+Satisfied. Along with the satisfied GATE-031 evidence decision, those facts
+support the recorded separate authorisation.
 
 ## 2. Authoritative inputs and inspected state
 
@@ -62,9 +63,9 @@ file is exactly:
 supabase/migrations/010_ir003_atomic_group_bootstrap.sql
 ```
 
-That file is reserved, absent, and must remain absent until GATE-031 is
-Satisfied and IR-003 receives a separately bounded authorisation. When later
-authorised, DBM-014 may own only all of the following, in that one migration:
+That file is reserved and absent at authorisation. It may be created only by
+the authorised Lane A after the GATE-031 and IR-003 entry conditions are
+rechecked. DBM-014 may own only all of the following, in that one migration:
 
 1. the minimum display-context child persistence in §4;
 2. the IR-003-specific TOP-001 idempotency table in §7 and its indexes,
@@ -481,14 +482,14 @@ behaviour, lifecycle action, or Invitation-derived navigation. IR-005 alone
 owns all of those and the issued-Invitation state. Existing clean and annotated
 ONB-06 PNGs remain byte-identical State B evidence; State A is accepted in the
 contract and manifest only. The pre-authorisation design freeze is complete.
-GATE-031 is Satisfied and IR-003 remains Not authorised; the next
-activity is a separate bounded IR-003 authorisation decision. No agent may
-improvise a different ONB-06 variant.
+GATE-031 is Satisfied and the separate IR-003 authorisation is recorded; the
+next activity is the frozen lane implementation. No agent may improvise a
+different ONB-06 variant.
 
 ## 10. Future four-lane implementation allow-list
 
-Every path marked **Proposed** is absent at this HEAD and must be rechecked at
-authorisation. The current existing shared inputs are read-only in all four
+Every path marked **Proposed** is absent at this authorisation HEAD and must be
+rechecked at lane start. The current existing shared inputs are read-only in all four
 lanes. No lane writes documentation, existing migrations 001–009,
 `package.json`, package-lock, deployment/CI, any `artifacts/ir-001/**`,
 `artifacts/ir-002/**`, `artifacts/ir-004/**`, or `artifacts/ir-007/**`, or

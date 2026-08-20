@@ -32,10 +32,10 @@ design manifests remain evidence inputs, not a visual-test runner.
 
 ## IR-003 TOP-001 pre-authorisation evidence freeze
 
-IR-003 has no executed evidence and remains unauthorised. Its later physical
+IR-003 is Authorised but has no executed evidence. Its physical
 TOP-001 evidence is frozen to the verified local-isolated IR-001 capability and
 the IR-007 evidence discipline; this does not reserve a remote project or
-authorise Docker/Supabase execution now.
+authorise a remote project or deployment.
 
 - Lane B owns only the TOP-001 database/contract adversarial matrix: verified
   actor/Profile success; unauthenticated and unverified denial; forged actor
