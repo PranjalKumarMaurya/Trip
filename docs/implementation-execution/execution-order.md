@@ -13,15 +13,15 @@ freeze is Complete. Controlled GATE-031 evidence preparation is recorded in
 [`gate-031-evidence-preparation.md`](gate-031-evidence-preparation.md) and is
 incomplete: the selected eventual migrated-Bali initial Owner, its verification
 and exactly-one Profile linkage, reviewed configuration, and four approvals
-are absent. The newly authorised target-baseline verification attempt is
-access-blocked because the exact Trip project is neither linked nor available
-in the current CLI inventory. GATE-031 remains Not satisfied and IR-003 remains
-unauthorised. The next activity is to provide exact target-project
-reference/access-linkage evidence, complete read-only baseline verification,
-then obtain the remaining controlled evidence and perform a separate GATE-031
-evidence review and satisfaction decision. No physical trusted operation is
-authorised. W3 through W7 execution, deployment, and cutover remain
-unauthorised. The accepted roadmap order remains authoritative.
+are absent. The later target-linked read-only baseline audit positively
+identified the Product Owner-designated target, but found no deployed 006–009
+equivalent objects. Its decision is **TARGET SCHEMA BASELINE INCOMPLETE**.
+GATE-031 remains Not satisfied and IR-003 remains unauthorised. The next
+activity is separately authorised application of existing migrations 006–009,
+then a fresh read-only audit before any remaining controlled Owner evidence is
+considered. No physical trusted operation is authorised. W3 through W7
+execution, deployment, and cutover remain unauthorised. The accepted roadmap
+order remains authoritative.
 
 ## W1 — Evidence and tenant foundation
 

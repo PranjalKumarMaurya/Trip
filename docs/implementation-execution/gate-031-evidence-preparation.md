@@ -142,3 +142,25 @@ Git. It contains no credentials or project identifiers. Remote schema, Auth
 configuration, and Auth-user-count verification remain pending the exact target
 project reference and access/linkage evidence. GATE-031 remains **Not
 satisfied** and IR-003 remains **Not authorised**.
+
+## Target-linked baseline reattempt — 2026-08-20 UTC
+
+The Product Owner-designated Travel target was subsequently positively
+identified and linked in the authenticated CLI session. The exact reference is
+retained only in the new controlled record
+`remote-baseline-verification-20260821.md`; Git deliberately records no
+project identifier or credential.
+
+The reattempt completed read-only linkage, migration-history, generated-schema,
+PostgREST object-presence, Auth-settings, and zero-user checks. The target is
+reachable, has an enabled email-signup/confirmation path, and has zero Auth
+users. However, it has no remotely applied migrations and the required
+`public` baseline objects are absent. Equivalents of migrations 006–009,
+including `public.profiles`, its Auth FK/uniqueness constraint, the creation
+function/trigger path, and Profile RLS/grants therefore fail the audit.
+
+This advances the result from target-access blocked to **TARGET SCHEMA BASELINE
+INCOMPLETE**. It neither satisfies GATE-031 nor authorises IR-003, Owner
+creation, migration 010, TOP-001, deployment, or a repair. The smallest next
+step is separately authorised application of existing migrations 006–009 to
+the exact controlled target, followed by a fresh read-only audit.
