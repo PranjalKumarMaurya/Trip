@@ -22,11 +22,16 @@
   one-persistent-session control remains p95 `52.930 ms`. `EXPLAIN ANALYZE`
   measures the timezone-validation path at `23.335 ms`; TOP-001 invokes it
   directly and again through the configuration timezone CHECK.
-- The smallest required next correction is one bounded, measured database
-  correction: replace the catalog-view implementation of
-  `public.is_valid_iana_timezone(text)` with an indexed, maintained IANA
-  reference lookup while preserving its boolean contract. Migration `010` is
-  unchanged in this diagnosis; frozen workload and thresholds are unchanged.
+- Performance-correction design decision: **IR-003 PERFORMANCE DESIGN
+  BLOCKED**. A disposable indexed 1,151-name primary-key reference-table
+  prototype passes the frozen workload (p95 `12.095 ms`, p99 `13.405 ms`), but
+  it is a shared DBM-002 validator evolution with a non-automatic tzdata
+  refresh obligation. DBM-014 neither owns that new shared table nor its
+  maintenance; migration `011` is not authorised. The smaller no-schema
+  removal of TOP-001's explicit call still fails p95 (`65.255 ms`) and changes
+  invalid-timezone classification. Migration `010` remains unchanged; frozen
+  workload and thresholds are unchanged. See
+  `CC-IR003-20260821-performance-correction-design`.
 - Lane D is complete and remains isolated in its own worktree. Integration,
   generated types, and independent verification remain pending.
 - IR-003 remains **Authorised**, not globally Implemented, and not Verified.

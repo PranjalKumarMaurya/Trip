@@ -533,3 +533,63 @@ preserves the finding and proposal history.
   Implemented and not Verified. This record changes no SQL, remote state,
   deployment, or push; migration `010` still contains the identified defect
   until the separately authorised implementation correction is applied.
+
+## CC-IR003-20260821-performance-correction-design — ownership decision
+
+- Decision: **IR-003 PERFORMANCE DESIGN BLOCKED**.
+- Scope: a disposable, isolated Lane C performance-correction design review
+  only. No production migration, function, role, table, test harness,
+  generated type, remote target, deployment, or Lane D path changed.
+- Root cause: confirmed. `public.is_valid_iana_timezone(text)` is the shared
+  IR-002 / DBM-002 function defined by immutable migration `007`. It is a
+  `STABLE`, `SECURITY INVOKER` SQL function with `search_path = pg_catalog`;
+  it accepts a slash-qualified candidate only when it occurs exactly in
+  `pg_catalog.pg_timezone_names`. TOP-001 evaluates it explicitly and the
+  inherited `group_configurations.timezone` CHECK evaluates it again. A
+  successful bootstrap therefore makes exactly two calls.
+- Option A rejected: removing the explicit TOP-001 validation leaves one
+  authoritative CHECK evaluation and no new schema, but the exact frozen
+  10-worker/100-distinct fixture measured p95 `65.255 ms` (limit `40 ms`) and
+  p99 `69.750 ms` (limit `75 ms`). Its direct constraint failure also becomes
+  safe `operation_failed`, rather than the existing `invalid_request`
+  validation category, unless further exception translation is added. It is
+  neither a threshold pass nor an exact public-behaviour preservation.
+- Option B rejected pending separate ownership: the only tested threshold-pass
+  design is an ordinary persistent reference table populated from the current
+  PostgreSQL timezone catalogue, with a primary-key lookup by exact timezone
+  name. It contained 1,151 names, had no set difference from the catalogue,
+  and measured p95 `12.095 ms`, p99 `13.405 ms`, max `13.837 ms` for the
+  frozen 10-worker workload. It would require a new persistent shared schema
+  object, executor `SELECT`, and `CREATE OR REPLACE` of the IR-002 validator.
+  A migration-time snapshot is not automatically refreshed by PostgreSQL or
+  OS tzdata upgrades, so it changes the validated set unless an owned refresh
+  process is added. DBM-014 is expressly limited to the display child,
+  TOP-001 idempotency, executor/grants, and bootstrap RPC; it also forbids any
+  other project-defined dependency. This shared DBM-002 evolution and its
+  maintenance ownership are not authorised by the IR-003 authority. The
+  current validator is `PUBLIC`-executable (and appears in generated public
+  database types), so its security-invoker replacement would also require
+  browser-role `SELECT` on the reference table to preserve direct calls, or a
+  global SECURITY DEFINER posture change. Neither exposure/posture decision is
+  in IR-003 authority.
+- Option C rejected: the native `timezone(candidate, current_timestamp)`
+  prototype accepted every current catalogue name but also accepted
+  lowercase `asia/kolkata`; the existing exact catalogue comparison rejects
+  it. It therefore cannot preserve the frozen case-sensitive boolean contract
+  without reintroducing a shared exact-name reference.
+- Option D: migration `011` is **NOT AUTHORISED**. The authorisation and
+  migration register reserve only `010_ir003_atomic_group_bootstrap.sql`; no
+  migration-011 reservation or authority exists.
+- Required future authority: a separately authorised shared DBM-002 forward
+  evolution must choose the reference data, exact refresh trigger/operator,
+  tzdata-upgrade reconciliation, grants/RLS exposure, rollback/forward repair,
+  and physical migration location. It must then require the timezone subset of
+  Lane B (canonical, unusual, invalid, null, blank, CHECK, rollback, replay,
+  changed fingerprint, and cross-actor UUID) and a complete fresh Lane C rerun
+  using unchanged p95 `<= 40 ms` and p99 `<= 75 ms` thresholds, followed by
+  independent verification. Until then, no correction location is approved.
+- Status impact: GATE-031 remains Satisfied; IR-003 remains Authorised and not
+  globally Implemented or Verified; Lane C remains BLOCKED; Lane D remains
+  isolated; Travel migration `010` remains unapplied. The next action is to
+  obtain the missing shared-contract and maintenance authority, not to alter
+  migration `010` or create migration `011`.

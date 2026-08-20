@@ -18,7 +18,11 @@
   formal performance and final Lane C manifest not run/finalized; Lane D
   complete and isolated; integration/generated types and independent
   verification pending. Diagnosis: LANE C DATABASE PERFORMANCE DEFECT;
-  migration 010 remains unchanged and Travel remains unapplied.
+  `CC-IR003-20260821-performance-correction-design` records **IR-003
+  PERFORMANCE DESIGN BLOCKED**: the only threshold-pass prototype is an
+  unauthorised shared DBM-002 reference-table/maintenance evolution; Option A
+  remains over p95. Migration 010 remains unchanged and Travel remains
+  unapplied.
 - IR-003 pre-authorisation design freeze: Complete
 - DCC-IR003-FREEZE-001: Accepted
 - BLK-IR003-FREEZE-001: Resolved by DCC-IR003-FREEZE-001 — Accepted
