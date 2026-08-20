@@ -26,6 +26,7 @@
     "test:ir004:browser": "PLAYWRIGHT_BROWSERS_PATH=0 playwright test tests/browser/ir-004/auth-profile-session.spec.ts",
     "test:ir004:unit": "node --test tests/unit/ir-004-auth-profile-session.test.mjs",
     "test:ir004:evidence": "node tests/evidence/write-ir-004-evidence-manifest.mjs",
+    "test:ir003": "node tests/database/ir-003/run-adversarial-bootstrap.mjs",
     "test:ir007": "npm run test:ir007:unit && npm run test:ir007:static && npm run test:ir007:evidence && npm run test:ir007:cleanup",
     "test:ir007:unit": "node --test tests/unit/ir-007-rls-ownership-matrix.test.mjs",
     "test:ir007:static": "node --test tests/unit/ir-007-static-contract.test.mjs",
