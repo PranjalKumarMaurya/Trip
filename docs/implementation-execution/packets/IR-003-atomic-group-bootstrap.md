@@ -431,6 +431,49 @@ or purge policy needs its own reviewed owner and cannot weaken a still-valid
 retry record. Request ID remains correlation/idempotency data, never an access
 grant.
 
+### 7.1 Audit request-ID compatibility clarification
+
+`public.group_audit_events` is the immutable IR-002 / DBM-002 audit-table
+baseline; IR-007 / DBM-006 later owns its RLS/read boundary, not its
+idempotency semantics. The IR-002 authorisation required a unique
+`request_id`, but does not define that column as a global trusted-operation
+idempotency authority. The frozen common trusted-operation contract instead
+defines request ID as correlation/idempotency data, and TOP-001 expressly owns
+its idempotency persistence in `public.ir003_bootstrap_requests`.
+
+The authoritative TOP-001 key is exactly
+`(operation, actor_profile_id, request_id)`. Consequently, two distinct
+validated actors may use the same UUID independently. TOP-001 continues to
+write that caller request UUID unchanged to its one `group_bootstrapped` audit
+row; the audit row is correlation evidence, not a substitute claim or replay
+authority.
+
+The inherited global constraint
+`group_audit_events_request_id_key` is incompatible with that frozen key: it
+would reject the second actor's otherwise valid, separately claimed bootstrap
+solely because the UUID appears in another actor's audit row. It must therefore
+be forward-altered, without rewriting migration `007`, inside the authorised
+DBM-014 migration before the TOP-001 function is created:
+
+```sql
+ALTER TABLE public.group_audit_events
+  DROP CONSTRAINT group_audit_events_request_id_key;
+
+CREATE INDEX group_audit_events_request_id_idx
+  ON public.group_audit_events (request_id);
+```
+
+The non-unique btree is required to retain efficient correlation lookup after
+dropping the constraint-owned index. No composite audit uniqueness replacement
+is authorised: the table has no authoritative TOP operation or actor-Profile
+key, and an audit constraint must not recreate a hidden replay authority.
+Same-actor/same-TOP duplicate prevention remains solely the
+`ir003_bootstrap_requests` primary key; its completed replay path emits no
+second bootstrap audit event. This is a bounded IR-003 compatibility evolution,
+not an IR-002 or IR-007 correction and not an architecture reopening. Lane B
+and the detached verifier must prove the cross-actor same-UUID cases and the
+continued same-actor replay/conflict/race guarantees.
+
 ## 8. TOP-001 performance and evidence acceptance
 
 This is a future test contract, not a benchmark result. It uses the Verified

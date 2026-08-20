@@ -464,3 +464,72 @@ preserves the finding and proposal history.
 - Status impact: GATE-031 remains Satisfied. IR-003 remains **Authorised**,
   not Implemented and not Verified. This record authorises no remote migration,
   bootstrap execution, deployment, or push.
+
+## CC-IR003-20260821-audit-request-id-scope — TOP-001 compatibility correction
+
+- Decision authority: bounded IR-003 compatibility/change-control decision.
+- Decision: **IR-003 AUDIT REQUEST-ID CORRECTION APPROVED**.
+- Finding: Lane B adversarial testing reproduced a deterministic cross-actor
+  failure. Migration `007_ir002_configuration_archive_audit.sql` creates
+  `public.group_audit_events.request_id` with the global unique constraint
+  `group_audit_events_request_id_key`. Migration `010` correctly claims
+  TOP-001 idempotency by `(operation, actor_profile_id, request_id)`, but also
+  writes the caller UUID to the bootstrap audit row. A second validated actor
+  using the same UUID receives a distinct valid idempotency claim and then
+  fails at the inherited audit constraint.
+- Ownership and original meaning: migration `007` is IR-002 / DBM-002's
+  immutable audit-table baseline, while IR-007 / DBM-006 owns its later
+  RLS/read boundary. The IR-002 authorisation says `request_id` is unique but
+  supplies no contract making it a global operation-idempotency authority.
+  The later authoritative IR-008/IR-003 contracts define request ID as
+  correlation/idempotency data and assign TOP-001 replay authority exclusively
+  to IR-003's `ir003_bootstrap_requests`. The original reason for a global
+  uniqueness scope is not otherwise documented. It cannot override the later
+  frozen cross-actor TOP-001 rule or become a hidden public replay contract.
+- Accepted correction: in migration `010`, before defining TOP-001, drop
+  `group_audit_events_request_id_key` and create the required non-unique
+  btree `group_audit_events_request_id_idx (request_id)`. TOP-001 continues to
+  store the unchanged caller `request_id` in exactly one committed
+  `group_bootstrapped` audit row. Do not generate or derive a replacement audit
+  UUID, and do not add an audit composite uniqueness constraint. The migration
+  must retain `ir003_bootstrap_requests` with primary key
+  `(operation, actor_profile_id, request_id)` as the sole TOP-001 idempotency
+  authority.
+- Option evaluation: A is accepted because it preserves the frozen key,
+  correlation, and audit lookup while removing only the incompatible global
+  replay effect. B and C are rejected because replacing the caller correlation
+  value with generated/derived audit values changes the audit meaning and
+  weakens direct request-to-event evidence. D is rejected because global
+  request-ID idempotency changes the frozen public replay contract and
+  cross-actor independence. No repository-supported alternative exists: the
+  audit table has no authoritative operation or actor-Profile columns with
+  which to create a correct substitute uniqueness key.
+- Data, security, and architecture compatibility: **PASS**. Duplicate UUIDs
+  across actors are valid correlation values; duplicate UUIDs for the same
+  TOP-001 actor remain prevented by the IR-003 primary key. The non-unique
+  index preserves correlation lookup. Authorization, actor binding, forced RLS,
+  direct-write denial, audit actor/group foreign keys, safe replay, and
+  concurrency semantics are unchanged. The correction neither alters the
+  public `bootstrap_group` signature nor Owner/configuration semantics, adds a
+  TOP, expands Group lifecycle, or crosses into IR-005+ work. It is compatible
+  with the accepted Data, Security, and Architecture GATE-031 approvals.
+- Baseline classification: **VALID FORWARD EVOLUTION IN MIGRATION 010**.
+  Migration `007` remains immutable. DBM-014 may forward-alter its inherited
+  constraint to satisfy the later authorised TOP-001 contract; this does not
+  reopen IR-002's audit foundation or IR-007's accepted RLS baseline.
+- Required Lane B regression and verifier proof: (1) two distinct validated
+  actors use the same UUID with distinct valid payloads and both bootstrap,
+  each with one Group, one actor-scoped request record, and one audit event;
+  (2) prove the two audit rows retain that same caller UUID; (3) same
+  actor/same UUID/same normalized payload replays one stored result and leaves
+  one audit row; (4) same actor/same UUID/changed fingerprint returns only
+  `idempotency_conflict` with no additional Group or audit row; (5) concurrent
+  same-actor/same-key calls converge to one Group/request/audit result; and
+  (6) request-ID lookup uses the non-unique audit index without turning the
+  audit table into idempotency authority. The independent verifier must repeat
+  these checks against the integrated migration and confirm migrations
+  `001`–`009` are byte-for-byte unchanged.
+- Status impact: GATE-031 remains Satisfied. IR-003 remains **Authorised**, not
+  Implemented and not Verified. This record changes no SQL, remote state,
+  deployment, or push; migration `010` still contains the identified defect
+  until the separately authorised implementation correction is applied.
