@@ -119,3 +119,14 @@ evidence, then perform a separate GATE-031 evidence review and satisfaction
 decision; a separate IR-003 authorisation remains required afterward. No W3
 packet or physical trusted operation is authorised, and deployment and cutover
 remain unauthorised.
+
+### 2026-08-20 authorised database prerequisite baseline
+
+The exact controlled target now has the accepted migration prefix `001`–`009`
+and a fresh remote audit has passed the 006–009 tenant/Profile/Auth/RLS
+baseline. This was prerequisite realization only: no `010`, TOP, Owner Auth
+user, Group, configuration, deployment, or cutover occurred. GATE-031 remains
+Not satisfied and IR-003 remains Not authorised. The immediate next action is
+the supported-signup, confirmation, and exactly-one automatic Profile-linkage
+evidence for exactly one legitimate intended Owner, followed by the separate
+GATE-031 review.

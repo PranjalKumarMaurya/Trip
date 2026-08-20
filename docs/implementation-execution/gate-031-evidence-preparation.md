@@ -164,3 +164,28 @@ INCOMPLETE**. It neither satisfies GATE-031 nor authorises IR-003, Owner
 creation, migration 010, TOP-001, deployment, or a repair. The smallest next
 step is separately authorised application of existing migrations 006–009 to
 the exact controlled target, followed by a fresh read-only audit.
+
+## Authorised prerequisite deployment and fresh audit — 2026-08-20 UTC
+
+The remote target had no repository migration history, so a dependency review
+found that `009` also requires the legacy tables created by `001`–`005`; the
+frozen valid prefix was therefore `001` through `009`, not `006` through
+`009` alone. After checksum validation and a CLI dry run, the linked standard
+migration mechanism applied that exact accepted prefix. No seed, migration
+`010`, Auth/configuration mutation, Auth user, Profile, Group, configuration
+row, TOP, deployment, or cutover was performed.
+
+The fresh controlled audit passed the deployed 006–009 equivalent baseline:
+tenant/configuration/audit foundations, nullable-unique-restrictive
+`profiles.auth_user_id`, the one enabled Auth insert Profile trigger,
+fail-closed RLS/FORCE RLS/policies/grants, zero Auth users, zero Profiles, and
+the still-viable email-confirmation signup configuration. The redacted
+protected evidence is `target-baseline-deployment-20260820.md`; Git contains
+no target ref, credential, or identity value.
+
+This is a database prerequisite result only. **GATE-031 remains Not satisfied
+and IR-003 remains Not authorised.** The next controlled action is to create
+exactly one legitimate intended Owner Auth account through the supported signup
+path, complete email confirmation, verify automatic exactly-one Profile
+linkage, and capture frozen Owner identity evidence for separate GATE-031
+review.
