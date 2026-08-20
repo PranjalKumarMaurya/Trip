@@ -13,6 +13,8 @@
 - W2: Complete; GATE-012 and GATE-013: Satisfied
 - GATE-015: Satisfied; W3 entry prerequisites from W2: passed
 - W3 implementation and IR-003: Not authorised; GATE-031: Not satisfied
+- GATE-031 pre-decision evidence: Ready for separate review; Product, Data,
+  Security, and Architecture approvals are complete in protected evidence
 - No physical trusted operation, deployment, or cutover is authorised.
 
 ## Package review result
@@ -63,8 +65,8 @@ test-environment evidence first affects W1 exit; neither blocks IR-001 entry.
 
 ## Recommendation
 
-The next planned activity is the documentation-only IR-003 pre-authorisation
-design freeze. It is not IR-003 implementation authority.
+The next planned activity is a separate GATE-031 satisfaction decision from
+clean `v2`. It is not IR-003 implementation authority.
 
 The implementation package is accepted and locked. IR-003 and every other
 unauthorised packet require separate authority. R-02 remains implementation

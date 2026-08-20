@@ -112,13 +112,16 @@ The IR-003 pre-authorisation design freeze is **Complete**. IR-003 remains
 **Not authorised** and GATE-031 remains **Not satisfied**. Controlled evidence
 preparation is recorded in
 [`gate-031-evidence-preparation.md`](../gate-031-evidence-preparation.md) and
-is incomplete: the selected eventual migrated-Bali initial Owner, verified
-identity and exactly-one Profile linkage, reviewed configuration, and four
-approvals remain absent. The next activity is to obtain that exact controlled
-evidence, then perform a separate GATE-031 evidence review and satisfaction
-decision; a separate IR-003 authorisation remains required afterward. No W3
-packet or physical trusted operation is authorised, and deployment and cutover
-remain unauthorised.
+is **READY FOR SEPARATE GATE-031 REVIEW**: the approved configuration and
+historical-date adjudication, Product approval, selected initial Owner,
+verified Auth identity, exactly-one Profile linkage, target-baseline evidence,
+and Data/Security/Architecture approvals are complete in the protected
+package. The current controlled manifest hash is referenced only in the
+redacted preparation record. Existing Auth/Profile evidence is an input, not
+an IR-003-created Group or Owner membership. The next activity is a separate
+GATE-031 satisfaction decision; a separate IR-003 authorisation remains
+required afterward. No W3 packet or physical trusted operation is authorised,
+and deployment and cutover remain unauthorised.
 
 ### 2026-08-20 authorised database prerequisite baseline
 
@@ -127,6 +130,5 @@ and a fresh remote audit has passed the 006–009 tenant/Profile/Auth/RLS
 baseline. This was prerequisite realization only: no `010`, TOP, Owner Auth
 user, Group, configuration, deployment, or cutover occurred. GATE-031 remains
 Not satisfied and IR-003 remains Not authorised. The immediate next action is
-the supported-signup, confirmation, and exactly-one automatic Profile-linkage
-evidence for exactly one legitimate intended Owner, followed by the separate
-GATE-031 review.
+a separate GATE-031 satisfaction decision from clean `v2`; no further
+Owner/Auth/Profile preparation is required for the pre-decision package.

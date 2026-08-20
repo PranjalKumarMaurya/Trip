@@ -6,7 +6,7 @@
 - Packet: `IR-003`
 - Controlled-evidence reference: `GATE-031-IR-003-CONTROLLED-20260812`
 - Controlled manifest schema: `1`
-- Evidence readiness: **INCOMPLETE — GATE-031 REMAINS BLOCKED**
+- Evidence readiness: **READY FOR SEPARATE GATE-031 REVIEW**
 - Gate status: **Not satisfied**
 - IR-003 status: **Not authorised**
 
@@ -31,20 +31,44 @@ environment; the later bounded evidence capture is recorded below.
 | Owner Auth identity | Complete — controlled evidence only |
 | Verified Owner identity | Complete — accepted confirmed-email condition passed |
 | Exactly-one Profile linkage | Complete — controlled evidence only |
-| Bootstrap request ID | Present in controlled package; pending reviewed request approval |
+| Bootstrap request / execution manifest | Complete — frozen controlled request reviewed by all three independent approval lanes |
 | Mandatory Group configuration | **Product-approved in controlled package** |
 | Product approval | **Complete for mandatory configuration and intended Owner-selection scope only** |
-| Data approval | Missing |
-| Security approval | Missing |
-| Architecture approval | Missing |
+| Data approval | **Granted — `gate-031-data-review.md`** |
+| Security approval | **Granted — `gate-031-security-review.md`** |
+| Architecture approval | **Granted — `gate-031-architecture-review.md`** |
 | Baseline checksums, including migration-010 absence | Validated |
 | Secret-safety classification | Passed |
 
 The controlled package holds the raw request identifier and holds any identity,
 Profile, configuration, and approval evidence. None of those values is
-reproduced here. No final controlled-manifest SHA-256 exists because the
-package remains incomplete pending the three independent approvals and a
-separate GATE-031 satisfaction decision.
+reproduced here. Its final pre-decision manifest uses schema `1` and has the
+canonical SHA-256
+`b255c36c8249db35f5cf711054dfee28fca0858904a2900426e2e0951dc65e2a`.
+The hash input is UTF-8 JSON canonicalized with `jq -S --indent 2`, one
+terminal LF, and `canonicalisation.finalManifestHash` omitted to avoid a
+self-reference. This records complete pre-decision evidence only; it is not a
+GATE-031 satisfaction decision or IR-003 authorisation.
+
+## Final pre-decision evidence integration — 2026-08-21
+
+| GATE-031 pre-decision requirement | Status / redacted evidence anchor |
+| --- | --- |
+| Validated initial Owner Auth identity | PASS — selected identity, Auth-row existence, and confirmed-email condition are complete only in the protected package. |
+| Exactly-one Profile linkage | PASS — protected one-row linkage predicate is complete. |
+| Reviewed bootstrap request / execution manifest | PASS — one protected request UUID and frozen request fields were reviewed by the Data, Security, and Architecture lanes. |
+| Mandatory Group configuration and historical-date adjudication | PASS — Product-approved controlled configuration record; values remain outside Git. |
+| Product approval | PASS — protected Product approval record. |
+| Data approval | PASS — [Data review](gate-031-data-review.md). |
+| Security approval | PASS — [Security review](gate-031-security-review.md). |
+| Architecture approval | PASS — [Architecture review](gate-031-architecture-review.md). |
+| Target baseline and checksum provenance | PASS — controlled target `001`–`009` deployment/fresh-audit record; accepted `006`–`009` and frozen-contract checksums match. Migration `010` remains absent. |
+| Secret-safety classification and evidence provenance | PASS — controlled package is outside Git, directory mode `0700`, files mode `0600`, no credential material; Git record is redacted. |
+| No authoritative IR-003 bootstrap state | PASS — existing Auth/Profile evidence is an input only; no IR-003 Group, configuration, membership, or Owner state exists. |
+
+The package has no unresolved pre-decision evidence blocker and is **READY FOR
+SEPARATE GATE-031 REVIEW**. GATE-031 remains **Not satisfied** and IR-003
+remains **Not authorised** pending that separate decision.
 
 ## Evidence-completion pass — 2026-08-12
 

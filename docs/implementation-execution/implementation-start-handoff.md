@@ -14,8 +14,8 @@
 - W2: Complete; GATE-012 and GATE-013: Satisfied
 - GATE-015: Satisfied; W3 entry prerequisites from W2: passed
 - IR-003: Not authorised; GATE-031: Not satisfied
-- GATE-031 intended-Owner identity evidence: Complete in protected evidence;
-  Data, Security, and Architecture approvals remain pending
+- GATE-031 pre-decision evidence: Ready for separate review in protected
+  evidence; Product, Data, Security, and Architecture approvals are complete
 - Physical trusted operations: none authorised
 - Deployment: Not authorised
 - Production cutover: Not authorised
