@@ -76,9 +76,14 @@ design freeze. Controlled GATE-031 preparation is recorded in
 [`gate-031-evidence-preparation.md`](gate-031-evidence-preparation.md) and is
 incomplete: the selected eventual migrated-Bali initial Owner, its verification
 and exactly-one Profile linkage, reviewed configuration, and four approvals
-are missing. The next activity is to obtain that exact controlled evidence,
-then perform a separate GATE-031 evidence review and satisfaction decision.
-IR-003 and IR-005 remain unauthorised, GATE-031 remains Not satisfied, and a
-separate IR-003 authorisation would still be required afterward. No physical
-trusted operation is authorised. Storage (IR-009), Realtime (IR-010), product
-conversion, deployment, and cutover remain unauthorised.
+are missing. A newly authorised read-only target-baseline attempt is recorded
+in the controlled package, but is access-blocked: the exact Trip project is
+not linked or available in the current CLI inventory. The next activity is to
+provide that exact project reference and access/linkage evidence, verify the
+remote Auth/Profile baseline, then obtain the remaining controlled Owner
+evidence and perform a separate GATE-031 evidence review and satisfaction
+decision. IR-003 and IR-005 remain unauthorised, GATE-031 remains Not
+satisfied, and a separate IR-003 authorisation would still be required
+afterward. No physical trusted operation is authorised. Storage (IR-009),
+Realtime (IR-010), product conversion, deployment, and cutover remain
+unauthorised.

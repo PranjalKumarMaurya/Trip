@@ -46,6 +46,12 @@ Implementation packet changes require product/reviewer approval; design divergen
 - W3 entry prerequisites from W2: passed. W3 implementation: Not authorised.
 - GATE-031: Not satisfied; IR-003 and all physical owner packets: Not
   authorised.
+- Product Owner has authorised the bounded W3 remote Supabase access required
+  for target-baseline verification. Read-only verification is authorised now;
+  any Auth/Profile/database mutation remains separately contingent on its
+  applicable prerequisite and gate. The mandatory W3 gate order remains in
+  force. This authority neither satisfies GATE-031 nor authorises IR-003,
+  migration `010`, or `TOP-001`.
 - Deployment and production cutover: Not authorised.
 - Packet scope cannot expand silently; use change control.
 - W7 separate production authorisation: Mandatory

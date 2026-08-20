@@ -118,3 +118,27 @@ exactly-one-Profile-linkage evidence; capture the remaining Data, Security, and
 Architecture approvals; and perform a separate GATE-031 evidence review and
 satisfaction decision. This record must be superseded by a new controlled-
 manifest hash only after every required field is final.
+
+## Remote baseline verification authority and access result — 2026-08-20
+
+The Product Owner has explicitly authorised the remote Supabase access necessary
+for W3. Read-only target-baseline verification is authorised. Any necessary W3
+Auth/Profile/database mutation may be considered only after its individual
+prerequisites pass; the accepted W3 gate order remains mandatory. This authority
+does not satisfy GATE-031, authorise IR-003, or authorise migration `010` or
+`TOP-001`.
+
+The first bounded remote verification attempt did not positively identify the
+intended Trip target. The existing authenticated CLI session has no linked
+project for this repository and its accessible-project inventory did not identify
+the Trip target. The only repository-hosted Supabase hostname is legacy public
+asset storage and is not valid target-identification evidence. No alternative
+project was selected, queried, or modified.
+
+The redacted controlled record
+`trip-controlled-evidence/gate-031/remote-baseline-verification-20260820.md`
+records the method, local baseline checksums, and access-blocked result outside
+Git. It contains no credentials or project identifiers. Remote schema, Auth
+configuration, and Auth-user-count verification remain pending the exact target
+project reference and access/linkage evidence. GATE-031 remains **Not
+satisfied** and IR-003 remains **Not authorised**.
