@@ -418,3 +418,49 @@ preserves the finding and proposal history.
 - Status impact: IR-003 is Authorised, not Implemented, and not Verified.
   Migration `010`, TOP-001, and IR-003 Group/configuration/member state remain
   absent. No remote mutation, deployment, or push is authorised by this record.
+
+## CC-IR003-20260821-top001-wrapper-clarification — PostgreSQL compiler boundary
+
+- Decision authority: bounded IR-003 implementation-deviation adjudication.
+- Decision: **Accepted minimal physical implementation clarification**.
+- Reason: PostgreSQL 17 independently rejects a PL/pgSQL function that uses
+  `request_id` for both an input parameter and a `RETURNS TABLE` output
+  parameter (`parameter name "request_id" used more than once`). Changing
+  either public name would violate the frozen TOP-001 RPC contract.
+- Scope: only the compiler-required wrapper/helper form inside the already
+  authorised migration `010_ir003_atomic_group_bootstrap.sql`. It changes no
+  request field, result field, logical TOP ownership, DBM object ownership,
+  data model, UI/API route, or later-packet scope.
+- Public contract: the sole application-callable function remains exactly
+  `public.bootstrap_group(group_request jsonb, configuration_request jsonb,
+  request_id uuid) RETURNS TABLE (outcome text, group_id uuid, request_id
+  uuid)`, with exactly three named arguments, no defaults, no overload, no
+  actor parameter, and the same safe result. It alone is granted to
+  `authenticated`; `PUBLIC`, `anon`, and `service_role` have no `EXECUTE`.
+- Implementation boundary: the one permitted helper,
+  `public.ir003_bootstrap_group_impl(jsonb, jsonb, uuid)`, is non-application-
+  callable machinery only. It receives no `EXECUTE` from `PUBLIC`, `anon`,
+  `authenticated`, or `service_role`; it is not a PostgREST/browser route, a
+  generic proxy, another logical TOP, or an API with its own contract. Both
+  functions are owned by `ir003_top001_executor`, are `SECURITY DEFINER`, use
+  fixed `search_path = pg_catalog`, and retain the existing qualified-object,
+  least-privilege, `NOLOGIN NOINHERIT BYPASSRLS` confinement. The helper has
+  only the authority required to perform this one approved operation and may
+  be reached only through the wrapper by application callers.
+- Transaction and result boundary: the wrapper adds no transaction control or
+  state. The helper executes inside the caller transaction; Group,
+  configuration/display rows, Member/Owner, audit, and TOP-001 idempotency
+  state therefore remain one atomic outcome. Actor binding, normalized
+  fingerprint, same-key serialization, replay, changed-fingerprint conflict,
+  and the safe three-field result are unchanged.
+- Required later proof: Lane B must adversarially prove direct helper denial
+  for `anon`, `authenticated`, and `service_role`; absence of `PUBLIC`
+  `EXECUTE`, helper overloads, and alternate bootstrap RPCs; wrapper-only
+  success with the exact public signature/result; identical owner,
+  `SECURITY DEFINER`, fixed search path, and no executor-role inheritance; and
+  no helper path that bypasses actor/request validation, idempotency, or
+  rollback. Independent verification must repeat those checks against the
+  integrated migration.
+- Status impact: GATE-031 remains Satisfied. IR-003 remains **Authorised**,
+  not Implemented and not Verified. This record authorises no remote migration,
+  bootstrap execution, deployment, or push.

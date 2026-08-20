@@ -156,7 +156,7 @@ RETURNS TABLE (
   group_id uuid,
   request_id uuid
 )
-LANGUAGE plpgsql
+LANGUAGE sql
 SECURITY DEFINER
 SET search_path = pg_catalog
 ```
@@ -171,6 +171,32 @@ safe categories: `not_authenticated`, `auth_not_verified`,
 `profile_unavailable`, `invalid_request`, `idempotency_conflict`, or
 `operation_failed`. Internal constraint names, existence information, and
 database diagnostics are not RPC output.
+
+### 5.1.1 PostgreSQL implementation clarification
+
+The public callable above remains the exact TOP-001 contract. PostgreSQL
+rejects a PL/pgSQL declaration that uses `request_id` both as its input name
+and as a `RETURNS TABLE` output name. To retain those frozen public names, one
+implementation-only `public.ir003_bootstrap_group_impl(jsonb, jsonb, uuid)`
+may be used only as the target of a SQL `SECURITY DEFINER` wrapper at the exact
+public signature above. The helper's arguments use non-public names; its safe
+three-field result is projected unchanged by the wrapper.
+
+This is a compiler-required physical clarification, not a second logical TOP
+or public callable. Both wrapper and helper, where privileged, are owned by
+the sole `ir003_top001_executor` role and use fixed `search_path = pg_catalog`
+with schema-qualified project references. The helper is revoked from `PUBLIC`,
+`anon`, `authenticated`, and `service_role`; only `authenticated` receives
+`EXECUTE` on the public wrapper. It has no defaults or overloads, cannot be a
+PostgREST/browser alternate route, accepts no actor parameter, has no broader
+privilege than the approved bootstrap operation, and performs no transaction
+control. It executes in the caller transaction, so all successful writes and
+all rollback/idempotency behaviour remain those of one TOP-001 operation.
+
+Lane B and the independent verifier must prove the helper's direct
+non-callability for every application role, the wrapper-only `EXECUTE` grant,
+same owner/security-definer/search-path confinement, and inability to bypass
+the public actor/request validation or create a separately committed result.
 
 `group_request` must be a JSON object with exactly one key:
 
@@ -206,7 +232,7 @@ only; it is never authority.
 
 ### 5.2 Actor, validation, and one transaction
 
-The function's first authority operation is `auth.uid()`. It rejects null,
+The implementation helper's first authority operation is `auth.uid()`. It rejects null,
 then looks up exactly one `public.profiles` row where
 `profiles.auth_user_id = auth.uid()`, and confirms that the same Auth User is
 currently verified by `auth.users.email_confirmed_at IS NOT NULL` before

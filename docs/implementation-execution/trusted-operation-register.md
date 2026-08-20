@@ -61,6 +61,17 @@ any operation.
   `public.bootstrap_group(group_request jsonb, configuration_request jsonb, request_id uuid)`;
   it returns `TABLE (outcome text, group_id uuid, request_id uuid)`, has no
   defaults/overloads, and has no actor argument.
+- “Callable” in this freeze means callable by an application role or exposed as
+  an application RPC. PostgreSQL's PL/pgSQL output-parameter namespace does
+  not permit the exact public `request_id` input/output names in one PL/pgSQL
+  function. The bounded implementation clarification in
+  `CC-IR003-20260821-top001-wrapper-clarification` therefore permits one
+  non-application-callable implementation helper solely behind that exact
+  public RPC. It is not a second TOP, RPC, browser route, or API contract.
+  It must have no `PUBLIC`, `anon`, `authenticated`, or `service_role`
+  `EXECUTE`, use the same dedicated owner and fixed security posture as
+  TOP-001, and must not contain transaction control or independently committed
+  state.
 - `group_request` contains only `trip_name`; `configuration_request` contains
   only explicit destination, dates, IANA timezone, ISO accounting currency,
   and a non-empty ISO display-currency set containing accounting currency.
