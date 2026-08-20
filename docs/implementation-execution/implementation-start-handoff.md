@@ -13,7 +13,11 @@
 - W1: Complete; GATE-011: Satisfied
 - W2: Complete; GATE-012 and GATE-013: Satisfied
 - GATE-015: Satisfied; W3 entry prerequisites from W2: passed
-- IR-003: Authorised — implementation not started or verified; GATE-031: Satisfied
+- IR-003: Authorised — Lane A database and audit request-ID correction complete;
+  Lane B adversarial verification PASS; Lane C blocked on frozen distinct-request
+  database performance (first p95 118.485 ms; p99 120.593 ms); Lane D complete
+  and isolated; integration/generated types and independent verification pending.
+  IR-003 is not globally Implemented or Verified; GATE-031: Satisfied.
 - GATE-031 decision: recorded in `gate-031-decision.md`; protected evidence,
   Product, Data, Security, and Architecture approvals passed the separate
   gate decision

@@ -12,6 +12,13 @@
 - GATE-015: Satisfied; W3 entry prerequisites from W2: passed
 - GATE-031: Satisfied; IR-003 is Authorised but not Implemented or Verified;
   other physical owner packets: Not authorised
+- IR-003 current lane status: Lane A database/audit request-ID correction
+  complete; Lane B adversarial verification PASS; Lane C BLOCKED on frozen
+  distinct-request performance (p95 118.485 ms, p99 120.593 ms); same-key
+  formal performance and final Lane C manifest not run/finalized; Lane D
+  complete and isolated; integration/generated types and independent
+  verification pending. Diagnosis: LANE C DATABASE PERFORMANCE DEFECT;
+  migration 010 remains unchanged and Travel remains unapplied.
 - IR-003 pre-authorisation design freeze: Complete
 - DCC-IR003-FREEZE-001: Accepted
 - BLK-IR003-FREEZE-001: Resolved by DCC-IR003-FREEZE-001 — Accepted

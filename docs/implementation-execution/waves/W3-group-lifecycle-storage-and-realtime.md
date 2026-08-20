@@ -3,8 +3,35 @@
 ## Status and authorisation
 
 - Status: GATE-015 satisfied for W3 entry; IR-003 alone is authorised
-- Implementation authorised: IR-003 only — not started, Implemented, or Verified
+- Implementation authorised: IR-003 only — not globally Implemented or Verified
 - Wave complete: No
+
+## IR-003 current implementation status — 2026-08-21
+
+- Lane A database implementation is complete and integrated in the authorised
+  candidate; the audit request-ID forward correction is complete.
+- Lane B adversarial verification: **PASS**.
+- Lane C is **BLOCKED** on the frozen distinct-request performance gate. Its
+  first formal run recorded p95 `118.485 ms` and p99 `120.593 ms`, above the
+  frozen `40 ms`/`75 ms` limits. Same-key formal performance has not run,
+  diagnostic query-plan evidence is not a final Lane C plan record, and the
+  final Lane C manifest is not finalized.
+- Root-cause diagnosis classifies the blocker as **LANE C DATABASE PERFORMANCE
+  DEFECT**. The committed harness faithfully records server-observed operation
+  duration; a ten-persistent-session control remains p95 `107.048 ms`, while a
+  one-persistent-session control remains p95 `52.930 ms`. `EXPLAIN ANALYZE`
+  measures the timezone-validation path at `23.335 ms`; TOP-001 invokes it
+  directly and again through the configuration timezone CHECK.
+- The smallest required next correction is one bounded, measured database
+  correction: replace the catalog-view implementation of
+  `public.is_valid_iana_timezone(text)` with an indexed, maintained IANA
+  reference lookup while preserving its boolean contract. Migration `010` is
+  unchanged in this diagnosis; frozen workload and thresholds are unchanged.
+- Lane D is complete and remains isolated in its own worktree. Integration,
+  generated types, and independent verification remain pending.
+- IR-003 remains **Authorised**, not globally Implemented, and not Verified.
+  Travel migration `010` remains unapplied. No deployment, remote bootstrap,
+  or remote mutation occurred.
 
 ## Wave objective
 
