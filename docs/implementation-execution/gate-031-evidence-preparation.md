@@ -20,19 +20,20 @@ deployment, or cutover.
 The required identity is the separately product/security-selected initial Owner
 for the eventual migrated Bali Group under migration S04/S05. A local,
 staging, rehearsal, persona, display-name, fixture, or historical identity is
-not a substitute. No target environment was accessed during this preparation.
+not a substitute. The original preparation pass did not access a target
+environment; the later bounded evidence capture is recorded below.
 
 ## Redacted evidence status
 
 | Required category | Status |
 | --- | --- |
-| Intended Owner selection | **INCOMPLETE — OWNER IDENTITY SOURCE REQUIRED** |
-| Owner Auth identity | Missing |
-| Verified Owner identity | Missing |
-| Exactly-one Profile linkage | Missing |
+| Intended Owner selection | **Complete — Product Owner explicitly selected one real target account** |
+| Owner Auth identity | Complete — controlled evidence only |
+| Verified Owner identity | Complete — accepted confirmed-email condition passed |
+| Exactly-one Profile linkage | Complete — controlled evidence only |
 | Bootstrap request ID | Present in controlled package; pending reviewed request approval |
 | Mandatory Group configuration | **Product-approved in controlled package** |
-| Product approval | **Complete for mandatory configuration only; intended Owner-selection scope remains incomplete** |
+| Product approval | **Complete for mandatory configuration and intended Owner-selection scope only** |
 | Data approval | Missing |
 | Security approval | Missing |
 | Architecture approval | Missing |
@@ -42,7 +43,8 @@ not a substitute. No target environment was accessed during this preparation.
 The controlled package holds the raw request identifier and holds any identity,
 Profile, configuration, and approval evidence. None of those values is
 reproduced here. No final controlled-manifest SHA-256 exists because the
-package is incomplete.
+package remains incomplete pending the three independent approvals and a
+separate GATE-031 satisfaction decision.
 
 ## Evidence-completion pass — 2026-08-12
 
@@ -109,15 +111,39 @@ recorded in the controlled package. The package is user-private, outside every
 Git worktree, and is not trackable by Git. Its manifest has no credential
 material.
 
+## Owner identity evidence completion — 2026-08-21 IST
+
+The Product Owner explicitly selected the one account created through the
+authorised normal application signup as the initial Owner for the eventual
+migrated Bali Group. The frozen, one-query, read-only procedure then passed its
+four required checks: one selected Auth row, accepted verified-identity
+condition true, one linked Profile, and exactly-one linkage true. The normal
+email-confirmation state is therefore verified; a later browser callback with
+an expired OTP did not change that recorded state.
+
+The protected package alone retains the selected identifiers, rendered query,
+and raw one-row result. Its redacted artifact references are
+`owner-identity-provenance-20260820T202251Z.md`
+(`270eb85a136975a9ca298681c93f431b29a0522149700868c6463f78a380cbb8`),
+`owner-identity-rendered-query-20260820T202251Z.sql`
+(`641f3a8de51ab9dafeaa77ce303a79a3011a67b8b2e6d4d13cd7b8803934d5d3`),
+and `owner-identity-result-20260820T202251Z.json`
+(`cdad9e6957eb858f600968bbc691082b1d6e39db5b2a965982a349918afb10ed`).
+They contain no password, browser key, service/secret key, or email address.
+
+This completes the intended-Owner selection, Auth-row existence, verified
+identity, exactly-one Profile linkage, and Owner identity evidence categories
+only. Data, Security, and Architecture reviews may now begin independently
+against the frozen controlled package. GATE-031 remains **Not satisfied** and
+IR-003 remains **Not authorised**.
+
 ## Next activity
 
-Obtain a legitimate initial-Owner identity source. The Product Owner must then
-select exactly one intended Owner and record the corresponding bounded Product
-approval. Obtain authorised read-only Auth-row, verification, and
-exactly-one-Profile-linkage evidence; capture the remaining Data, Security, and
-Architecture approvals; and perform a separate GATE-031 evidence review and
-satisfaction decision. This record must be superseded by a new controlled-
-manifest hash only after every required field is final.
+Launch independent Data, Security, and Architecture GATE-031 reviews against
+the frozen controlled package. After all three are complete, conduct a separate
+GATE-031 satisfaction decision. Do not create Group, configuration, member, or
+Owner data; do not apply migration `010`; and do not authorise IR-003 before
+that decision.
 
 ## Remote baseline verification authority and access result — 2026-08-20
 
