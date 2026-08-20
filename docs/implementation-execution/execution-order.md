@@ -10,22 +10,14 @@ not its input. The separate GATE-015 W3-entry review is Satisfied: W3 entry
 prerequisites from W2 have passed. `DCC-IR003-FREEZE-001` is Accepted and
 resolves `BLK-IR003-FREEZE-001` / `OE-006`; the IR-003 pre-authorisation design
 freeze is Complete. Controlled GATE-031 evidence preparation is recorded in
-[`gate-031-evidence-preparation.md`](gate-031-evidence-preparation.md) and is
-incomplete: the selected eventual migrated-Bali initial Owner, its verification
-and exactly-one Profile linkage, reviewed configuration, and four approvals
-are absent. The historical target audit found no deployed baseline. The
-subsequently authorised prerequisite deployment proved the dependency chain and
-applied the exact accepted `001`–`009` prefix to the controlled target; a fresh
-remote audit passed the deployed 006–009 equivalent object/security checks,
-with Auth users and Profiles still zero and email confirmation still viable.
-This establishes only the database prerequisite baseline: GATE-031 remains Not
-satisfied and IR-003 remains unauthorised. The next activity is to create one
-legitimate intended Owner Auth account through the supported signup path,
-complete confirmation, verify the automatic exactly-one Profile linkage, and
-capture the frozen controlled Owner-identity evidence before the separate
-GATE-031 review. No physical trusted operation is authorised. W3 through W7
-execution, deployment, and cutover remain unauthorised. The accepted roadmap
-order remains authoritative.
+[`gate-031-evidence-preparation.md`](gate-031-evidence-preparation.md), and
+the separate decision in [`gate-031-decision.md`](gate-031-decision.md) is
+**Satisfied**. It confirms validated Owner, request, configuration, approval,
+baseline, provenance, secret-safety, and no-premature-state evidence only.
+IR-003 remains unauthorised pending a separate bounded authorisation decision.
+No physical trusted operation is authorised. W3 through W7 execution,
+deployment, and cutover remain unauthorised. The accepted roadmap order remains
+authoritative.
 
 ## W1 — Evidence and tenant foundation
 
@@ -89,11 +81,9 @@ order remains authoritative.
   a W3 packet or physical operation.
 - IR-003 boundary: the Accepted `DCC-IR003-FREEZE-001` supplies the committed
   TOP-001 → ONB-06 State A destination while preserving the IR-005/TOP-002
-  State B boundary. Next prepare the controlled GATE-031 evidence package and
-  redacted Git record. GATE-031 must still supply validated initial Owner Auth
-  identity, a reviewed bootstrap request/execution manifest, mandatory Group
-  configuration, and product/data/security/architecture approvals before
-  separate IR-003 authorisation. It remains Not authorised throughout.
+  State B boundary. GATE-031 is Satisfied by its controlled evidence package
+  and separate decision record. A separate bounded IR-003 authorisation is
+  still required; IR-003 remains Not authorised throughout.
 - Internal packet order: IR-003 bootstrap precedes IR-005 lifecycle; IR-005 precedes IR-006 claiming. IR-009 and IR-010 may run in parallel only after IR-005, IR-007, and IR-008 are satisfied.
 - Permitted parallel work: Private Storage and authorised Realtime may run in parallel after lifecycle and trusted-boundary gates. Claiming remains serial after membership.
 - Mandatory serial boundary: IR-003 bootstrap precedes IR-005 lifecycle; IR-005 precedes IR-006 claiming. IR-009 and IR-010 may run in parallel only after IR-005, IR-007, and IR-008 are satisfied.

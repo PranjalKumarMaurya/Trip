@@ -84,8 +84,8 @@ IR-004, IR-007, and IR-008 are independently Verified. IR-008 verification
 confirms the common trusted-operation contract/register and static immutable
 evidence only; each physical owner remains unauthorised. Corrected GATE-013 is
 Satisfied and W2 is Complete. The separate GATE-015 W3-entry review is
-Satisfied because the W2 exit prerequisites pass. IR-003 is eligible only for
-GATE-031 completion and separate authorisation; it remains unauthorised, and
-GATE-031 remains Not satisfied. No physical trusted operation, Storage
+Satisfied because the W2 exit prerequisites pass. GATE-031 is Satisfied by its
+separate decision; IR-003 remains unauthorised pending its own separate
+authorisation. No physical trusted operation, Storage
 (IR-009), Realtime (IR-010), product conversion, deployment, or cutover is
 authorised.

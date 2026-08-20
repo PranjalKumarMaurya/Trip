@@ -55,8 +55,8 @@ foundations; IR-008 freezes the trusted-operation contract and ownership
 register only, with zero physical operations implemented. Its accepted
 contract-only verification satisfies the corrected GATE-013 input; physical TOP
 proof remains with its owner packet. W2 is complete and the separate GATE-015
-review is Satisfied for W3 entry, but IR-003 remains Not authorised pending
-GATE-031 completion and separate authorisation. IR-019 is a separately
+review is Satisfied for W3 entry and GATE-031 is Satisfied, but IR-003 remains
+Not authorised pending separate authorisation. IR-019 is a separately
 authorised cutover gate, and IR-020 owns post-release containment. They have
 limited or no primary screen ownership, but each remains traceable to packet
 security, test, rollback, observability, and gate evidence. The absence of a

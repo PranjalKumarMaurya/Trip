@@ -19,7 +19,7 @@
 - W1 status: Complete; GATE-011 satisfied
 - W2 status: Complete; GATE-013 satisfied
 - W3 entry status: GATE-015 satisfied; implementation authorised: No
-- GATE-031 status: Not satisfied
+- GATE-031 status: Satisfied (evidence gate only; IR-003 remains not authorised)
 - Application implementation: IR-004 and IR-007 verified
 
 ## Purpose
@@ -72,18 +72,13 @@ performance evidence remains with each separately authorised TOP owner.
 The separate GATE-015 W3-entry review is Satisfied: W3 entry prerequisites
 from W2 have passed. `DCC-IR003-FREEZE-001` is Accepted; it resolves
 `BLK-IR003-FREEZE-001` and `OE-006` and completes the IR-003 pre-authorisation
-design freeze. Controlled GATE-031 preparation is recorded in
-[`gate-031-evidence-preparation.md`](gate-031-evidence-preparation.md) and is
-incomplete: the selected eventual migrated-Bali initial Owner, its verification
-and exactly-one Profile linkage, reviewed configuration, and four approvals
-are missing. The later target-linked read-only audit is retained outside Git:
-it positively identifies the Product Owner-designated target but finds the
-deployed 006–009 baseline absent, including `public.profiles` and its Auth
-creation/security path. The current decision is **TARGET SCHEMA BASELINE
-INCOMPLETE**, not access blocked. The next activity is separately authorised
-application of existing migrations 006–009 to that exact target, then a fresh
-read-only audit; no Owner account may be created as remediation. IR-003 and
-IR-005 remain unauthorised, GATE-031 remains Not satisfied, and a separate
-IR-003 authorisation would still be required afterward. No physical trusted
-operation is authorised. Storage (IR-009), Realtime (IR-010), product
-conversion, deployment, and cutover remain unauthorised.
+design freeze. The protected GATE-031 package is recorded in
+[`gate-031-evidence-preparation.md`](gate-031-evidence-preparation.md), and
+the separate satisfaction decision is recorded in
+[`gate-031-decision.md`](gate-031-decision.md). GATE-031 is Satisfied on its
+validated Owner, request, mandatory configuration, approval, baseline,
+provenance, secret-safety, and no-premature-state evidence. The next activity
+is a separate bounded IR-003 authorisation decision. IR-003 and IR-005 remain
+unauthorised; GATE-031 satisfaction is not implementation authority. No
+physical trusted operation is authorised. Storage (IR-009), Realtime (IR-010),
+product conversion, deployment, and cutover remain unauthorised.

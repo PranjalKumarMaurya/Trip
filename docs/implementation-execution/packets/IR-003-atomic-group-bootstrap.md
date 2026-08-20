@@ -7,7 +7,7 @@
 - Wave: W3
 - Physical owner: IR-003 / W3 for DBM-014 and TOP-001 only
 - Implementation authorised: **No**
-- GATE-031: **Not satisfied**
+- GATE-031: **Satisfied** — evidence gate only; IR-003 remains not authorised
 - Physical trusted operation: **Not authorised and not implemented**
 - Future migration reservation only:
   `supabase/migrations/010_ir003_atomic_group_bootstrap.sql`
@@ -481,9 +481,9 @@ behaviour, lifecycle action, or Invitation-derived navigation. IR-005 alone
 owns all of those and the issued-Invitation state. Existing clean and annotated
 ONB-06 PNGs remain byte-identical State B evidence; State A is accepted in the
 contract and manifest only. The pre-authorisation design freeze is complete.
-GATE-031 remains Not satisfied and IR-003 remains Not authorised; the next
-activity is to prepare the controlled GATE-031 evidence package and redacted
-Git record. No agent may improvise a different ONB-06 variant.
+GATE-031 is Satisfied and IR-003 remains Not authorised; the next
+activity is a separate bounded IR-003 authorisation decision. No agent may
+improvise a different ONB-06 variant.
 
 ## 10. Future four-lane implementation allow-list
 
@@ -606,10 +606,12 @@ cleanup; and absence of TOP-002–TOP-012 or later-packet scope. It retains its
 own reviewed, checksum-verified result and cannot make a status decision from
 the implementation team's assertions alone.
 
-## 12. GATE-031 controlled evidence package — future only
+## 12. GATE-031 controlled evidence package
 
-This section defines a package schema; it records no evidence and leaves
-GATE-031 **Not satisfied**. The controlled non-Git manifest/package must hold:
+This section defines the required package schema. The protected package was
+independently assessed and GATE-031 is **Satisfied** in
+`../gate-031-decision.md`; this does not authorise IR-003. The controlled
+non-Git manifest/package holds:
 
 - the real initial Owner `auth.users.id`, approved verification evidence, and
   proof that exactly one Profile links through `profiles.auth_user_id`, with

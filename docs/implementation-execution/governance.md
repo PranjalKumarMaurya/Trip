@@ -44,8 +44,10 @@ Implementation packet changes require product/reviewer approval; design divergen
   no physical owner packet is authorised.
 - GATE-011, GATE-012, GATE-013, and GATE-015: Satisfied; W1 and W2: Complete.
 - W3 entry prerequisites from W2: passed. W3 implementation: Not authorised.
-- GATE-031: Not satisfied; IR-003 and all physical owner packets: Not
-  authorised.
+- GATE-031: Satisfied; IR-003 and all physical owner packets: Not authorised.
+- The separate GATE-031 decision is recorded in `gate-031-decision.md`.
+  Satisfaction confirms its evidence prerequisites only; it is not IR-003
+  authorisation.
 - Product Owner has authorised the bounded W3 remote Supabase access required
   for target-baseline verification. Read-only verification is authorised now;
   any Auth/Profile/database mutation remains separately contingent on its

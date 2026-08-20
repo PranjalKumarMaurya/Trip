@@ -108,18 +108,19 @@ GATE-013 is Satisfied; W2 is Complete; and no unresolved W2 implementation
 defect is recorded. GATE-014 remains a named IR-006 authorisation prerequisite
 only and does not block this W3-entry decision.
 
-The IR-003 pre-authorisation design freeze is **Complete**. IR-003 remains
-**Not authorised** and GATE-031 remains **Not satisfied**. Controlled evidence
-preparation is recorded in
+The IR-003 pre-authorisation design freeze is **Complete**. GATE-031 is
+**Satisfied** by the separate decision in
+[`gate-031-decision.md`](../gate-031-decision.md); IR-003 remains **Not
+authorised**. Controlled evidence preparation is recorded in
 [`gate-031-evidence-preparation.md`](../gate-031-evidence-preparation.md) and
-is **READY FOR SEPARATE GATE-031 REVIEW**: the approved configuration and
+is complete: the approved configuration and
 historical-date adjudication, Product approval, selected initial Owner,
 verified Auth identity, exactly-one Profile linkage, target-baseline evidence,
 and Data/Security/Architecture approvals are complete in the protected
 package. The current controlled manifest hash is referenced only in the
 redacted preparation record. Existing Auth/Profile evidence is an input, not
 an IR-003-created Group or Owner membership. The next activity is a separate
-GATE-031 satisfaction decision; a separate IR-003 authorisation remains
+bounded IR-003 authorisation decision; a separate IR-003 authorisation remains
 required afterward. No W3 packet or physical trusted operation is authorised,
 and deployment and cutover remain unauthorised.
 
@@ -128,7 +129,6 @@ and deployment and cutover remain unauthorised.
 The exact controlled target now has the accepted migration prefix `001`–`009`
 and a fresh remote audit has passed the 006–009 tenant/Profile/Auth/RLS
 baseline. This was prerequisite realization only: no `010`, TOP, Owner Auth
-user, Group, configuration, deployment, or cutover occurred. GATE-031 remains
-Not satisfied and IR-003 remains Not authorised. The immediate next action is
-a separate GATE-031 satisfaction decision from clean `v2`; no further
-Owner/Auth/Profile preparation is required for the pre-decision package.
+user, Group, configuration, deployment, or cutover occurred. The later
+separate GATE-031 decision is Satisfied; IR-003 remains Not authorised. The
+immediate next action is a separate bounded IR-003 authorisation decision.

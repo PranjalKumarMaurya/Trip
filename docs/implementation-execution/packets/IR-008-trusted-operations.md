@@ -139,7 +139,7 @@ IR-008: Verified (contract-only)
 GATE-013: Satisfied
 W2: Complete
 GATE-015: Satisfied; W3 entry prerequisites from W2 passed
-GATE-031: Not satisfied
+GATE-031: Satisfied (evidence gate only)
 IR-003 and physical owner packets: Not authorised
 Physical trusted operations: none authorised
 Deployment and cutover: Not authorised

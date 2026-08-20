@@ -13,9 +13,10 @@
 - W1: Complete; GATE-011: Satisfied
 - W2: Complete; GATE-012 and GATE-013: Satisfied
 - GATE-015: Satisfied; W3 entry prerequisites from W2: passed
-- IR-003: Not authorised; GATE-031: Not satisfied
-- GATE-031 pre-decision evidence: Ready for separate review in protected
-  evidence; Product, Data, Security, and Architecture approvals are complete
+- IR-003: Not authorised; GATE-031: Satisfied
+- GATE-031 decision: recorded in `gate-031-decision.md`; protected evidence,
+  Product, Data, Security, and Architecture approvals passed the separate
+  gate decision
 - Physical trusted operations: none authorised
 - Deployment: Not authorised
 - Production cutover: Not authorised
