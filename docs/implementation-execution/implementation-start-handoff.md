@@ -17,11 +17,12 @@
   Lane B adversarial verification PASS; Lane C blocked on frozen distinct-request
   database performance (first p95 118.485 ms; p99 120.593 ms); Lane D complete
   and isolated; integration/generated types and independent verification pending.
-  The performance-correction ownership decision is **BLOCKED**: the only
-  threshold-pass prototype requires separately authorised shared DBM-002
-  reference-data and tzdata-maintenance ownership; migration 010 and Travel
-  remain unchanged. IR-003 is not globally Implemented or Verified; GATE-031:
-  Satisfied.
+  The supplemental shared DBM-002 remediation review is **DESIGN BLOCKED**:
+  the only threshold-pass prototype would change the accepted live catalogue
+  contract to application-maintained reference semantics. Product, Data,
+  Security, Architecture, and separate shared authority are pending; migration
+  010 and Travel remain unchanged. IR-003 is not globally Implemented or
+  Verified; GATE-031 remains historically Satisfied for its original package.
 - GATE-031 decision: recorded in `gate-031-decision.md`; protected evidence,
   Product, Data, Security, and Architecture approvals passed the separate
   gate decision

@@ -593,3 +593,34 @@ preserves the finding and proposal history.
   isolated; Travel migration `010` remains unapplied. The next action is to
   obtain the missing shared-contract and maintenance authority, not to alter
   migration `010` or create migration `011`.
+
+## CC-IR003-20260821-shared-dbm002-remediation-freeze — supplemental design review
+
+- Decision: **SHARED DBM-002 REMEDIATION DESIGN BLOCKED**.
+- Scope: documentation-only shared-validator design/governance review. It
+  records no implementation authority and changes no migration, function,
+  role, table, generated type, remote state, deployment, or Lane D path.
+- Classification: a required **shared DBM-002 forward evolution for W3**, not
+  a reopening of immutable `007` and not an IR-003/DBM-014-owned change.
+- Finding: the accepted/current contract is live, exact, case-sensitive
+  `pg_catalog.pg_timezone_names` membership subject to the existing
+  slash-qualified lexical guard. A persistent indexed reference relation is
+  the only measured threshold-pass design, but every table/materialized/
+  scheduled/protected-refresh variation is stale between catalogue drift and
+  reconciliation. A hybrid preserves removals only by checking the live
+  catalogue on each indexed hit, defeating the measured latency benefit.
+- Unresolved blocker: no authority has approved an evolution from live
+  catalogue semantics to an application-maintained reference set. The detailed
+  physical candidate, conditional maintenance/security model, migration-option
+  analysis, approval matrix, and regression/verifier obligations are frozen in
+  `ir-003-shared-dbm-002-remediation-freeze.md`; that record does not select
+  the conditional design as an approved implementation.
+- Governance: GATE-031 remains historically Satisfied for the original
+  reviewed package but may not be reused for the shared contract. Use existing
+  bounded supplemental change control, Product/Data/Security/Architecture
+  approvals, separate shared DBM-002 authorisation, then an IR-003
+  authorisation amendment. No new gate ID, migration number, or implementation
+  authority is created here.
+- Status: Lane C remains blocked; IR-003 remains Authorised but not globally
+  Implemented or Verified; Lane D remains isolated; Travel migration `010`
+  remains unapplied; no deploy, push, or remote mutation occurred.

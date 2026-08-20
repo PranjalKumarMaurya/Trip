@@ -40,3 +40,18 @@ deliberately separated.
 IR-002 approves the existing three-digit sequence only for
 `006_ir002_tenant_root.sql` and `007_ir002_configuration_archive_audit.sql`.
 No later packet inherits this naming authority.
+
+## Current supplemental DBM-002 status
+
+The verified historical DBM-002 implementation remains unchanged. The W3
+TOP-001 performance investigation has identified a possible shared forward
+evolution of its timezone validator, but the supplemental design review is
+**BLOCKED**: current accepted semantics are live exact
+`pg_catalog.pg_timezone_names` membership, which an indexed persistent
+reference cannot retain through tzdata drift without a per-call live check.
+No reference relation, validator replacement, maintenance operation, or
+migration location is authorised. `010_ir003_atomic_group_bootstrap.sql`
+remains DBM-014's reservation; `011` is unreserved but not authorised. Any
+future shared prerequisite needs the documented semantic decision, separate
+Product/Data/Security/Architecture approvals, and shared DBM-002 authority
+before it can amend the reservation or be consumed by IR-003.

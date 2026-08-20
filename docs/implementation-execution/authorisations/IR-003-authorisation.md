@@ -75,3 +75,17 @@ IR-003 is **Authorised**, not Implemented and not Verified. IR-005, IR-006,
 IR-009, IR-010, deployment, and cutover remain Not authorised. No current
 authorisation permits a remote database mutation, bootstrap execution, or
 push.
+
+### Supplemental shared DBM-002 dependency
+
+Lane C is blocked on the documented shared DBM-002 timezone-validator
+remediation. This authorisation does **not** authorise a shared reference
+relation, validator replacement, SECURITY DEFINER posture, maintenance
+operation, migration reservation supersession, or any migration beyond its
+frozen DBM-014 boundary. GATE-031 remains historically satisfied for the
+original package, but that approval is not authority for the shared contract.
+Only after the separately required Product/Data/Security/Architecture reviews
+and shared DBM-002 forward-evolution authorisation may a supplemental IR-003
+authorisation amendment bind this packet to the approved prerequisite and
+fresh Lane B/Lane C/independent-verifier evidence. Until then IR-003 remains
+Authorised but implementation-blocked; Lane D remains isolated.
