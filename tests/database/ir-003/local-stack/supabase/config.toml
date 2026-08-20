@@ -1,0 +1,36 @@
+project_id = "bachelor-trip-app-ir003-lanec"
+
+[api]
+enabled = true
+port = 57821
+
+[db]
+port = 57822
+
+[db.pooler]
+enabled = false
+port = 57829
+
+[realtime]
+enabled = false
+
+[studio]
+enabled = false
+port = 57823
+
+[inbucket]
+enabled = false
+port = 57824
+smtp_port = 57825
+
+[storage]
+enabled = true
+
+[auth]
+enabled = true
+
+[edge_runtime]
+enabled = false
+
+[analytics]
+enabled = false
