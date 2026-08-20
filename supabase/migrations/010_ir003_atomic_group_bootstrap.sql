@@ -3,6 +3,12 @@
 
 BEGIN;
 
+ALTER TABLE public.group_audit_events
+  DROP CONSTRAINT group_audit_events_request_id_key;
+
+CREATE INDEX group_audit_events_request_id_idx
+  ON public.group_audit_events (request_id);
+
 CREATE TABLE public.group_configuration_display_currencies (
   group_id UUID NOT NULL
     REFERENCES public.group_configurations(group_id) ON DELETE RESTRICT,
