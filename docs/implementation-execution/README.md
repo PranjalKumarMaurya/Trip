@@ -83,5 +83,13 @@ bounded authorisation is recorded in
 [`authorisations/IR-003-authorisation.md`](authorisations/IR-003-authorisation.md).
 IR-003 alone is Authorised and remains not Implemented or Verified; its four
 frozen lanes, later integration, and independent verification are mandatory.
+The supplemental Product decision in
+[`ir-003-product-timezone-semantic-evolution.md`](ir-003-product-timezone-semantic-evolution.md)
+approves stable application-controlled timezone-reference semantics and resolves
+the sole Product-semantic blocker in the shared DBM-002 review. It authorises
+no physical design, migration placement, maintenance/security model, shared
+implementation, or IR-003 amendment. Lane C therefore remains blocked pending
+the supplemental shared DBM-002 change-control decision and its independent
+Data, Security, and Architecture inputs.
 IR-005 and later packets, Storage (IR-009), Realtime (IR-010), product
 conversion, deployment, and cutover remain unauthorised.

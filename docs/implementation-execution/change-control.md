@@ -624,3 +624,37 @@ preserves the finding and proposal history.
 - Status: Lane C remains blocked; IR-003 remains Authorised but not globally
   Implemented or Verified; Lane D remains isolated; Travel migration `010`
   remains unapplied; no deploy, push, or remote mutation occurred.
+
+## CC-IR003-20260822-product-timezone-semantics — supplemental Product decision
+
+- Decision authority: Product owner, for the user-visible timezone-validity
+  contract only.
+- Decision timestamp: `2026-08-22T21:06:34+05:30`.
+- Decision: **PRODUCT TIMEZONE SEMANTIC EVOLUTION APPROVED**. Timezone
+  validity moves from automatic live `pg_catalog.pg_timezone_names` membership
+  to a controlled application-approved IANA reference set. Exact,
+  case-sensitive matching, the existing slash-qualified lexical guard, aliases
+  that are in the approved set, the public logical validator signature, and no
+  silent stored-value rewrite are preserved.
+- Drift behaviour: a PostgreSQL/OS/platform tzdata change does not itself
+  change application validity. Additions require governed reconciliation before
+  becoming valid; removals/renames must be identified through reconciliation.
+  Known drift and validation-dependent availability are governed later by the
+  required Data, Security, and Architecture integrity decision.
+- Rationale/evidence: the live frozen ten-worker p95 was approximately
+  `119 ms`; removing the duplicate call remained approximately `65 ms`; the
+  indexed controlled-reference prototype measured `12.095 ms` p95 and
+  `13.405 ms` p99 against frozen `<= 40 ms`/`<= 75 ms` limits. The performance
+  evidence motivates semantics only and selects no physical implementation.
+- Non-approval boundary: no relation or private-schema design, security
+  posture, owner/grants, maintenance/drift implementation, migration placement
+  or renumbering, shared implementation, Data/Security/Architecture approval,
+  shared DBM-002 authorisation, or IR-003 amendment is approved.
+- Gate/status impact: GATE-031 remains historically Satisfied for the original
+  package. IR-003 remains Authorised, not globally Implemented or Verified;
+  Lane C remains blocked and Lane D remains isolated. Migration `010` remains
+  unapplied; no deploy, push, or remote mutation is authorised.
+- Next governance dependency: the Product-semantic blocker is resolved.
+  **READY FOR SUPPLEMENTAL SHARED DBM-002 CHANGE-CONTROL DECISION** to select
+  physical design, M3/migration placement, maintenance/security model, and
+  required independent Data, Security, and Architecture approval inputs.

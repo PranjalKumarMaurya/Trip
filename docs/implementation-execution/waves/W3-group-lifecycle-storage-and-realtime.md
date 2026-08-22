@@ -22,19 +22,19 @@
   one-persistent-session control remains p95 `52.930 ms`. `EXPLAIN ANALYZE`
   measures the timezone-validation path at `23.335 ms`; TOP-001 invokes it
   directly and again through the configuration timezone CHECK.
-- Performance-correction design decision: **IR-003 PERFORMANCE DESIGN
-  BLOCKED**. The supplemental shared review is **SHARED DBM-002 REMEDIATION
-  DESIGN BLOCKED**: accepted semantics are live exact catalogue membership,
-  while a persistent indexed reference cannot retain that equivalence through
-  PostgreSQL/tzdata drift without a per-call live check. The only passing
-  prototype therefore needs a separately approved semantic evolution plus
-  Product/Data/Security/Architecture review and shared DBM-002 authority.
-  DBM-014 neither owns that new shared relation nor its maintenance; migration
-  `011` remains unauthorised. The smaller no-schema removal of TOP-001's
-  explicit call still fails p95 (`65.255 ms`) and changes invalid-timezone
-  classification. Migration `010` remains unchanged; frozen workload and
-  thresholds are unchanged. See
-  `CC-IR003-20260821-shared-dbm002-remediation-freeze` and
+- Performance-correction status: the Product owner has approved the bounded
+  semantic evolution from live catalogue membership to a controlled
+  application-approved IANA reference set. This resolves the sole Product
+  semantic blocker in **SHARED DBM-002 REMEDIATION DESIGN BLOCKED**, but no
+  physical design, M3/migration placement, maintenance/security model, or
+  shared implementation is authorised. The next eligible step is the
+  supplemental shared DBM-002 change-control decision with independent Data,
+  Security, and Architecture inputs. Lane C remains blocked until that
+  prerequisite is authorised and implemented. DBM-014 neither owns the shared
+  evolution nor its maintenance; migration `011` remains unauthorised.
+  Migration `010` remains unchanged; frozen workload and thresholds are
+  unchanged. See
+  `ir-003-product-timezone-semantic-evolution.md` and
   `ir-003-shared-dbm-002-remediation-freeze.md`.
 - Lane D is complete and remains isolated in its own worktree. Integration,
   generated types, and independent verification remain pending.

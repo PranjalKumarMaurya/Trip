@@ -18,14 +18,15 @@
   formal performance and final Lane C manifest not run/finalized; Lane D
   complete and isolated; integration/generated types and independent
   verification pending. Diagnosis: LANE C DATABASE PERFORMANCE DEFECT;
-  `CC-IR003-20260821-performance-correction-design` records **IR-003
-  PERFORMANCE DESIGN BLOCKED**: the only threshold-pass prototype is an
-  unauthorised shared DBM-002 reference-table/maintenance evolution; the
-  supplemental design review is itself **BLOCKED** because the accepted live
-  catalogue contract cannot be retained by an indexed sole authority through
-  tzdata drift. A semantic evolution and Product/Data/Security/Architecture
-  approvals are required before shared authority can exist; Option A remains
-  over p95. Migration 010 remains unchanged and Travel remains unapplied.
+  `CC-IR003-20260821-performance-correction-design` records the shared
+  DBM-002 performance defect. The Product semantic evolution to a controlled
+  application-approved IANA reference set is now approved in
+  `ir-003-product-timezone-semantic-evolution.md`; no physical design or
+  maintenance/security/migration authority follows from it. The next eligible
+  step is supplemental shared DBM-002 change control and independent Data,
+  Security, and Architecture approval inputs. Lane C stays blocked until that
+  shared prerequisite is authorised and implemented; Option A remains over
+  p95. Migration 010 remains unchanged and Travel remains unapplied.
 - IR-003 pre-authorisation design freeze: Complete
 - DCC-IR003-FREEZE-001: Accepted
 - BLK-IR003-FREEZE-001: Resolved by DCC-IR003-FREEZE-001 — Accepted
