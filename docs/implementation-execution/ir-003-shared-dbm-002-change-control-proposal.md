@@ -2,9 +2,15 @@
 
 ## Decision
 
-**SHARED DBM-002 CHANGE CONTROL APPROVED FOR REVIEW**
+**SHARED DBM-002 CHANGE CONTROL — DBM-002-DATA-001 CORRECTION FROZEN**
 
 This is a documentation-only technical proposal. It freezes one reviewable design for Product-approved controlled timezone-reference semantics. It does not approve Data, Security, or Architecture; authorise shared implementation; amend IR-003; unblock Lane C; alter migrations, source, generated types, tests, database, Travel, deployment, or Lane D.
+
+Supplemental Security and Architecture approvals are granted. The immutable
+supplemental Data review is blocked only on `DBM-002-DATA-001`; this bounded
+correction freezes the previously omitted deterministic reference-name
+comparator. It requires supplemental Data re-review and does not itself grant
+implementation authority or reopen Product semantics.
 
 Governing inputs are [the Product decision](ir-003-product-timezone-semantic-evolution.md), [the remediation freeze](ir-003-shared-dbm-002-remediation-freeze.md), the migration register, and the IR-002/IR-003 authorities cited below. Historical evidence is retained; the Product decision is not technical approval.
 
@@ -32,13 +38,20 @@ Exact reference relation:
 
     schema:    ir002_private
     relation:  ir002_private.iana_timezone_reference
-    columns:   name text NOT NULL
+    columns:   name text COLLATE "C" NOT NULL
     key:       PRIMARY KEY (name)
     check:     name ~ '^[A-Za-z][A-Za-z0-9_+\-]*(?:/[A-Za-z0-9_+\-]+)+$'
     indexes:   no index beyond the primary-key index
     RLS:       disabled; controlled reference data, not tenant rows
 
-The primary key supplies uniqueness and the sole membership-lookup index. The CHECK makes every row obey the existing lexical rule. There are no timestamp, source, alias, or mutable provenance columns on a reference row.
+`COLLATE "C"` is the fixed PostgreSQL bytewise, case-sensitive comparator for
+the reference-name attribute. Because it is the column collation, the
+primary-key index uses it for uniqueness and duplicate prevention; it also
+defines the reference side of exact membership identity independently of a
+database default collation. The primary key supplies that uniqueness and the
+sole membership-lookup index. The CHECK makes every row obey the existing
+lexical rule. There are no timestamp, source, alias, or mutable provenance
+columns on a reference row.
 
 One supporting private control relation is required only for the accepted integrity/maintenance contract; it is not application data or an alternative reference set:
 
@@ -63,7 +76,16 @@ The source model is **B: versioned canonical data committed and reviewed with th
     supabase/reference-data/iana-timezone-reference/<dataset-version>.txt
     supabase/reference-data/iana-timezone-reference/<dataset-version>.manifest.json
 
-The text artifact is UTF-8, one valid name per line, bytewise sorted by PostgreSQL C-collation order, deduplicated, with no comments/blank lines and exactly one terminal LF. Its SHA-256 over exact bytes is the dataset checksum. The manifest names the exact upstream IANA tzdata release and retrieval/source provenance, repeats artifact SHA-256 and row count, and lists approved canonical-name/alias policy. Its canonical JSON SHA-256 is retained in evidence. The manifest dataset_version, not an environment image, identifies the approved set.
+The text artifact is UTF-8, one valid name per line, bytewise sorted by the
+same PostgreSQL `"C"` collation used by `name`, deduplicated under that
+comparator, with no comments/blank lines and exactly one terminal LF. Because
+the lexical contract admits only ASCII name characters, this ordering is the
+same bytewise identity/order used by the reference key. Its SHA-256 over exact
+bytes is the dataset checksum. The manifest names the exact upstream IANA
+tzdata release and retrieval/source provenance, repeats artifact SHA-256 and
+row count, and lists approved canonical-name/alias policy. Its canonical JSON
+SHA-256 is retained in evidence. The manifest dataset_version, not an
+environment image, identifies the approved set.
 
 This proposal intentionally does not invent an initial IANA release, list, or digest before Data reviews it. Data must approve the exact first version and SHA-256 in the later shared DBM-002 authority. Once approved, this committed artifact is the immutable deployment input: the migration uses only its reviewed static values and control version/digest. It never reads pg_catalog.pg_timezone_names to populate or refresh the relation. The same Git commit therefore deploys the same product-valid set in every environment.
 
@@ -76,7 +98,7 @@ The later authorised shared migration replaces public.is_valid_iana_timezone(can
 - LANGUAGE plpgsql, STABLE, SECURITY DEFINER, owned by ir002_timezone_validator.
 - The validator owner is NOLOGIN, NOINHERIT, NOSUPERUSER, NOCREATEDB, NOCREATEROLE, NOREPLICATION, and NOBYPASSRLS. It has no memberships or generic privileged capability, owns no schema/table, and has only USAGE on ir002_private and SELECT on the two qualified private relations.
 - It has SET search_path = pg_catalog; every non-catalogue object is schema-qualified. There is no caller-controlled resolution and no validator write path.
-- It returns NULL before other work for NULL. It next applies the existing regex exactly; blank, whitespace-only, non-slash, and lexical failures return false. It then requires the one ready control row and does exact name = candidate primary-key membership. No trimming, folding, canonicalisation, platform fallback, or alias rewrite is permitted.
+- It returns NULL before other work for NULL. It next applies the existing regex exactly; blank, whitespace-only, non-slash, and lexical failures return false. It then requires the one ready control row and performs primary-key membership as `reference.name = candidate COLLATE "C"`; `reference.name` is itself `text COLLATE "C"`. Thus both operands use the same fixed bytewise, case-sensitive comparator, rather than a database default. `Asia/Kolkata` does not equal `asia/kolkata`. No trimming, folding, canonicalisation, platform fallback, or alias rewrite is permitted.
 - If control is absent/blocked, either relation unavailable, or an error prevents guarded lookup, it catches the internal failure and raises only SQLSTATE P0001 with message timezone_reference_unavailable. The signature remains boolean, but an unavailable integrity dependency fails closed rather than reclassifying names or accepting unsafe data.
 
 group_configurations.timezone retains CHECK (public.is_valid_iana_timezone(timezone)) unchanged. No CHECK is removed, weakened, or moved client-side. In ready state invalid input fails at the database layer. A null/duplicate/lexically invalid reference row is impossible; a missing row returns false, and known checksum/state corruption causes unavailable error. The CHECK aborts the full INSERT/UPDATE atomically; it never accepts on error.
@@ -85,7 +107,17 @@ The current function is PUBLIC-executable and appears in generated public types.
 
 ## Drift classification and policy
 
-The read-only drift check compares: the canonical committed artifact/manifest; actual private rows/control digest; and slash-qualified exact names in pg_catalog.pg_timezone_names. It first verifies constraints, one control row, control version/digest against manifest, canonical row count, and reference-set checksum. It then classifies platform difference with exact case-sensitive set difference.
+The read-only drift check compares: the canonical committed artifact/manifest;
+actual private rows/control digest; and slash-qualified exact names in
+pg_catalog.pg_timezone_names. It first verifies constraints, one control row,
+control version/digest against manifest, canonical row count, and
+reference-set checksum. Every name-based equality, duplicate check, ordering,
+and set operation used for artifact/reference/platform comparison must apply
+`COLLATE "C"` to both compared/projected name expressions before the
+operation. It then classifies platform difference with exact case-sensitive
+set difference. No `lower()`, `citext`, case-folding, locale-dependent
+equality, or default-collation comparison is permitted where exact identity is
+required.
 
 | Classification | Exact result | Treatment |
 | --- | --- | --- |
@@ -110,6 +142,18 @@ There is no scheduler and no callable maintenance function. Reconciliation is ex
 5. Independently verify post-migration checksum, control row, diffs, grants/owners, validator/CHECK behavior, and no stored-value rewrite. Preserve report and migration/artifact/manifest checksums. A failed update remains blocked and uses forward repair; only empty isolated targets may use authorised rollback/reapply evidence.
 
 The maintenance role has no LOGIN, application use, public function, or generic proxy. Only the separately approved deployment operator invokes it through a reviewed forward migration; browser, Edge Function, and service-role maintenance invocation do not exist.
+
+## Comparator scope and control relation
+
+The fixed `"C"` comparator applies only to exact timezone-name identity:
+reference primary-key identity, duplicate prevention, validator membership,
+artifact canonicalisation/checksum input ordering, and all exact-name drift
+comparisons. It changes no Product rule; it makes the existing exact,
+case-sensitive rule independent of database-default collation.
+
+The control relation is unchanged. Its version, digest, and status fields are
+not timezone-name identity keys, so this correction adds no collation or other
+field to that relation.
 
 ## Review packages
 
@@ -148,7 +192,7 @@ After shared authority and independent shared verification, an IR-003 authorisat
 
 ## Post-approval execution and verification
 
-    Data + Security + Architecture supplemental approvals (parallel)
+    supplemental Data re-review of this corrected proposal
     -> separate shared DBM-002 authorisation
     -> shared DBM-002 implementation (011) and independent shared verification
     -> IR-003 authorisation amendment
@@ -159,7 +203,14 @@ After shared authority and independent shared verification, an IR-003 authorisat
     -> IR-003 integration verification
     -> fresh independent IR-003 verification
 
-Implementation does not parallelise across authority boundaries. The three reviews may run in parallel. Independent shared verification precedes IR-003 amendment/dependent test work; Lane C precedes Lane D integration; generated types follow authorised integrated schema. No other W3 packet starts from this work.
+Implementation does not parallelise across authority boundaries. This correction
+has no material Security or Architecture impact, so their granted approvals
+remain applicable; only supplemental Data re-review is required. That re-review
+must assess `DBM-002-DATA-001` against this corrected proposal and confirm its
+previous PASS findings remain valid; it must not reopen Product semantics.
+Independent shared verification precedes IR-003 amendment/dependent test work;
+Lane C precedes Lane D integration; generated types follow authorised
+integrated schema. No other W3 packet starts from this work.
 
 The performance contract is unchanged:
 
@@ -170,6 +221,27 @@ Option-B p95 12.095 ms / p99 13.405 ms remains design evidence only. Full Lane C
 
 Expanded independent-verifier scope: supplemental authority; migration provenance; dataset provenance/version/checksums; Product compatibility; artifact/reference/platform classifications; reconciliation/rollback; validator inputs/errors; relation/control integrity; owner/grants/definer/search path; direct-access denial; CHECK behavior; maintenance authority; Lane-B regression; full Lane-C evidence; and no later-IR leakage.
 
+The future shared implementation and independent verification must additionally
+prove all of the following, without relying on the database default collation:
+
+- the reference `name` column has `COLLATE "C"` and therefore the frozen
+  deterministic bytewise, case-sensitive comparator;
+- its primary key uses that comparator for identity and duplicate prevention;
+- `public.is_valid_iana_timezone(text)` performs membership using that same
+  comparator;
+- all exact-name drift comparisons/set operations use that comparator on both
+  reference and platform-catalogue names;
+- an approved `Asia/Kolkata` row cannot match a candidate `asia/kolkata`; and
+- case-only variants cannot collapse into one primary-key identity under a
+  different database/environment default collation.
+
+The design-level assertion approach is to inspect the column and primary-key
+index collation metadata, exercise validator lookup with the approved/case-only
+pair, and run duplicate and directional-drift assertions after setting or
+creating a non-`"C"` database/default comparison context. Those assertions
+must demonstrate that the column/operator/set-operation contract remains
+`"C"`; they must not merely demonstrate a passing case test under one default.
+
 ## Status
 
 - GATE-031 is historically Satisfied.
@@ -179,4 +251,13 @@ Expanded independent-verifier scope: supplemental authority; migration provenanc
 - Shared remediation is not implementation-authorised.
 - Travel was not read or mutated; no deployment or push occurred.
 
-**PARALLEL D/S/A SUPPLEMENTAL REVIEWS READY**
+**SUPPLEMENTAL SECURITY APPROVAL GRANTED**
+
+**SUPPLEMENTAL ARCHITECTURE APPROVAL GRANTED**
+
+**SUPPLEMENTAL DATA APPROVAL BLOCKED — DBM-002-DATA-001** (immutable
+historical review record)
+
+**BOUNDED COMPARATOR CORRECTION FROZEN — SUPPLEMENTAL DATA RE-REVIEW REQUIRED**
+
+**SHARED IMPLEMENTATION NOT AUTHORISED**

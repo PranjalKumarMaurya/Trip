@@ -47,7 +47,11 @@ No later packet inherits this naming authority.
 The verified historical DBM-002 implementation remains unchanged. The Product
 owner approved controlled application-reference semantics, and supplemental
 change control froze an M2 proposal: preserve 010 unchanged and reserve the
-dedicated shared `011_ir002_timezone_reference.sql` after it. This is planning
-only: Data, Security, and Architecture reviews and separate shared DBM-002
-authority remain required before implementation. See
+dedicated shared `011_ir002_timezone_reference.sql` after it. Supplemental
+Security and Architecture approvals are granted. The immutable supplemental
+Data review remains blocked on `DBM-002-DATA-001`; the bounded correction now
+freezes `name text COLLATE "C" NOT NULL PRIMARY KEY`, same-comparator
+membership/drift requirements, and the related Data regression obligation.
+One supplemental Data re-review and then separate shared DBM-002 authority
+remain required before implementation. See
 `ir-003-shared-dbm-002-change-control-proposal.md`.

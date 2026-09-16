@@ -684,3 +684,42 @@ preserves the finding and proposal history.
 - Status: IR-003 remains Authorised but not globally Implemented or Verified;
   Lane C remains blocked; Lane D remains isolated; shared remediation is not
   implementation-authorised. No remote mutation, deployment, or push occurred.
+
+## CC-IR003-20260916-shared-dbm002-data-001-correction — bounded comparator correction
+
+- Decision: **DBM-002-DATA-001 COMPARATOR CORRECTION FROZEN**.
+- Scope: documentation-only correction to the frozen shared DBM-002 proposal.
+  No migration, application source, generated type, test implementation,
+  database, remote target, deployment, or Lane D path changes.
+- Finding: the immutable supplemental Data review correctly found that
+  `name text PRIMARY KEY` left exact case-sensitive reference identity dependent
+  on a database-default collation. Repository migration `010` already uses
+  explicit `COLLATE "C"` for deterministic ordering. The corrected reference
+  column is exactly `name text COLLATE "C" NOT NULL PRIMARY KEY`.
+- Frozen contract: `"C"` supplies bytewise, case-sensitive primary-key
+  identity and duplicate prevention. Validator membership compares
+  `reference.name = candidate COLLATE "C"`; every exact-name
+  artifact/reference/platform drift comparison or set operation explicitly uses
+  `COLLATE "C"` on both name expressions. The existing bytewise artifact order
+  matches that comparator and its checksum/provenance model is unchanged.
+- Control relation: unchanged; its version, digest, and status are not
+  timezone-name identity fields.
+- Review impact: **SUPPLEMENTAL SECURITY APPROVAL GRANTED** and
+  **SUPPLEMENTAL ARCHITECTURE APPROVAL GRANTED** remain applicable: the
+  correction changes no private-schema boundary, role, grant, definer,
+  search-path, maintenance, migration placement, IR-003 dependency, W3 order,
+  generated-type boundary, or verifier ownership model. The immutable
+  **SUPPLEMENTAL DATA APPROVAL BLOCKED** record remains historical evidence;
+  one supplemental Data re-review must assess this corrected proposal against
+  `DBM-002-DATA-001` and confirm its previous PASS findings remain valid.
+- Security impact: **NO MATERIAL SECURITY IMPACT**.
+- Architecture impact: **NO MATERIAL ARCHITECTURE IMPACT**.
+- Required later evidence: verify the `"C"` column/key metadata, exact
+  membership and drift comparator use, case-only non-match, and resistance to
+  case-only duplicate collapse under a different default collation.
+- Status: migration `011_ir002_timezone_reference.sql` remains
+  **PROPOSED / RESERVED / NOT AUTHORISED**. GATE-031 remains historically
+  Satisfied; IR-003 remains Authorised, not globally Implemented or Verified;
+  Lane C remains blocked; Lane D remains isolated; shared remediation remains
+  not implementation-authorised. No remote mutation, deployment, or push
+  occurred.
