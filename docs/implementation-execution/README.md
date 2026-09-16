@@ -8,7 +8,8 @@
 - Implementation Planning Freeze: Complete
 - Implementation readiness review: Approved
 - Implementation authorisation scope: IR-003 atomic Group bootstrap is
-  authorised but not started; IR-004, IR-007, and IR-008 are verified
+  authorised; Lane A is integrated, Lane B passed, Lane C is blocked, and Lane
+  D is isolated. IR-004, IR-007, and IR-008 are verified.
 - IR-001 authorised: Yes
 - IR-001 status: Implemented and Verified
 - IR-002 authorised: closed — Implemented and Verified
@@ -86,10 +87,11 @@ frozen lanes, later integration, and independent verification are mandatory.
 The supplemental Product decision in
 [`ir-003-product-timezone-semantic-evolution.md`](ir-003-product-timezone-semantic-evolution.md)
 approves stable application-controlled timezone-reference semantics and resolves
-the sole Product-semantic blocker in the shared DBM-002 review. It authorises
-no physical design, migration placement, maintenance/security model, shared
-implementation, or IR-003 amendment. Lane C therefore remains blocked pending
-the supplemental shared DBM-002 change-control decision and its independent
-Data, Security, and Architecture inputs.
+the sole Product-semantic blocker in the shared DBM-002 review. The later
+review-only proposal in
+[`ir-003-shared-dbm-002-change-control-proposal.md`](ir-003-shared-dbm-002-change-control-proposal.md)
+freezes the technical design and reserves M2 migration 011; it authorises no
+implementation or IR-003 amendment. Lane C remains blocked pending independent
+Data, Security, and Architecture reviews and separate shared authority.
 IR-005 and later packets, Storage (IR-009), Realtime (IR-010), product
 conversion, deployment, and cutover remain unauthorised.

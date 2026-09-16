@@ -12,7 +12,8 @@
 - W1: Complete; GATE-011: Satisfied
 - W2: Complete; GATE-012 and GATE-013: Satisfied
 - GATE-015: Satisfied; W3 entry prerequisites from W2: passed
-- IR-003: Authorised — implementation not started or verified; GATE-031: Satisfied
+- IR-003: Authorised — Lane A integrated, Lane B PASS, Lane C blocked, Lane D
+  isolated; not globally Implemented or Verified; GATE-031 historically Satisfied
 - Remaining W3 implementation: Not authorised
 - GATE-031 decision: the protected evidence and Product, Data, Security, and
   Architecture approvals passed the separate decision in `gate-031-decision.md`
@@ -68,8 +69,10 @@ test-environment evidence first affects W1 exit; neither blocks IR-001 entry.
 
 ## Recommendation
 
-The next planned activity is authorised IR-003 implementation in the frozen
-non-overlapping lanes, followed by integration and independent verification.
+The next planned activity is independent supplemental Data, Security, and
+Architecture review of `ir-003-shared-dbm-002-change-control-proposal.md`.
+Shared implementation, Lane-C rerun, integration, and independent IR-003
+verification remain pending the resulting approvals and separate authority.
 
 The implementation package is accepted and locked. IR-003 and every other
 unauthorised packet require separate authority. R-02 remains implementation

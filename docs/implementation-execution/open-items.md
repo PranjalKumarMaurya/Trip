@@ -21,12 +21,13 @@
   `CC-IR003-20260821-performance-correction-design` records the shared
   DBM-002 performance defect. The Product semantic evolution to a controlled
   application-approved IANA reference set is now approved in
-  `ir-003-product-timezone-semantic-evolution.md`; no physical design or
-  maintenance/security/migration authority follows from it. The next eligible
-  step is supplemental shared DBM-002 change control and independent Data,
-  Security, and Architecture approval inputs. Lane C stays blocked until that
-  shared prerequisite is authorised and implemented; Option A remains over
-  p95. Migration 010 remains unchanged and Travel remains unapplied.
+  `ir-003-product-timezone-semantic-evolution.md`. Supplemental change control
+  now freezes a review-only controlled-reference proposal and reserves proposed
+  `011_ir002_timezone_reference.sql`; Data, Security, and Architecture reviews
+  and separate shared authority remain required. Lane C stays blocked until
+  that shared prerequisite is authorised, implemented, and independently
+  verified; Option A remains over p95. Migration 010 remains unchanged and
+  Travel remains unapplied.
 - IR-003 pre-authorisation design freeze: Complete
 - DCC-IR003-FREEZE-001: Accepted
 - BLK-IR003-FREEZE-001: Resolved by DCC-IR003-FREEZE-001 — Accepted

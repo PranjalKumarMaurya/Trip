@@ -658,3 +658,29 @@ preserves the finding and proposal history.
   **READY FOR SUPPLEMENTAL SHARED DBM-002 CHANGE-CONTROL DECISION** to select
   physical design, M3/migration placement, maintenance/security model, and
   required independent Data, Security, and Architecture approval inputs.
+
+## CC-IR003-20260916-shared-dbm002-proposal — supplemental change control
+
+- Decision: **SHARED DBM-002 CHANGE CONTROL APPROVED FOR REVIEW**.
+- Scope: freeze one technical proposal for Product-approved controlled
+  timezone-reference semantics. It selects the private relation/control model,
+  deterministic committed dataset model, protected public validator, drift and
+  reconciliation boundary, and M2 placement proposal. It is documentation only
+  and neither implements nor authorises the shared evolution.
+- Ownership: shared DBM-002 forward evolution, consumed by IR-003; not an
+  IR-003/DBM-014-owned schema change. Historical migration 007 is immutable.
+  Existing 010 remains immutable at SHA-256
+  5c3ca06dfe29cf5388686559d124adc4ea507e9445a52c93d79d181221f4ec4f.
+- Proposed placement: reserve, but do not create or authorise,
+  011_ir002_timezone_reference.sql after 010. TOP-001 remains unavailable
+  until both migrations and required shared evidence are approved and verified;
+  no renumbering is proposed.
+- Required next decisions: independent Data, Security, and Architecture review
+  records against ir-003-shared-dbm-002-change-control-proposal.md, followed
+  by separate shared DBM-002 authority if all required decisions pass. GATE-031
+  stays historically Satisfied. A later IR-003 amendment, Lane-B regression,
+  full Lane-C rerun, integration, and fresh independent verification remain
+  required.
+- Status: IR-003 remains Authorised but not globally Implemented or Verified;
+  Lane C remains blocked; Lane D remains isolated; shared remediation is not
+  implementation-authorised. No remote mutation, deployment, or push occurred.

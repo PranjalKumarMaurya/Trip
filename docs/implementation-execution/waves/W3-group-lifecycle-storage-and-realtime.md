@@ -25,17 +25,16 @@
 - Performance-correction status: the Product owner has approved the bounded
   semantic evolution from live catalogue membership to a controlled
   application-approved IANA reference set. This resolves the sole Product
-  semantic blocker in **SHARED DBM-002 REMEDIATION DESIGN BLOCKED**, but no
-  physical design, M3/migration placement, maintenance/security model, or
-  shared implementation is authorised. The next eligible step is the
-  supplemental shared DBM-002 change-control decision with independent Data,
-  Security, and Architecture inputs. Lane C remains blocked until that
-  prerequisite is authorised and implemented. DBM-014 neither owns the shared
-  evolution nor its maintenance; migration `011` remains unauthorised.
-  Migration `010` remains unchanged; frozen workload and thresholds are
-  unchanged. See
+  semantic blocker in **SHARED DBM-002 REMEDIATION DESIGN BLOCKED**. A
+  review-only M2 proposal now reserves a dedicated shared migration `011` after
+  unchanged `010`; it freezes physical/security/maintenance design for
+  independent Data, Security, and Architecture review only. Lane C remains
+  blocked until that prerequisite is separately authorised, implemented, and
+  independently verified. DBM-014 neither owns the shared evolution nor its
+  maintenance; migration `011` remains unauthorised. Frozen workload and
+  thresholds are unchanged. See
   `ir-003-product-timezone-semantic-evolution.md` and
-  `ir-003-shared-dbm-002-remediation-freeze.md`.
+  `ir-003-shared-dbm-002-change-control-proposal.md`.
 - Lane D is complete and remains isolated in its own worktree. Integration,
   generated types, and independent verification remain pending.
 - IR-003 remains **Authorised**, not globally Implemented, and not Verified.

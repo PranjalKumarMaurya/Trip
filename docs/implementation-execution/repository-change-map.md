@@ -19,7 +19,7 @@ existing: it is labelled **Proposed path — verify at packet start**.
 | `src/tabs/ScanTab.tsx`, `supabase/functions/parse-document/index.ts` | Public ticket path and legacy privileged parse/upload/Event insertion. | Convert to validated private ingest/reconciliation flow. | IR-013 / W4 | IR-016, IR-021 | Critical server/Storage boundary; serial with IR-009 private Storage contract. | FP-007/008, UI-09, IPE-SCAN/STORAGE. | Quarantine/reconcile object and metadata; no public fallback. | Confirmed existing |
 | `src/tabs/SplitTab.tsx`, `src/components/AddExpenseModal.tsx`, `EditExpenseModal.tsx`, `SettleUpModal.tsx`, `src/lib/splitting.ts` | Global, name-keyed finance and direct mutations. | Convert to exact normalized finance with trusted writes. | IR-014 / W4 | IR-016, IR-021 | Critical finance lane; no concurrent shared-shell edit before IR-011 checkpoint. | FP-009–015, UI-10–12, EQ-01/SET-01/USD-01. | Preserve immutable exact history; no float/name fallback. | Confirmed existing |
 | `src/tabs/FXTab.tsx`, `src/lib/currency.ts`, `src/constants/seedData.ts`, `src/constants/eventTypes.ts`, `src/constants/tabAssets.ts` | Static FX/Bali content and fixed app constants. | Separate reference FX from ledger accounting and confine Bali content to configured Group. | IR-015 / W4 | IR-016, IR-021 | Medium: IR-015 owns configuration/FX lane; coordinate any shared copy/token impact with IR-011. | FP-016–018, UI-13, IPE-FX/TIME. | Do not recalculate/rewrite accounting history from live rates. | Confirmed existing |
-| `supabase/migrations/`, `supabase/seed.sql` | Five legacy SQL migrations and legacy source seed, plus verified IR-002 migrations `006_ir002_tenant_root.sql` and `007_ir002_configuration_archive_audit.sql`. | IR-004 added only `008_ir004_profile_auth.sql`; IR-007 added only `009_ir007_base_rls_ownership.sql`. **Proposed path — absent:** `010_ir003_atomic_group_bootstrap.sql` is reserved only for DBM-014 after GATE-031 and separate IR-003 authorisation. Legacy files/seed remain read-only. | IR-002 / W1; IR-004 / W2; IR-007 / W2; bounded IR-003 / W3; IR-016 / W5 source transforms | All schema/migration consumers | Critical: database reviewer serialises all future schema/policy work; Lane A alone owns migration 010. | Future dedicated IR-003 immutable evidence, plus accepted IR-004/IR-007 evidence. | Empty-target only; legacy source retained; populated target uses reviewed forward correction. | IR-002 verified; DBM-003 verified; DBM-006 Verified; DBM-014 Authorised/not started |
+| `supabase/migrations/`, `supabase/seed.sql` | Five legacy SQL migrations and legacy source seed, plus verified IR-002 migrations `006_ir002_tenant_root.sql` and `007_ir002_configuration_archive_audit.sql`. | IR-004 added `008_ir004_profile_auth.sql`; IR-007 added `009_ir007_base_rls_ownership.sql`; IR-003 Lane A added immutable candidate `010_ir003_atomic_group_bootstrap.sql`. Proposed/reserved only: `011_ir002_timezone_reference.sql` for the separately authorised shared DBM-002 evolution. Legacy files/seed remain read-only. | IR-002 / W1; IR-004 / W2; IR-007 / W2; bounded IR-003 / W3; IR-016 / W5 source transforms | All schema/migration consumers | Critical: database reviewer serialises all future schema/policy work; shared DBM-002 is a prerequisite before TOP-001 runtime. | Lane A/B candidate evidence plus accepted IR-004/IR-007 evidence; shared evidence pending. | Empty-target only; legacy source retained; populated target uses reviewed forward correction. | DBM-014 candidate: Lane A integrated, Lane B PASS, Lane C blocked; 011 Proposed/Reserved/Not authorised |
 | `.env.example` | Browser-safe variable example and server-secret warning. | Inventory only; no value, secret, or deployed identifier enters documentation. | IR-001 / W1 | IR-004, IR-008, IR-013, IR-017–020 | High environment boundary: IR-001 owns inventory; each later packet consumes a named gate. | Secret-boundary review, TC-013. | Never add server secrets; invalid boundary blocks consuming packet. | Confirmed existing |
 
 ## Not-established target paths and serial ownership
@@ -57,13 +57,14 @@ existing: it is labelled **Proposed path — verify at packet start**.
   package files, Storage, Realtime, environment files, deployment, remote
   Supabase, or IR-001/002/004/007 evidence semantics. It creates no physical
   trusted operation; its register assigns every TOP to a future owner.
-- IR-003 is authorised but not started. `DCC-IR003-FREEZE-001` is Accepted and
-  the separately controlled GATE-031 evidence is Satisfied. Its four disjoint
-  write sets are those
-  in `packets/IR-003-atomic-group-bootstrap.md` §10: Lane A
-  writes only the proposed migration 010; Lane B only the proposed
-  `tests/database/ir-003/cases/**` and unit contract file; Lane C only the
-  proposed IR-003 harness/rollback/performance/manifest paths and
+- IR-003 is Authorised but not globally Implemented or Verified. Lane A is
+  integrated, Lane B PASS, Lane C blocked, and Lane D remains isolated.
+  `DCC-IR003-FREEZE-001` is Accepted and the separately controlled GATE-031
+  evidence is historically Satisfied. Its four disjoint write sets remain
+  those in `packets/IR-003-atomic-group-bootstrap.md` §10: completed Lane A
+  wrote only migration 010; completed Lane B wrote only its dedicated cases
+  and unit contract; Lane C owns only the dedicated
+  IR-003 harness/rollback/performance/manifest paths and
   `artifacts/ir-003/**`; Lane D only the listed authenticated-boundary,
   proposed onboarding/adapter, and browser/static test paths. Integration,
   not a lane, alone writes `src/lib/database.types.ts` after migration.
