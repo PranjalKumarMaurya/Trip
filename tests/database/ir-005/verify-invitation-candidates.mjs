@@ -286,6 +286,12 @@ async function verify() {
   success(callAnon(inspect('bad-link')), 'invalid')
   success(callAnon(inspect('0'.repeat(64))), 'invalid')
   success(call(actor.stranger, inspect(a.proof)), 'switch_account')
+  psql(`UPDATE auth.users SET email_confirmed_at=NULL
+    WHERE id=${quote(actor.friend)}::uuid`, 'unverify-recipient')
+  success(call(actor.friend, inspect(a.proof)), 'verification_required')
+  denied(call(actor.friend, accept(a.proof, id(41))), 'not_authorized')
+  psql(`UPDATE auth.users SET email_confirmed_at=clock_timestamp()
+    WHERE id=${quote(actor.friend)}::uuid`, 'verify-recipient')
   success(call(actor.friend, inspect(a.proof)), 'ready')
   const same = success(call(actor.owner, issue(groupA, 'friend@example.test', id(1))), 'already_completed')
   assert.equal(Object.hasOwn(same, 'proof'), false, 'proof-redisplayed')
