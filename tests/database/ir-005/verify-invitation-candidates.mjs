@@ -131,6 +131,7 @@ function migrate() {
     '014_ir005_accept_invitation_candidate.sql',
     '015_ir005_revoke_invitation_candidate.sql',
     '016_ir005_role_change_candidate.sql',
+    '017_ir005_transfer_ownership_candidate.sql',
   ]
   for (const file of candidates) adminSql(read(`supabase/migrations/${file}`), file)
 }
@@ -206,6 +207,11 @@ function revoke(groupId, invitationId, requestId) {
 function changeRole(groupId, memberId, role, requestId) {
   return `public.change_member_role(${quote(groupId)}::uuid,
     ${quote(memberId)}::uuid, ${quote(role)}, ${quote(requestId)}::uuid)`
+}
+
+function transfer(groupId, memberId, priorOutcome, requestId) {
+  return `public.transfer_ownership(${quote(groupId)}::uuid,
+    ${quote(memberId)}::uuid, ${quote(priorOutcome)}, ${quote(requestId)}::uuid)`
 }
 
 function success(result, outcome) {
@@ -289,6 +295,15 @@ async function verify() {
   assert.equal(contestMembers, finalStatus === 'accepted' ? 1 : 0, 'contest-membership-atomic')
   assert.equal(contest.filter((result) => result.ok).length, finalStatus === 'accepted' ? 2 : 1, 'contest-call-results')
 
+  denied(call(actor.owner, transfer(groupB, joined.group_member_id, 'member', id(23))), 'invalid_target')
+  denied(call(actor.late, transfer(groupB, crossJoin.group_member_id, 'member', id(24))), 'not_authorized')
+  success(call(actor.owner, transfer(groupB, crossJoin.group_member_id, 'member', id(25))), 'transferred')
+  success(call(actor.owner, transfer(groupB, crossJoin.group_member_id, 'member', id(25))), 'already_completed')
+  denied(call(actor.owner, transfer(groupB, crossJoin.group_member_id, 'inactive', id(25))), 'idempotency_conflict')
+  denied(call(actor.owner, transfer(groupB, crossJoin.group_member_id, 'member', id(26))), 'not_authorized')
+  assert.equal(psql(`SELECT count(*) FROM public.group_members
+    WHERE group_id=${quote(groupB)}::uuid AND status='active' AND role='owner'`), '1')
+
   assert.equal(psql(`SELECT has_table_privilege('authenticated','public.invitations','SELECT'),
     has_table_privilege('service_role','public.invitations','SELECT'),
     has_function_privilege('anon','public.accept_invitation(text,jsonb,uuid)','EXECUTE'),
@@ -309,7 +324,13 @@ async function verify() {
     adminSql(`GRANT INSERT (${auditColumns}) ON TABLE public.group_audit_events
       TO ir005_invitation_executor`, 'restore-audit-write')
   }
-  return { invitationCandidate: 'passed', twoGroups: 'passed', expiry: 'passed', acceptRace: 'passed', revokeRace: 'passed', lastOwner: 'passed', rollback: 'passed', cleanup: 'pending' }
+  success(call(actor.owner, transfer(groupA, joined.group_member_id, 'inactive', id(27))), 'transferred')
+  success(call(actor.owner, transfer(groupA, joined.group_member_id, 'inactive', id(27))), 'already_completed')
+  assert.equal(psql(`SELECT count(*) FROM public.group_members
+    WHERE group_id=${quote(groupA)}::uuid AND status='active' AND role='owner'`), '1')
+  assert.equal(psql(`SELECT status || '|' || role FROM public.group_members
+    WHERE id=${quote(ownerMember)}::uuid`), 'inactive|member')
+  return { invitationCandidate: 'passed', twoGroups: 'passed', expiry: 'passed', acceptRace: 'passed', revokeRace: 'passed', lastOwner: 'passed', transfer: 'passed', rollback: 'passed', cleanup: 'pending' }
 }
 
 try {
