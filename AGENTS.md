@@ -19,6 +19,7 @@ Use this map to answer questions about the current app without reading the entir
 | Invites, members, ownership | `docs/implementation-execution/packets/IR-005-membership-invitation-and-owner.md`; `docs/architecture/auth-groups-and-invitations.md` §§8–14 | Main has no integrated invitation flow. The isolated `impl/ir005-invitations` worktree holds draft migrations 012–021, `src/features/invitations/` recipient/Owner UI candidates, `npm run test:ir005:candidate`, its implementation draft, and the recipient-bound screen amendment; check that branch's status before using them. |
 | Active Group and trip data | `docs/implementation-execution/packets/IR-011-active-group-and-data-access.md`; `execution-order.md` W3–W4 | `src/App.tsx`, `src/hooks/`, `src/tabs/`, later migrations |
 | Release path | `docs/implementation-execution/execution-order.md` W5–W7; `gate-ledger.md` | Current tests, migrations, deployment configuration, evidence |
+| Integrated new-user candidate | `../bachelor-trip-app-journey/docs/implementation-execution/live-journey-candidate.md` | Separate `candidate/new-user-journey` worktree combines Lane D and invite candidates; `npm run test:journey:live` passed disposable real-API two-account/two-Group UI flow. This is not a packet exit or release source. |
 | Deferred features | `docs/product/deferred-scope-register.md` | Search only the named feature |
 
 ## Search efficiently
