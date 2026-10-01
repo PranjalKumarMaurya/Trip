@@ -275,7 +275,23 @@ async function verify() {
   assert.equal(psql(`SELECT has_table_privilege('authenticated','public.invitations','SELECT'),
     has_table_privilege('service_role','public.invitations','SELECT'),
     has_function_privilege('anon','public.accept_invitation(text,jsonb,uuid)','EXECUTE')`), 'f|f|f')
-  return { invitationCandidate: 'passed', twoGroups: 'passed', expiry: 'passed', acceptRace: 'passed', revokeRace: 'passed', cleanup: 'pending' }
+
+  const beforeFailure = psql(`SELECT (SELECT count(*) FROM public.invitations),
+    (SELECT count(*) FROM public.ir005_invitation_requests),
+    (SELECT count(*) FROM public.group_audit_events)`)
+  const auditColumns = 'group_id, actor_group_member_id, event_type, request_id, details, occurred_at'
+  adminSql(`REVOKE INSERT (${auditColumns}) ON TABLE public.group_audit_events
+    FROM ir005_invitation_executor`, 'deny-audit-write')
+  try {
+    denied(call(actor.owner, issue(groupA, 'rollback@example.test', id(18))), 'operation_failed')
+    assert.equal(psql(`SELECT (SELECT count(*) FROM public.invitations),
+      (SELECT count(*) FROM public.ir005_invitation_requests),
+      (SELECT count(*) FROM public.group_audit_events)`), beforeFailure, 'audit-failure-rollback')
+  } finally {
+    adminSql(`GRANT INSERT (${auditColumns}) ON TABLE public.group_audit_events
+      TO ir005_invitation_executor`, 'restore-audit-write')
+  }
+  return { invitationCandidate: 'passed', twoGroups: 'passed', expiry: 'passed', acceptRace: 'passed', revokeRace: 'passed', rollback: 'passed', cleanup: 'pending' }
 }
 
 try {
