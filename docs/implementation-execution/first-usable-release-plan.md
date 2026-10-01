@@ -23,7 +23,7 @@ The first release is complete only after a two-account/two-Group running-build j
 
 1. Resolve `CC-IR003-ISO-PLAN-20261001` through its required review. The shared timezone migration and IANA dataset pass repeatable local checks, and Lane C passes numeric latency limits, but its frozen ISO plan rule still fails.
 2. Complete independent shared DBM-002 review, a fresh passing IR-003 Lane C manifest, generated types, and onboarding integration. Keep Lane D isolated until that boundary closes.
-3. Review and extend the isolated `impl/ir005-invitations` branch: its schema and TOP-002/003 candidates pass basic local issue/accept/replay checks but have no IR-005 entry gate, race/expiry/revoke verification, or browser integration. Complete Invitation and Membership lifecycle with two-account/two-Group negative tests, then Group selection and the five scoped product features. Do not connect the legacy name-based tabs to the authenticated shell until their replacements pass.
+3. Review and extend the isolated `impl/ir005-invitations` branch: its schema, TOP-002/003, and revoke candidates pass local issue/accept/replay, expiry, revoke, and two-Group boundary probes. They still need the IR-005 entry gate, repeatable race/injected-failure tests, lifecycle roles, and browser integration. Complete Invitation and Membership lifecycle, then Group selection and the five scoped product features. Do not connect the legacy name-based tabs to the authenticated shell until their replacements pass.
 
 ## Current known risks
 
