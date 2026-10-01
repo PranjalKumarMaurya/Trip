@@ -2,26 +2,8 @@
 -- No browser access or callable lifecycle operation is introduced by this file.
 BEGIN;
 
-CREATE ROLE ir005_invitation_key_owner
-  NOLOGIN NOINHERIT NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS;
 CREATE ROLE ir005_invitation_executor
   NOLOGIN NOINHERIT NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION BYPASSRLS;
-
-CREATE SCHEMA ir005_private AUTHORIZATION ir005_invitation_key_owner;
-REVOKE ALL ON SCHEMA ir005_private FROM PUBLIC, anon, authenticated, service_role;
-
-CREATE TABLE ir005_private.invitation_hmac_key (
-  singleton boolean PRIMARY KEY CHECK (singleton),
-  key_bytes bytea NOT NULL CHECK (octet_length(key_bytes) = 32),
-  created_at timestamptz NOT NULL DEFAULT now()
-);
-ALTER TABLE ir005_private.invitation_hmac_key OWNER TO ir005_invitation_key_owner;
-REVOKE ALL ON TABLE ir005_private.invitation_hmac_key
-  FROM PUBLIC, anon, authenticated, service_role;
-GRANT USAGE ON SCHEMA ir005_private TO ir005_invitation_executor;
-GRANT SELECT ON TABLE ir005_private.invitation_hmac_key TO ir005_invitation_executor;
-INSERT INTO ir005_private.invitation_hmac_key (singleton, key_bytes)
-VALUES (true, extensions.gen_random_bytes(32));
 
 CREATE TABLE public.invitations (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
