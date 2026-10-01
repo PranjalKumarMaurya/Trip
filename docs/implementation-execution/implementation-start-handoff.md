@@ -14,14 +14,16 @@
 - W2: Complete; GATE-012 and GATE-013: Satisfied
 - GATE-015: Satisfied; W3 entry prerequisites from W2: passed
 - IR-003: Authorised — Lane A database and audit request-ID correction complete;
-  Lane B adversarial verification PASS; Lane C blocked on frozen distinct-request
-  database performance (first p95 118.485 ms; p99 120.593 ms); Lane D complete
-  and isolated; integration/generated types and independent verification pending.
+  Lane B adversarial verification PASS; shared DBM-002 migration 011 and IANA
+  2026e reference candidate locally implemented and repeatably checked; fresh
+  Lane C numeric thresholds passed in three diagnostic repetitions, but Lane C
+  still fails the frozen ISO lookup index-plan check. Lane D is complete and
+  isolated; integration/generated types and independent verification pending.
   The Product semantic evolution to an application-approved IANA reference set
   is approved, resolving the sole semantic blocker in the supplemental shared
-  DBM-002 review. The review-only shared proposal reserves a dedicated M2
-  migration 011 without changing 010; Data/Security/Architecture approvals and
-  separate shared authority remain pending. Travel remains unchanged. IR-003
+  DBM-002 review. The corrected proposal and bounded local authority now own
+  migration 011 without changing 010; independent shared exit and the ISO
+  plan change-control decision remain pending. Travel remains unchanged. IR-003
   is not globally Implemented or Verified; GATE-031 remains historically
   Satisfied for its original package.
 - GATE-031 decision: recorded in `gate-031-decision.md`; protected evidence,

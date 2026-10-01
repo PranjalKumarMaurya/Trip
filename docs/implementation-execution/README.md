@@ -24,6 +24,19 @@
 - GATE-031 status: Satisfied (evidence prerequisite to the separate IR-003 authorisation)
 - Application implementation: IR-004 and IR-007 verified
 
+### Current local update — 2026-10-01
+
+Shared DBM-002 migration 011 and a deterministic IANA 2026e reference artifact
+are locally implemented under the bounded authority record. `npm run
+test:tzref` passed three disposable-stack runs; this is not independent shared
+verification or deployed evidence. The renewed IR-003 Lane B suite passed.
+Fresh Lane C diagnostic evidence captured three repetitions whose numeric
+distinct and same-key latency limits all passed, but all three failed the
+frozen ISO-reference index-plan requirement because PostgreSQL chose a
+bounded sequential scan. The exact exception proposal is
+`ir-003-iso-plan-change-proposal.md`; until its required decision and a fresh
+passing manifest, IR-003 remains not Verified and Lane D remains isolated.
+
 ## Purpose
 
 This package translates accepted architecture and design into implementation-ready execution units without changing accepted decisions, code, schema, policies, or design assets. It is a planning and traceability package only.
@@ -84,14 +97,11 @@ bounded authorisation is recorded in
 [`authorisations/IR-003-authorisation.md`](authorisations/IR-003-authorisation.md).
 IR-003 alone is Authorised and remains not Implemented or Verified; its four
 frozen lanes, later integration, and independent verification are mandatory.
-The supplemental Product decision in
-[`ir-003-product-timezone-semantic-evolution.md`](ir-003-product-timezone-semantic-evolution.md)
-approves stable application-controlled timezone-reference semantics and resolves
-the sole Product-semantic blocker in the shared DBM-002 review. The later
-review-only proposal in
-[`ir-003-shared-dbm-002-change-control-proposal.md`](ir-003-shared-dbm-002-change-control-proposal.md)
-freezes the technical design and reserves M2 migration 011; it authorises no
-implementation or IR-003 amendment. Lane C remains blocked pending independent
-Data, Security, and Architecture reviews and separate shared authority.
+The supplemental Product decision and corrected shared proposal establish
+controlled timezone-reference semantics. A bounded local authority now covers
+candidate migration 011, with local verification recorded separately. Lane C
+remains blocked on its frozen ISO lookup plan requirement; see the current local
+update above and `ir-003-iso-plan-change-proposal.md`. Independent shared and
+IR-003 verification, generated types, and Lane D integration remain pending.
 IR-005 and later packets, Storage (IR-009), Realtime (IR-010), product
 conversion, deployment, and cutover remain unauthorised.

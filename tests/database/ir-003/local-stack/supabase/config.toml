@@ -2,26 +2,26 @@ project_id = "bachelor-trip-app-ir003-lanec"
 
 [api]
 enabled = true
-port = 57821
+port = 58021
 
 [db]
-port = 57822
+port = 58022
 
 [db.pooler]
 enabled = false
-port = 57829
+port = 58029
 
 [realtime]
 enabled = false
 
 [studio]
 enabled = false
-port = 57823
+port = 58023
 
 [inbucket]
 enabled = false
-port = 57824
-smtp_port = 57825
+port = 58024
+smtp_port = 58025
 
 [storage]
 enabled = true

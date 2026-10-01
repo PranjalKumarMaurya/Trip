@@ -15,6 +15,7 @@ const migrations = [
   '001_initial.sql', '002_tickets_bucket.sql', '003_gmap_url.sql', '004_paid_by_splits.sql',
   '005_todos.sql', '006_ir002_tenant_root.sql', '007_ir002_configuration_archive_audit.sql',
   '008_ir004_profile_auth.sql', '009_ir007_base_rls_ownership.sql', '010_ir003_atomic_group_bootstrap.sql',
+  '011_ir002_timezone_reference.sql',
 ]
 let stackRoot = ''
 let started = false
@@ -142,6 +143,14 @@ function applyMigrations() {
     '--set', 'ON_ERROR_STOP=1', '--username', 'supabase_admin', '--dbname', 'postgres',
   ], { input: readFileSync(resolve(repositoryRoot, 'supabase/migrations/010_ir003_atomic_group_bootstrap.sql'), 'utf8') })
   if (migration010.error || migration010.status !== 0) throw new Error('migration-010-application-failed')
+  const migration011 = commandResult('docker', [
+    'exec', '--interactive', '--user', 'postgres', container, 'psql', '--no-psqlrc', '--quiet',
+    '--set', 'ON_ERROR_STOP=1', '--username', 'supabase_admin', '--dbname', 'postgres',
+  ], { input: readFileSync(resolve(repositoryRoot, 'supabase/migrations/011_ir002_timezone_reference.sql'), 'utf8') })
+  if (migration011.error || migration011.status !== 0) throw new Error('migration-011-application-failed')
+  assert.equal(psql("SELECT public.is_valid_iana_timezone('Asia/Kolkata')::text"), 'true')
+  assert.equal(psql("SELECT public.is_valid_iana_timezone('asia/kolkata')::text"), 'false')
+  assert.equal(psql("SELECT public.is_valid_iana_timezone('Asia/Calcutta')::text"), 'true')
 }
 
 function quote(value) {
@@ -271,6 +280,7 @@ function authAndValidationDenials(actors) {
     [actors.a, payload.group, { ...payload.configuration, start_date: '2026-02-30' }, 'invalid_request'],
     [actors.a, payload.group, { ...payload.configuration, end_date: '2026-10-01' }, 'invalid_request'],
     [actors.a, payload.group, { ...payload.configuration, timezone: 'Mars/Olympus' }, 'invalid_request'],
+    [actors.a, payload.group, { ...payload.configuration, timezone: 'asia/kolkata' }, 'invalid_request'],
     [actors.a, payload.group, { ...payload.configuration, accounting_currency: 'ZZZ', display_currency_codes: ['ZZZ'] }, 'invalid_request'],
     [actors.a, payload.group, { ...payload.configuration, display_currency_codes: [] }, 'invalid_request'],
     [actors.a, payload.group, { ...payload.configuration, display_currency_codes: ['INR', 'INR'] }, 'invalid_request'],

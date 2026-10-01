@@ -11,18 +11,20 @@ import { fileURLToPath } from 'node:url'
 const root = fileURLToPath(new URL('../../..', import.meta.url))
 const config = fileURLToPath(new URL('./local-stack/supabase/config.toml', import.meta.url))
 const projectId = 'bachelor-trip-app-ir003-lanec'
-const dbPort = '57822'
+const dbPort = '58022'
 const container = `supabase_db_${projectId}`
 const evidenceRoot = process.env.IR003_EVIDENCE_ROOT ?? '/home/prospero/Work/trip-controlled-evidence/ir-003'
 const runId = process.env.IR003_EVIDENCE_RUN_ID ?? `ir003-lanec-${new Date().toISOString().replace(/[:.]/gu, '-')}-${randomUUID()}`
 const evidenceDir = resolve(evidenceRoot, runId)
 const candidateCommit = command('git', ['rev-parse', 'HEAD']).trim()
 const candidateMigration = resolve(root, 'supabase/migrations/010_ir003_atomic_group_bootstrap.sql')
+const sharedTimezoneMigration = resolve(root, 'supabase/migrations/011_ir002_timezone_reference.sql')
 const laneBHarness = resolve(root, 'tests/database/ir-003/run-adversarial-bootstrap.mjs')
 const migrations = [
   '001_initial.sql', '002_tickets_bucket.sql', '003_gmap_url.sql', '004_paid_by_splits.sql', '005_todos.sql',
   '006_ir002_tenant_root.sql', '007_ir002_configuration_archive_audit.sql', '008_ir004_profile_auth.sql',
   '009_ir007_base_rls_ownership.sql', '010_ir003_atomic_group_bootstrap.sql',
+  '011_ir002_timezone_reference.sql',
 ]
 const unsafe = [
   /postgres(?:ql)?:\/\//iu,
@@ -57,6 +59,7 @@ function fileHash(path) {
 function assertCandidate() {
   assert.equal(command('git', ['rev-parse', 'HEAD']).trim(), candidateCommit, 'candidate-commit-changed')
   assert.equal(fileHash(candidateMigration), provenance.migration010Sha256, 'candidate-migration-changed')
+  assert.equal(fileHash(sharedTimezoneMigration), provenance.migration011Sha256, 'shared-timezone-migration-changed')
   assert.equal(fileHash(laneBHarness), provenance.laneBHarnessSha256, 'lane-b-harness-changed')
 }
 
@@ -176,6 +179,8 @@ function applyPrefix(log) {
 function apply010(log) {
   psqlInput(readFileSync(candidateMigration, 'utf8'), { administrator: true })
   log.push({ migration: migrations[9], sha256: provenance.migration010Sha256, result: 'applied-once-exact-file' })
+  psqlInput(readFileSync(sharedTimezoneMigration, 'utf8'), { administrator: true })
+  log.push({ migration: migrations[10], sha256: provenance.migration011Sha256, result: 'applied-once-exact-file' })
 }
 
 function q(value) { return `'${String(value).replaceAll("'", "''")}'` }
@@ -423,8 +428,15 @@ function plans(actor) {
     display_currency: { index: 'group_configuration_display_currencies_pkey', plan: explain(`SELECT * FROM public.group_configuration_display_currencies WHERE group_id='10000000-0000-4000-8000-000000000001'::uuid AND currency_code='INR'`) },
     iso_validation: { index: 'iso_4217_currency_codes_pkey', plan: explain(`SELECT * FROM public.iso_4217_currency_codes WHERE code='INR'`) },
   }
-  for (const [name, result] of Object.entries(paths)) assertPlan(name, result.plan, result.index)
-  return Object.fromEntries(Object.entries(paths).map(([name, result]) => [name, { expectedIndex: result.index, observed: 'index-backed', plan: result.plan }]))
+  const violations = []
+  for (const [name, result] of Object.entries(paths)) {
+    try { assertPlan(name, result.plan, result.index) }
+    catch (error) { violations.push(error instanceof Error ? error.message : `${name}-plan-failed`) }
+  }
+  return {
+    paths: Object.fromEntries(Object.entries(paths).map(([name, result]) => [name, { expectedIndex: result.index, plan: result.plan }])),
+    violations,
+  }
 }
 
 async function performanceRun(run) {
@@ -452,8 +464,8 @@ async function performanceRun(run) {
   assert.equal(new Set(race.map((v) => v.groupId)).size, 1, `same-key-result-convergence-run-${run}`)
   const raceCounts = countFor(sameId)
   assert.deepEqual({ groups: raceCounts.forRequestGroups, audits: raceCounts.forRequestAudits, requests: raceCounts.forRequestRows }, { groups: 1, audits: 1, requests: 1 })
-  const loadedFailureId = randomUUID(); const before = countFor(loadedFailureId); const failure = psql(`${bootstrapSql(actor, payload(`loaded-failure-${run}`), loadedFailureId).replace(/COMMIT;$/u, "DO $$ BEGIN RAISE EXCEPTION 'ir003-lanec-loaded-failure'; END $$; COMMIT;")}`, { expectFailure: true })
-  assert.match(failure, /ir003-lanec-loaded-failure/u)
+  const loadedFailureId = randomUUID(); const before = countFor(loadedFailureId); const failure = psql(bootstrapSql(actor, payload(`loaded-failure-${run}`), loadedFailureId).replace(/COMMIT;$/u, 'SELECT 1 / 0; COMMIT;'), { expectFailure: true })
+  assert.match(failure, /division by zero/u)
   const afterFailure = countFor(loadedFailureId); assert.deepEqual(afterFailure, before, `loaded-failure-no-partial-state-run-${run}`)
   const retry = await invoke(actor, payload(`loaded-failure-${run}`), loadedFailureId); assert.equal(retry.outcome, 'completed')
   const planEvidence = plans(actor)
@@ -475,7 +487,7 @@ function baselineOutput() {
 
 const provenance = Object.freeze({
   schemaVersion: 1, ir: 'IR-003', lane: 'C', runId, candidateCommit,
-  migration010Sha256: fileHash(candidateMigration), laneBHarnessSha256: fileHash(laneBHarness),
+  migration010Sha256: fileHash(candidateMigration), migration011Sha256: fileHash(sharedTimezoneMigration), laneBHarnessSha256: fileHash(laneBHarness),
   packageScripts: JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8')).scripts,
   tools: {
     supabase: command('npx', ['--no-install', 'supabase', '--version']).trim(),
@@ -485,7 +497,7 @@ const provenance = Object.freeze({
 
 function finalManifest(records, result) {
   const artifacts = records.map(({ file }) => ({ file, sha256: fileHash(resolve(evidenceDir, file)) })).sort((a, b) => a.file.localeCompare(b.file))
-  const payload = { schemaVersion: 1, ir: 'IR-003', lane: 'C', runId, candidateCommit, migration010Sha256: provenance.migration010Sha256, laneBHarnessSha256: provenance.laneBHarnessSha256, environment: provenance.tools, timestamps: { startedAtUtc: provenance.environment.startedAtUtc, completedAtUtc: new Date().toISOString() }, artifacts, result }
+  const payload = { schemaVersion: 1, ir: 'IR-003', lane: 'C', runId, candidateCommit, migration010Sha256: provenance.migration010Sha256, migration011Sha256: provenance.migration011Sha256, laneBHarnessSha256: provenance.laneBHarnessSha256, environment: provenance.tools, timestamps: { startedAtUtc: provenance.environment.startedAtUtc, completedAtUtc: new Date().toISOString() }, artifacts, result }
   const manifest = { ...payload, canonicalization: 'JSON UTF-8 terminal LF sorted artifact names; manifest hash excludes finalManifestSha256', finalManifestSha256: sha256(`${JSON.stringify(payload, null, 2)}\n`) }
   const record = write('final-manifest.json', manifest)
   const independentlyRead = JSON.parse(readFileSync(resolve(evidenceDir, record.file), 'utf8'))
@@ -516,6 +528,7 @@ try {
     console.log(JSON.stringify({ capability: 'ir-003-lane-c-evidence', result: 'partial-pre-performance-capture', runId, evidenceDir: '<controlled-external>' }))
   } else {
     const performance = []; for (let run = 1; run <= 3; run += 1) performance.push(await performanceRun(run)); records.push(write('06-performance-and-plans.json', { exactFrozenInterpretation: '200 Groups; 4,000 active memberships; 200 inactive memberships; 20 archived Groups; 20,000 audit rows; 20,000 completed synthetic TOP-001 request records; 1 cold operation; 10 warm-ups; 100 distinct committed calls at 10 workers x 10 requests; 10 concurrent same-key callers.', runs: performance }))
+    assert.deepEqual(performance.flatMap((run) => run.plans.violations), [], 'lane-c-plan-violations')
     stop(); records.push(write('07-cleanup.json', { result: 'passed', dockerSnapshot: dockerSnapshot(), temporaryWorkdirRemoved: true }))
     start(); const repeat = []; applyPrefix(repeat); apply010(repeat); const repeatedSnapshot = candidateObjectSnapshot(); verifyObjects(repeatedSnapshot); records.push(write('08-repeated-clean-application.json', { migrations: repeat, objectEquivalent: sha256(JSON.stringify(repeatedSnapshot)) === sha256(JSON.stringify(objectSnapshot)), snapshot: repeatedSnapshot })); stop()
     assertCandidate()
