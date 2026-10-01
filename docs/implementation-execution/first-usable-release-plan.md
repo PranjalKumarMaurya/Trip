@@ -21,14 +21,13 @@ The first release is complete only after a two-account/two-Group running-build j
 
 ## Immediate work queue
 
-1. Re-review the corrected `COLLATE "C"` timezone reference contract against Data blocker `DBM-002-DATA-001`; distinguish design approval from approval of the first dataset/version/digest.
-2. Prepare the deterministic IANA dataset and manifest, migration 011 authority record, and isolated implementation/evidence plan. Do not call a proposal or local test a deployed result.
-3. Update the default test command and historical IR-007/008 checks so later authorised work does not create false failures; preserve their actual invariant checks.
-4. Implement and verify milestone 1, then start Invitations. Do not connect the legacy name-based tabs to the new authenticated shell until their Group-scoped replacements and access checks pass.
+1. Resolve `CC-IR003-ISO-PLAN-20261001` through its required review. The shared timezone migration and IANA dataset pass repeatable local checks, and Lane C passes numeric latency limits, but its frozen ISO plan rule still fails.
+2. Complete independent shared DBM-002 review, a fresh passing IR-003 Lane C manifest, generated types, and onboarding integration. Keep Lane D isolated until that boundary closes.
+3. Implement Invitation and Membership lifecycle with two-account/two-Group negative tests, then Group selection and the five scoped product features. Do not connect the legacy name-based tabs to the authenticated shell until their replacements pass.
 
 ## Current known risks
 
-- IR-003 Lane C failed the frozen distinct-request latency target; Option-B measurements are design evidence, not a passing Lane C rerun.
-- The default `test:unit` script omits later unit files. Three direct historical static checks fail against the evolved repository.
+- IR-003 Lane C has three local diagnostic repetitions below its numeric limits but fails the frozen ISO lookup index-plan rule. No passing final Lane C manifest exists.
+- The default `test:unit` script now discovers all unit tests, and historical static checks are scoped to their own exit state. Later packet coverage still needs review as it is implemented.
 - The currently reachable authenticated UI is an unavailable screen. Legacy hooks use global/name-based data access and the old tickets bucket is public; those files are not proof of a usable multi-user workspace.
 - Local build/test results do not establish deployment state. Confirm the target environment, migration application, and operational ownership before release.
