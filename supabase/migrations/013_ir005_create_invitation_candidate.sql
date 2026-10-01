@@ -54,6 +54,7 @@ DECLARE
   v_pending_invitation_id uuid;
   v_invitation_id uuid;
   v_expires_at timestamptz;
+  v_checked_at timestamptz;
   v_proof text;
 BEGIN
   v_auth_user_id := auth.uid();
@@ -157,17 +158,18 @@ BEGIN
     AND invitation.status = 'pending'
   FOR UPDATE;
   IF v_pending_invitation_id IS NOT NULL THEN
+    v_checked_at := clock_timestamp();
     UPDATE public.invitations AS invitation
-    SET status = 'expired', expired_at = now()
+    SET status = 'expired', expired_at = v_checked_at
     WHERE invitation.id = v_pending_invitation_id
-      AND invitation.expires_at <= now();
+      AND invitation.expires_at <= v_checked_at;
     IF NOT FOUND THEN
       RAISE EXCEPTION USING ERRCODE = 'P0001', MESSAGE = 'invitation_already_pending';
     END IF;
   END IF;
 
   v_proof := encode(extensions.gen_random_bytes(32), 'hex');
-  v_expires_at := now() + interval '7 days';
+  v_expires_at := clock_timestamp() + interval '7 days';
   INSERT INTO public.invitations (
     group_id, created_by_group_member_id, recipient_email,
     proof_verifier, status, expires_at

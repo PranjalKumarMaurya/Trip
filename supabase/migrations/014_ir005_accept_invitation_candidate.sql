@@ -27,6 +27,7 @@ DECLARE
   v_recipient_email text;
   v_invitation_status text;
   v_expires_at timestamptz;
+  v_checked_at timestamptz;
   v_archived_at timestamptz;
   v_group_member_id uuid;
   v_member_status text;
@@ -119,7 +120,8 @@ BEGIN
     RAISE EXCEPTION USING ERRCODE = 'P0001', MESSAGE = 'invalid_invitation';
   END IF;
 
-  IF v_invitation_status <> 'pending' OR v_expires_at <= now() THEN
+  v_checked_at := clock_timestamp();
+  IF v_invitation_status <> 'pending' OR v_expires_at <= v_checked_at THEN
     RAISE EXCEPTION USING ERRCODE = 'P0001', MESSAGE = 'invalid_invitation';
   END IF;
 
