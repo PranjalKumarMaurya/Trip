@@ -26,8 +26,8 @@ export default defineConfig({
     timeout: 60_000,
     env: {
       ...process.env,
-      VITE_SUPABASE_URL: 'http://127.0.0.1:56321',
-      VITE_SUPABASE_ANON_KEY: 'ir001-local-browser-anon-key',
+      VITE_SUPABASE_URL: process.env.VITE_SUPABASE_URL ?? 'http://127.0.0.1:56321',
+      VITE_SUPABASE_ANON_KEY: process.env.VITE_SUPABASE_ANON_KEY ?? 'ir001-local-browser-anon-key',
     },
   },
 })

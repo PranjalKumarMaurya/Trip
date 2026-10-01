@@ -6,6 +6,8 @@ import { createRequire } from 'node:module'
 const adapter = readFileSync('src/features/onboarding/bootstrapGroup.ts', 'utf8')
 const onboarding = readFileSync('src/features/onboarding/BootstrapOnboarding.tsx', 'utf8')
 const boundary = readFileSync('src/features/auth/AuthBoundary.tsx', 'utf8')
+const groupAccess = readFileSync('src/features/groups/myGroupAccess.ts', 'utf8')
+const workspace = readFileSync('src/features/groups/GroupWorkspace.tsx', 'utf8')
 const require = createRequire(import.meta.url)
 
 function loadAdapter(rpc) {
@@ -25,10 +27,13 @@ function loadAdapter(rpc) {
   return module.exports
 }
 
-test('IR-003 signed-in handoff is membership-aware and does not open a Group shell', () => {
-  assert.match(boundary, /supabase\.from\('groups'\)\.select\('id'\)\.limit\(1\)/)
+test('staged handoff uses current membership context before opening a Group shell', () => {
+  assert.match(boundary, /loadMyGroupAccess\(\)/)
   assert.match(boundary, /groupAccess === 'none'/)
+  assert.match(boundary, /groupAccess === 'has-group' && selectedGroupId/)
   assert.match(boundary, /<BootstrapOnboarding/)
+  assert.match(groupAccess, /get_my_group_access/)
+  assert.match(workspace, /selected\.role === 'owner'/)
   assert.doesNotMatch(boundary, /TripTab|PersonaPicker|useCurrentUser/)
 })
 

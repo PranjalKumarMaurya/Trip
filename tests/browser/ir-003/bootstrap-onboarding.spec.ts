@@ -22,7 +22,7 @@ async function installEligibleAccount(page: Page) {
     localStorage.setItem('ir003-test-account', id)
   }, { id: accountId, session: syntheticSession(accountId) })
   await page.route('**/rest/v1/profiles*', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([{ id: '00000000-0000-4000-8000-0000000003a2', display_name: 'Synthetic Creator' }]) }))
-  await page.route('**/rest/v1/groups*', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: '[]' }))
+  await page.route('**/rest/v1/rpc/get_my_group_access', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: '[]' }))
 }
 
 async function fillValidBootstrapForm(page: Page) {
@@ -117,7 +117,7 @@ test('IR-003 sends only the frozen RPC arguments and renders terminal ONB-06 Sta
   expect(JSON.stringify(rpcCalls[0])).not.toMatch(/actor|owner|role|profile|auth_user/i)
   await expect(page.getByText('GROUP CREATED')).toBeVisible()
   await expect(page.getByText('No Invitation has been issued yet.')).toBeVisible()
-  await expect(page.getByRole('button')).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Continue to Trip' })).toBeVisible()
   await expect(page.getByText(/copy|share|join|recipient/i)).toHaveCount(0)
 })
 

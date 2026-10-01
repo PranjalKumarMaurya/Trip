@@ -5,11 +5,17 @@ import { useAuthSession } from './authSession'
 import { BootstrapOnboarding } from '../onboarding/BootstrapOnboarding'
 import { InvitationEntry } from '../invitations/InvitationEntry'
 import { clearPendingInvitation, pendingInvitationFromBrowser } from '../invitations/invitationLink'
+import { GroupWorkspace } from '../groups/GroupWorkspace'
+import { loadMyGroupAccess, type MyGroupAccess } from '../groups/myGroupAccess'
 
 export function AuthBoundary() {
   const auth = useAuthSession()
   const [signOutError, setSignOutError] = useState<string | null>(null)
   const [groupAccess, setGroupAccess] = useState<'idle' | 'checking' | 'none' | 'has-group' | 'error'>('idle')
+  const [groups, setGroups] = useState<MyGroupAccess[]>([])
+  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null)
+  const [groupReload, setGroupReload] = useState(0)
+  const [creatingAnother, setCreatingAnother] = useState(false)
   const [inviteProof, setInviteProof] = useState<string | null>(() => {
     if (typeof window === 'undefined') return null
     let storage: Storage | null = null
@@ -53,8 +59,18 @@ export function AuthBoundary() {
   const profileId = auth.status === 'authenticated-linked' ? auth.profileId : null
 
   useEffect(() => {
+    if (!profileId) return
+    const refresh = () => setGroupReload((value) => value + 1)
+    window.addEventListener('focus', refresh)
+    return () => window.removeEventListener('focus', refresh)
+  }, [profileId])
+
+  useEffect(() => {
     if (!profileId) {
       setGroupAccess('idle')
+      setGroups([])
+      setSelectedGroupId(null)
+      setCreatingAnother(false)
       return
     }
     let active = true
@@ -64,9 +80,14 @@ export function AuthBoundary() {
     }, 1500)
     void (async () => {
       try {
-        const { data, error } = await supabase.from('groups').select('id').limit(1)
+        const data = await loadMyGroupAccess()
         window.clearTimeout(timeout)
-        if (active) setGroupAccess(error ? 'error' : data?.length ? 'has-group' : 'none')
+        if (active) {
+          setGroups(data)
+          setSelectedGroupId((previous) => data.some((group) => group.groupId === previous)
+            ? previous : data[0]?.groupId ?? null)
+          setGroupAccess(data.length ? 'has-group' : 'none')
+        }
       } catch {
         window.clearTimeout(timeout)
         if (active) setGroupAccess('error')
@@ -76,13 +97,13 @@ export function AuthBoundary() {
       active = false
       window.clearTimeout(timeout)
     }
-  }, [profileId])
+  }, [profileId, groupReload])
 
   if (auth.status === 'loading') return <AuthEntry mode="restoring" />
   if (auth.status === 'error') return <AuthEntry mode="error" onRetry={auth.retry} />
   if (auth.status === 'signed-out' && auth.reason === 'recovery') return <AuthEntry mode="reset" />
   if (inviteProof) {
-    return <InvitationEntry proof={inviteProof} auth={auth} onSignOut={() => void signOut()} onClose={closeInvitation} onAccepted={clearSavedInvitation} signOutError={signOutError} />
+    return <InvitationEntry proof={inviteProof} auth={auth} onSignOut={() => void signOut()} onClose={closeInvitation} onAccepted={() => { clearSavedInvitation(); setGroupReload((value) => value + 1) }} signOutError={signOutError} />
   }
   if (auth.status === 'signed-out') {
     return <AuthEntry mode={auth.reason === 'expired' ? 'expired' : 'sign-in'} />
@@ -104,8 +125,12 @@ export function AuthBoundary() {
     return <AuthEntry mode="restoring" />
   }
 
-  if (groupAccess === 'none') {
-    return <BootstrapOnboarding onSignOut={() => void signOut()} signOutError={signOutError} />
+  if (groupAccess === 'none' || creatingAnother) {
+    return <BootstrapOnboarding onSignOut={() => void signOut()} signOutError={signOutError} onContinue={(groupId) => { setSelectedGroupId(groupId); setCreatingAnother(false); setGroupReload((value) => value + 1) }} />
+  }
+
+  if (groupAccess === 'has-group' && selectedGroupId) {
+    return <GroupWorkspace groups={groups} selectedGroupId={selectedGroupId} onSelect={setSelectedGroupId} onRefresh={() => setGroupReload((value) => value + 1)} onCreateAnother={() => setCreatingAnother(true)} onSignOut={() => void signOut()} signOutError={signOutError} />
   }
 
   return (

@@ -30,6 +30,7 @@
     "test:ir003:evidence": "node tests/database/ir-003/run-top-001-evidence.mjs",
     "test:tzref": "node tests/database/ir-002/verify-timezone-reference.mjs",
     "test:ir005:candidate": "node tests/database/ir-005/verify-invitation-candidates.mjs",
+    "test:journey:live": "node tests/integration/run-live-journey.mjs",
     "test:ir007": "npm run test:ir007:unit && npm run test:ir007:static && npm run test:ir007:evidence && npm run test:ir007:cleanup",
     "test:ir007:unit": "node --test tests/unit/ir-007-rls-ownership-matrix.test.mjs",
     "test:ir007:static": "node --test tests/unit/ir-007-static-contract.test.mjs",

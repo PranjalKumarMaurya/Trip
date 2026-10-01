@@ -136,6 +136,8 @@ function migrate() {
     '019_ir005_archive_state_candidate.sql',
     '020_ir005_inspection_candidate.sql',
     '021_ir005_owner_invitation_list_candidate.sql',
+    '022_ir011_my_group_access_candidate.sql',
+    '023_ir004_profile_filter_grant_candidate.sql',
   ]
   for (const file of candidates) adminSql(read(`supabase/migrations/${file}`), file)
 }
@@ -223,6 +225,11 @@ function listInvitations(groupId, beforeCreatedAt = null, beforeInvitationId = n
     ${beforeInvitationId === null ? 'NULL' : `${quote(beforeInvitationId)}::uuid`})`
 }
 
+function myGroups() {
+  return `(SELECT coalesce(jsonb_agg(access), '[]'::jsonb)
+    FROM public.get_my_group_access() AS access)`
+}
+
 function revoke(groupId, invitationId, requestId) {
   return `public.revoke_invitation(${quote(groupId)}::uuid,
     ${quote(invitationId)}::uuid, ${quote(requestId)}::uuid)`
@@ -263,6 +270,14 @@ function denied(result, reason) {
 const id = (suffix) => `c5000000-0000-4000-8000-${String(suffix).padStart(12, '0')}`
 
 async function verify() {
+  assert.equal(call(actor.owner, `(SELECT count(*) FROM public.profiles
+    WHERE auth_user_id=${quote(actor.owner)}::uuid)`).value, 1)
+  assert.equal(call(actor.owner, `(SELECT count(*) FROM public.profiles
+    WHERE auth_user_id=${quote(actor.friend)}::uuid)`).value, 0)
+  const initialGroups = call(actor.owner, myGroups())
+  assert.equal(initialGroups.ok, true, initialGroups.error)
+  assert.deepEqual(initialGroups.value.map((group) => group.group_id).sort(), [groupA, groupB])
+  assert.equal(call(actor.friend, myGroups()).value.length, 0)
   const a = success(call(actor.owner, issue(groupA, 'friend@example.test', id(1))), 'created')
   assert.match(a.proof, /^[0-9a-f]{64}$/u)
   const ownerList = call(actor.owner, listInvitations(groupA))
@@ -298,6 +313,7 @@ async function verify() {
   denied(call(actor.stranger, accept(a.proof, id(2))), 'invalid_invitation')
   const joined = success(call(actor.friend, accept(a.proof, id(2))), 'accepted')
   assert.equal(joined.group_id, groupA)
+  assert.deepEqual(call(actor.friend, myGroups()).value.map((group) => group.group_id), [groupA])
   denied(call(actor.friend, listInvitations(groupA)), 'not_authorized')
   const acceptedList = call(actor.owner, listInvitations(groupA))
   assert.equal(acceptedList.value.live_count, 0)
@@ -402,7 +418,8 @@ async function verify() {
     has_table_privilege('service_role','public.invitations','SELECT'),
     has_function_privilege('anon','public.accept_invitation(text,jsonb,uuid)','EXECUTE'),
     has_table_privilege('authenticated','public.ir005_lifecycle_requests','SELECT'),
-    has_function_privilege('anon','public.list_group_invitations(uuid,timestamptz,uuid)','EXECUTE')`), 'f|f|f|f|f')
+    has_function_privilege('anon','public.list_group_invitations(uuid,timestamptz,uuid)','EXECUTE'),
+    has_function_privilege('anon','public.get_my_group_access()','EXECUTE')`), 'f|f|f|f|f|f')
 
   const beforeFailure = psql(`SELECT (SELECT count(*) FROM public.invitations),
     (SELECT count(*) FROM public.ir005_invitation_requests),
@@ -427,17 +444,19 @@ async function verify() {
     WHERE id=${quote(ownerMember)}::uuid`), 'inactive|member')
   const archiveInvite = success(call(actor.friend, issue(groupA, 'owner@example.test', id(35))), 'created')
   success(call(actor.friend, archive(groupA, 'archived', id(36))), 'archived')
+  assert.equal(call(actor.friend, myGroups()).value.some((group) => group.group_id === groupA), false)
   success(callAnon(inspect(archiveInvite.proof)), 'invalid')
   denied(call(actor.friend, issue(groupA, 'new@example.test', id(37))), 'not_authorized')
   denied(call(actor.owner, accept(archiveInvite.proof, id(38))), 'invalid_invitation')
   assert.equal(psql(`SELECT status FROM public.group_members WHERE id=${quote(ownerMember)}::uuid`), 'inactive')
   success(call(actor.friend, archive(groupA, 'active', id(39))), 'restored')
+  assert.equal(call(actor.friend, myGroups()).value.some((group) => group.group_id === groupA), true)
   success(callAnon(inspect(archiveInvite.proof)), 'continue')
   const restoredJoin = success(call(actor.owner, accept(archiveInvite.proof, id(38))), 'accepted')
   assert.equal(restoredJoin.group_member_id, ownerMember, 'archived-restoration-stable-id')
   denied(call(actor.owner, archive(groupA, 'archived', id(40))), 'not_authorized')
   assert.equal(psql(`SELECT archived_at IS NULL FROM public.groups WHERE id=${quote(groupA)}::uuid`), 't')
-  return { invitationCandidate: 'passed', inspection: 'passed', ownerList: 'passed', twoGroups: 'passed', expiry: 'passed', acceptRace: 'passed', revokeRace: 'passed', lastOwner: 'passed', transfer: 'passed', deactivate: 'passed', archive: 'passed', rollback: 'passed', cleanup: 'pending' }
+  return { invitationCandidate: 'passed', inspection: 'passed', ownerList: 'passed', myGroupAccess: 'passed', twoGroups: 'passed', expiry: 'passed', acceptRace: 'passed', revokeRace: 'passed', lastOwner: 'passed', transfer: 'passed', deactivate: 'passed', archive: 'passed', rollback: 'passed', cleanup: 'pending' }
 }
 
 try {

@@ -67,7 +67,7 @@ export function validateBootstrapForm(values: FormValues): FormErrors {
   return errors
 }
 
-export function BootstrapOnboarding({ onSignOut, signOutError }: { onSignOut: () => void; signOutError?: string | null }) {
+export function BootstrapOnboarding({ onSignOut, signOutError, onContinue }: { onSignOut: () => void; signOutError?: string | null; onContinue?: (groupId: string) => void }) {
   const [values, setValues] = useState<FormValues>({
     tripName: '',
     destination: '',
@@ -81,6 +81,7 @@ export function BootstrapOnboarding({ onSignOut, signOutError }: { onSignOut: ()
   const [touched, setTouched] = useState<Partial<Record<FieldName, boolean>>>({})
   const [state, setState] = useState<SubmissionState>('idle')
   const [confirmedTripName, setConfirmedTripName] = useState('')
+  const [confirmedGroupId, setConfirmedGroupId] = useState('')
   const requestIdRef = useRef<string | null>(null)
 
   const displayCurrencies = useMemo(() => parseDisplayCurrencies(values.displayCurrencies), [values.displayCurrencies])
@@ -124,7 +125,7 @@ export function BootstrapOnboarding({ onSignOut, signOutError }: { onSignOut: ()
     setState('submitting')
 
     try {
-      await bootstrapGroup({
+      const result = await bootstrapGroup({
         tripName: values.tripName,
         destination: values.destination,
         startDate: values.startDate,
@@ -134,6 +135,7 @@ export function BootstrapOnboarding({ onSignOut, signOutError }: { onSignOut: ()
         displayCurrencyCodes: displayCurrencies,
       }, requestId)
       setConfirmedTripName(values.tripName.trim())
+      setConfirmedGroupId(result.groupId)
       setState('success')
     } catch (error) {
       if (!(error instanceof BootstrapGroupError)) {
@@ -149,7 +151,7 @@ export function BootstrapOnboarding({ onSignOut, signOutError }: { onSignOut: ()
   }
 
   if (state === 'success') {
-    return <BootstrapSuccess tripName={confirmedTripName} />
+    return <BootstrapSuccess tripName={confirmedTripName} onContinue={onContinue && confirmedGroupId ? () => onContinue(confirmedGroupId) : undefined} />
   }
 
   return (
@@ -205,7 +207,7 @@ function FormField({ label, hint, error, children }: { label: string; hint?: str
   )
 }
 
-function BootstrapSuccess({ tripName }: { tripName: string }) {
+function BootstrapSuccess({ tripName, onContinue }: { tripName: string; onContinue?: () => void }) {
   return (
     <main data-testid="bootstrap-success-state-a" className="mx-auto flex min-h-dvh w-full max-w-[480px] flex-col justify-center px-5 py-10" style={{ background: 'rgba(15, 11, 8, 0.96)' }}>
       <p className="font-mono" style={{ color: 'var(--text-tertiary)', fontSize: 10, letterSpacing: '0.22em' }}>GROUP CONFIRMED</p>
@@ -215,6 +217,7 @@ function BootstrapSuccess({ tripName }: { tripName: string }) {
         <p className="font-mono" style={{ color: 'var(--text-tertiary)', fontSize: 10, letterSpacing: '0.16em' }}>INVITATION STATUS</p>
         <p className="serif-eyebrow mt-2" style={{ color: 'var(--text-secondary)', fontSize: 16 }}>No Invitation has been issued yet.</p>
       </section>
+      {onContinue && <button type="button" onClick={onContinue} className="mt-5 self-start" style={{ color: 'var(--accent)' }}>Continue to Trip</button>}
     </main>
   )
 }
