@@ -1549,8 +1549,8 @@ Management affordances are absent, not disabled. Roles stay visible so a Member 
 | Viewport | 393 wide, sheet at intrinsic height |
 | Components | CMP-14 member and participant rows, invitation management row, Card, Modal sheet, participant avatar, role badge, status badge, destructive button |
 | Loading / success / failure | Loading: in-button spinner or existing skeleton, reduced-motion safe. Error: block-level, plain language, opaque reference, idempotent retry. Success: confirmed only after the server answered, announced politely. |
-| Validation | No free-text input except invitation creation; nothing to validate client-side. |
-| Permission | Token shown is opaque; format is not locked (O-03). Management is Owner-only. Members see the list without management affordances. |
+| Validation | Friend’s email is required. Check basic email format before Create link; the server normalizes and validates the recipient. |
+| Permission | Only an active Owner may create a link for one recipient email. The opaque proof is shown only in the first successful response; the recipient must verify that same email to join. |
 | Responsive | 480px capped column; centred on tablet 768 and desktop 1440 with the base background around it. Sheets cap at 480px with a dark blurred backdrop. No layout changes between viewports. |
 | Architecture reference | Exactly two roles — Owner and Member (O-01). Role changes, removals and invitation revocation are server-confirmed. Removal never mutates ledger history. |
 | IR owner | IR-005 |
@@ -1559,11 +1559,11 @@ Management affordances are absent, not disabled. Roles stay visible so a Member 
 | Exceptions | E-04 |
 | Clean export | `screens/mobile/clean/MBR-03-invite-member.png` |
 | Annotated export | `screens/mobile/annotated/MBR-03-invite-member-annotated.png` |
-| Status | Accepted |
+| Status | Recipient-bound amendment approved as product direction; visual export and design/security review pending |
 
-Create, copy and share in one sheet. No email field — automatic delivery is deferred. Copy swaps to a confirmed state for two seconds and is announced.
+Create, copy and share in one sheet. The Owner enters a friend’s email before Create link. On success, show the recipient and the link once with: “Only the person who verifies this email can join with this link. It works once and expires after 7 days.” The Owner sends the link manually; automatic email delivery is deferred. Copy swaps to a confirmed state for two seconds and is announced. If the first response is lost, the Owner can revoke and issue a new link. The existing clean and annotated exports still show the superseded open-link wording and require an updated export before UI lock.
 
-## MBR-04 — Invitation management · copy, share, revoke
+## MBR-04 — Invitation management · recipient, status, revoke
 
 | Field | Value |
 |---|---|
@@ -1573,8 +1573,8 @@ Create, copy and share in one sheet. No email field — automatic delivery is de
 | Viewport | 393 wide, sheet at intrinsic height |
 | Components | CMP-14 member and participant rows, invitation management row, Card, Modal sheet, participant avatar, role badge, status badge, destructive button |
 | Loading / success / failure | Loading: in-button spinner or existing skeleton, reduced-motion safe. Error: block-level, plain language, opaque reference, idempotent retry. Success: confirmed only after the server answered, announced politely. |
-| Validation | No free-text input except invitation creation; nothing to validate client-side. |
-| Permission | Never says who revoked it. Management is Owner-only. Members see the list without management affordances. |
+| Validation | No free-text input. |
+| Permission | Management is Owner-only. Each row shows recipient email, status, and expiry, without a plaintext link or verifier after creation. Members see the list without management affordances. |
 | Responsive | 480px capped column; centred on tablet 768 and desktop 1440 with the base background around it. Sheets cap at 480px with a dark blurred backdrop. No layout changes between viewports. |
 | Architecture reference | Exactly two roles — Owner and Member (O-01). Role changes, removals and invitation revocation are server-confirmed. Removal never mutates ledger history. |
 | IR owner | IR-005 |
@@ -1583,9 +1583,9 @@ Create, copy and share in one sheet. No email field — automatic delivery is de
 | Exceptions | E-02 |
 | Clean export | `screens/mobile/clean/MBR-04-invitation-management.png` |
 | Annotated export | `screens/mobile/annotated/MBR-04-invitation-management-annotated.png` |
-| Status | Accepted |
+| Status | Recipient-bound amendment approved as product direction; visual export and design/security review pending |
 
-Owners see how many links are live and can revoke. Revoking is server-confirmed and lands the recipient on INV-11.
+Owners see how many links are live and can revoke. A row shows the intended recipient, logical status, and expiry. It never offers Copy or Share after the initial issue response. Revoking is server-confirmed and lands the recipient on INV-11. The existing exports require an updated mapping for these fields and the one-time link rule.
 
 ## MBR-05 — Member actions
 
