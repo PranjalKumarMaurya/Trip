@@ -132,6 +132,8 @@ function migrate() {
     '015_ir005_revoke_invitation_candidate.sql',
     '016_ir005_role_change_candidate.sql',
     '017_ir005_transfer_ownership_candidate.sql',
+    '018_ir005_deactivate_membership_candidate.sql',
+    '019_ir005_archive_state_candidate.sql',
   ]
   for (const file of candidates) adminSql(read(`supabase/migrations/${file}`), file)
 }
@@ -214,6 +216,17 @@ function transfer(groupId, memberId, priorOutcome, requestId) {
     ${quote(memberId)}::uuid, ${quote(priorOutcome)}, ${quote(requestId)}::uuid)`
 }
 
+function deactivate(groupId, memberId, action, requestId) {
+  return `public.deactivate_membership(${quote(groupId)}::uuid,
+    ${quote(memberId)}::uuid, ${quote(action)}, '{"confirmed":true}'::jsonb,
+    ${quote(requestId)}::uuid)`
+}
+
+function archive(groupId, state, requestId) {
+  return `public.set_group_archive_state(${quote(groupId)}::uuid,
+    ${quote(state)}, ${quote(requestId)}::uuid)`
+}
+
 function success(result, outcome) {
   assert.equal(result.ok, true, result.error)
   assert.equal(result.value.outcome, outcome)
@@ -258,6 +271,10 @@ async function verify() {
   denied(call(actor.owner, revoke(groupA, cross.invitation_id, id(8))), 'invalid_invitation')
   const crossJoin = success(call(actor.late, accept(cross.proof, id(9))), 'accepted')
   assert.equal(crossJoin.group_id, groupB)
+  const priorOwnerB = psql(`SELECT member.id FROM public.group_members AS member
+    JOIN public.profiles AS profile ON profile.id=member.profile_id
+    WHERE member.group_id=${quote(groupB)}::uuid
+      AND profile.auth_user_id=${quote(actor.owner)}::uuid`)
   denied(call(actor.owner, changeRole(groupA, crossJoin.group_member_id, 'owner', id(22))), 'invalid_target')
   assert.equal(psql(`SELECT count(*) FROM public.group_members AS member
     JOIN public.profiles AS profile ON profile.id=member.profile_id
@@ -303,6 +320,17 @@ async function verify() {
   denied(call(actor.owner, transfer(groupB, crossJoin.group_member_id, 'member', id(26))), 'not_authorized')
   assert.equal(psql(`SELECT count(*) FROM public.group_members
     WHERE group_id=${quote(groupB)}::uuid AND status='active' AND role='owner'`), '1')
+  denied(call(actor.late, deactivate(groupB, crossJoin.group_member_id, 'leave', id(28))), 'last_owner')
+  denied(call(actor.owner, deactivate(groupB, crossJoin.group_member_id, 'remove', id(29))), 'not_authorized')
+  denied(call(actor.late, deactivate(groupB, joined.group_member_id, 'remove', id(30))), 'invalid_target')
+  success(call(actor.owner, deactivate(groupB, priorOwnerB, 'leave', id(31))), 'deactivated')
+  success(call(actor.owner, deactivate(groupB, priorOwnerB, 'leave', id(31))), 'already_completed')
+  const removalInvite = success(call(actor.late, issue(groupB, 'stranger@example.test', id(32))), 'created')
+  const removable = success(call(actor.stranger, accept(removalInvite.proof, id(33))), 'accepted')
+  success(call(actor.late, deactivate(groupB, removable.group_member_id, 'remove', id(34))), 'deactivated')
+  success(call(actor.late, deactivate(groupB, removable.group_member_id, 'remove', id(34))), 'already_completed')
+  assert.equal(psql(`SELECT status || '|' || role FROM public.group_members
+    WHERE id=${quote(removable.group_member_id)}::uuid`), 'inactive|member')
 
   assert.equal(psql(`SELECT has_table_privilege('authenticated','public.invitations','SELECT'),
     has_table_privilege('service_role','public.invitations','SELECT'),
@@ -330,7 +358,17 @@ async function verify() {
     WHERE group_id=${quote(groupA)}::uuid AND status='active' AND role='owner'`), '1')
   assert.equal(psql(`SELECT status || '|' || role FROM public.group_members
     WHERE id=${quote(ownerMember)}::uuid`), 'inactive|member')
-  return { invitationCandidate: 'passed', twoGroups: 'passed', expiry: 'passed', acceptRace: 'passed', revokeRace: 'passed', lastOwner: 'passed', transfer: 'passed', rollback: 'passed', cleanup: 'pending' }
+  const archiveInvite = success(call(actor.friend, issue(groupA, 'owner@example.test', id(35))), 'created')
+  success(call(actor.friend, archive(groupA, 'archived', id(36))), 'archived')
+  denied(call(actor.friend, issue(groupA, 'new@example.test', id(37))), 'not_authorized')
+  denied(call(actor.owner, accept(archiveInvite.proof, id(38))), 'invalid_invitation')
+  assert.equal(psql(`SELECT status FROM public.group_members WHERE id=${quote(ownerMember)}::uuid`), 'inactive')
+  success(call(actor.friend, archive(groupA, 'active', id(39))), 'restored')
+  const restoredJoin = success(call(actor.owner, accept(archiveInvite.proof, id(38))), 'accepted')
+  assert.equal(restoredJoin.group_member_id, ownerMember, 'archived-restoration-stable-id')
+  denied(call(actor.owner, archive(groupA, 'archived', id(40))), 'not_authorized')
+  assert.equal(psql(`SELECT archived_at IS NULL FROM public.groups WHERE id=${quote(groupA)}::uuid`), 't')
+  return { invitationCandidate: 'passed', twoGroups: 'passed', expiry: 'passed', acceptRace: 'passed', revokeRace: 'passed', lastOwner: 'passed', transfer: 'passed', deactivate: 'passed', archive: 'passed', rollback: 'passed', cleanup: 'pending' }
 }
 
 try {
