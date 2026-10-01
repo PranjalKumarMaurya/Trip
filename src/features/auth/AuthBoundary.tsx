@@ -71,7 +71,7 @@ export function AuthBoundary() {
   }
 
   if (groupAccess === 'none') {
-    return <BootstrapOnboarding />
+    return <BootstrapOnboarding onSignOut={() => void signOut()} signOutError={signOutError} />
   }
 
   return (

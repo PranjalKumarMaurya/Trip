@@ -148,5 +148,7 @@ test('IR-003 presents an idempotency mismatch as a safe non-retryable state', as
 
   await expect(page.getByTestId('bootstrap-status')).toContainText('does not match an earlier request')
   await expect(page.getByRole('button', { name: 'Review details to continue' })).toBeDisabled()
+  await page.getByLabel('Trip name').fill('Northern lights revised')
+  await expect(page.getByRole('button', { name: 'Create Group' })).toBeEnabled()
   await expect(page.getByText(/constraint|database|profile|auth user/i)).toHaveCount(0)
 })

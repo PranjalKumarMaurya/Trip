@@ -17,7 +17,7 @@ type FieldName = keyof FormValues
 type FormErrors = Partial<Record<FieldName, string>>
 type SubmissionState = 'idle' | 'validating' | 'submitting' | 'retryable-failure' | 'conflict' | 'safe-failure' | 'success'
 
-const timezoneSuggestions = ['UTC', 'America/New_York', 'America/Los_Angeles', 'Asia/Kolkata', 'Asia/Singapore', 'Asia/Tokyo', 'Australia/Sydney', 'Europe/London']
+const timezoneSuggestions = ['America/New_York', 'America/Los_Angeles', 'Asia/Kolkata', 'Asia/Singapore', 'Asia/Tokyo', 'Australia/Sydney', 'Europe/London']
 
 const fieldLabels: Record<FieldName, string> = {
   tripName: 'Trip name',
@@ -66,7 +66,7 @@ export function validateBootstrapForm(values: FormValues): FormErrors {
   return errors
 }
 
-export function BootstrapOnboarding() {
+export function BootstrapOnboarding({ onSignOut, signOutError }: { onSignOut: () => void; signOutError?: string | null }) {
   const [values, setValues] = useState<FormValues>({
     tripName: '',
     destination: '',
@@ -94,7 +94,7 @@ export function BootstrapOnboarding() {
         : null
 
   const updateValue = (field: FieldName) => (event: ChangeEvent<HTMLInputElement>) => {
-    if (formIsInert || requiresEditedRequest) return
+    if (formIsInert) return
     if (requestIdRef.current) requestIdRef.current = null
     setValues((current) => ({ ...current, [field]: event.target.value }))
     if (state !== 'idle') setState('idle')
@@ -156,6 +156,8 @@ export function BootstrapOnboarding() {
       <p className="font-mono" style={{ color: 'var(--text-tertiary)', fontSize: 10, letterSpacing: '0.22em' }}>NEW TRIP</p>
       <h1 className="serif-display" style={{ color: 'var(--text-primary)', fontSize: 34, fontWeight: 400, marginTop: 12 }}>Create your Group</h1>
       <p className="serif-eyebrow" style={{ color: 'var(--text-secondary)', fontSize: 15, marginTop: 10, marginBottom: 24 }}>Set the trip details that travel with this Group.</p>
+      <button type="button" onClick={onSignOut} className="self-start text-sm" style={{ color: 'var(--text-secondary)', marginBottom: 20 }}>Sign out</button>
+      {signOutError && <p role="status" style={{ color: 'var(--text-secondary)', marginBottom: 16 }}>{signOutError}</p>}
 
       <form onSubmit={(event) => void submit(event)} aria-label="Create Group" aria-busy={formIsInert} className="flex flex-col gap-4">
         {message && <p role="alert" data-testid="bootstrap-status" className="surface px-3.5 py-3 text-sm" style={{ color: 'var(--text-secondary)' }}>{message}</p>}
