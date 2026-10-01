@@ -1,11 +1,13 @@
 import { supabase } from '../../lib/supabase'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AuthEntry } from './AuthEntry'
 import { useAuthSession } from './authSession'
+import { BootstrapOnboarding } from '../onboarding/BootstrapOnboarding'
 
 export function AuthBoundary() {
   const auth = useAuthSession()
   const [signOutError, setSignOutError] = useState<string | null>(null)
+  const [groupAccess, setGroupAccess] = useState<'idle' | 'checking' | 'none' | 'has-group' | 'error'>('idle')
 
   const signOut = async () => {
     setSignOutError(null)
@@ -16,6 +18,34 @@ export function AuthBoundary() {
     }
     auth.markSignedOut()
   }
+
+  const profileId = auth.status === 'authenticated-linked' ? auth.profileId : null
+
+  useEffect(() => {
+    if (!profileId) {
+      setGroupAccess('idle')
+      return
+    }
+    let active = true
+    setGroupAccess('checking')
+    const timeout = window.setTimeout(() => {
+      if (active) setGroupAccess('error')
+    }, 1500)
+    void (async () => {
+      try {
+        const { data, error } = await supabase.from('groups').select('id').limit(1)
+        window.clearTimeout(timeout)
+        if (active) setGroupAccess(error ? 'error' : data?.length ? 'has-group' : 'none')
+      } catch {
+        window.clearTimeout(timeout)
+        if (active) setGroupAccess('error')
+      }
+    })()
+    return () => {
+      active = false
+      window.clearTimeout(timeout)
+    }
+  }, [profileId])
 
   if (auth.status === 'loading') return <AuthEntry mode="restoring" />
   if (auth.status === 'error') return <AuthEntry mode="error" onRetry={auth.retry} />
@@ -34,6 +64,14 @@ export function AuthBoundary() {
         <button type="button" onClick={() => void signOut()} style={{ color: 'var(--text-secondary)', marginTop: 24 }}>Sign out</button>
       </section>
     )
+  }
+
+  if (groupAccess === 'checking' || groupAccess === 'idle') {
+    return <AuthEntry mode="restoring" />
+  }
+
+  if (groupAccess === 'none') {
+    return <BootstrapOnboarding onSignOut={() => void signOut()} signOutError={signOutError} />
   }
 
   return (
