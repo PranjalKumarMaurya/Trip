@@ -16,7 +16,7 @@ Use this map to answer questions about the current app without reading the entir
 | --- | --- | --- |
 | Signup, login, recovery, Profile | `docs/implementation-execution/ir-004-verification.md`; `docs/architecture/auth-groups-and-invitations.md` §§4–5 | `src/features/auth/`, `supabase/migrations/008_ir004_profile_auth.sql` |
 | Group creation | `docs/implementation-execution/packets/IR-003-atomic-group-bootstrap.md`; `docs/implementation-execution/authorisations/IR-003-authorisation.md`; recent IR-003 reviews | `supabase/migrations/010_ir003_atomic_group_bootstrap.sql`, `tests/database/ir-003/`, `src/App.tsx` |
-| Invites, members, ownership | `docs/implementation-execution/packets/IR-005-membership-invitation-and-owner.md`; `docs/architecture/auth-groups-and-invitations.md` §§8–9 | Search for invitation tables/RPCs and `src/features/memberships/` |
+| Invites, members, ownership | `docs/implementation-execution/packets/IR-005-membership-invitation-and-owner.md`; `docs/architecture/auth-groups-and-invitations.md` §§8–9 | Main has no integrated invitation flow. The isolated `impl/ir005-invitations` worktree holds draft migrations 012–015 and its implementation draft; check that branch's status before using them. |
 | Active Group and trip data | `docs/implementation-execution/packets/IR-011-active-group-and-data-access.md`; `execution-order.md` W3–W4 | `src/App.tsx`, `src/hooks/`, `src/tabs/`, later migrations |
 | Release path | `docs/implementation-execution/execution-order.md` W5–W7; `gate-ledger.md` | Current tests, migrations, deployment configuration, evidence |
 | Deferred features | `docs/product/deferred-scope-register.md` | Search only the named feature |
@@ -27,7 +27,7 @@ Use this map to answer questions about the current app without reading the entir
 - Search headings and decisions first: `rg -n '^(#|##)|Decision|Status|BLOCKED|Verified' path/to/relevant.md`.
 - Search code only in the owning directories: `rg -n 'rpc\(|from\(|channel\(' src/features src/hooks src/App.tsx`.
 - Read bounded sections with `sed -n 'START,ENDp' file`; avoid dumping whole packets, manifests, generated types, artifacts, or all documentation into context.
-- For a claimed test result, inspect `package.json`: `npm run test:unit` is a selected list, not every `tests/unit/*` file. Run the relevant direct test when necessary.
+- For a claimed test result, inspect `package.json`: `npm run test:unit` now discovers the unit suite, while database and browser packet tests remain separate commands. Run the relevant direct test when necessary.
 - Do not print `.env*`, secrets, invitation tokens, or full evidence artifacts. Check file names and safe status only.
 
 ## Current architecture boundary
