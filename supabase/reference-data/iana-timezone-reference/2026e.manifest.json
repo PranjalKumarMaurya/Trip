@@ -1,0 +1,22 @@
+{
+  "alias_name_count": 213,
+  "artifact_sha256": "bab362935dbe8fceb73682327aa5a8773917e07406d4cbd0b986808a9fff39d6",
+  "canonical_name_count": 340,
+  "dataset_version": "2026e",
+  "row_count": 553,
+  "selection": "All slash-qualified names satisfying the existing validator lexical rule from Zone declarations and Link targets in the listed IANA source files; includes canonical names and backward aliases, excludes non-slash names.",
+  "source_archive_sha256": "b26882805f26aac59d5b222978e6580484b834ccdc98be89df2f05a6dc53a652",
+  "source_files": [
+    "africa",
+    "antarctica",
+    "asia",
+    "australasia",
+    "europe",
+    "northamerica",
+    "southamerica",
+    "etcetera",
+    "backward"
+  ],
+  "source_release": "IANA Time Zone Database 2026e",
+  "source_url": "https://data.iana.org/time-zones/releases/tzdata2026e.tar.gz"
+}

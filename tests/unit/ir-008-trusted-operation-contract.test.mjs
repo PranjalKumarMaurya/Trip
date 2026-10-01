@@ -1,11 +1,10 @@
 import assert from 'node:assert/strict'
+import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 import test from 'node:test'
 import { fileURLToPath } from 'node:url'
 
 import {
-  buildTrustedOperationEvidenceStages,
-  collectTrustedOperationPlanEvidence,
   requiredEvidenceStages,
 } from '../database/ir-008/run-trusted-operation-plan-evidence.mjs'
 import {
@@ -117,26 +116,29 @@ test('IR-008 static evidence proves absence without claiming operation execution
 })
 
 test('IR-008 plan evidence is static-only, secret-safe, and leaves no stack to clean up', () => {
-  const evidence = collectTrustedOperationPlanEvidence()
-  assert.equal(evidence.result, 'contract-verified')
-  assert.equal(evidence.implementationState, 'implemented-not-verified-contract-only')
-  assert.equal(evidence.physicalTrustedOperationsImplemented, 0)
-  assert.equal(evidence.migration010, 'absent')
-  assert.equal(evidence.migrationDrift, 'none')
-  assert.equal(evidence.genericProxy, 'absent')
-  assert.equal(evidence.browserElevatedCredential, 'absent')
-  assert.equal(evidence.generatedTypeDrift, 'none')
-  assert.equal(evidence.applicationSourceDrift, 'none')
-  assert.equal(evidence.applicationAuthority, 'not-introduced')
-  assert.equal(evidence.performance, 'not-run-not-applicable')
-  assert.ok(evidence.operationResults.every((result) => result.executionClaimed === false))
-  const stages = buildTrustedOperationEvidenceStages(evidence)
-  assert.deepEqual(Object.keys(stages), requiredEvidenceStages.slice(0, -1))
-  assert.equal(stages['contract-inventory'].topCount, 12)
-  assert.equal(stages['adversarial-obligations'].obligationCount, 13)
-  assert.deepEqual(stages['adversarial-obligations'].obligations, expectedAdversarialRequirements)
-  assert.equal(stages['zero-physical-implementation'].performance, 'not-run-not-applicable')
-  assert.equal(stages.cleanup.databaseOrStackStarted, false)
+  // IR-008's zero-implementation evidence describes its historical exit state.
+  // Check the immutable, hash-linked record; do not rerun that probe against
+  // later authorised IR-003 files and misclassify them as IR-008 drift.
+  const artifactPath = 'artifacts/ir-008/ir008-20260804-trusted-operation-contracts/'
+  const manifest = JSON.parse(readText(`${artifactPath}final-manifest.json`))
+  assert.equal(manifest.result, 'contract-verified')
+  assert.equal(manifest.operationExecution, 'not-implemented')
+  assert.equal(manifest.performance, 'not-run-not-applicable')
+  assert.deepEqual(manifest.requiredStages, requiredEvidenceStages)
+  assert.deepEqual(manifest.stages.map((stage) => stage.stage), requiredEvidenceStages.slice(0, -1))
+  for (const stage of manifest.stages) {
+    const contents = readText(`${artifactPath}${stage.file}`)
+    assert.equal(createHash('sha256').update(contents).digest('hex'), stage.sha256)
+  }
+  const inventory = JSON.parse(readText(`${artifactPath}contract-inventory.json`))
+  const adversarial = JSON.parse(readText(`${artifactPath}adversarial-obligations.json`))
+  const zeroPhysical = JSON.parse(readText(`${artifactPath}zero-physical-implementation.json`))
+  const cleanupStage = JSON.parse(readText(`${artifactPath}cleanup.json`))
+  assert.equal(inventory.topCount, 12)
+  assert.equal(adversarial.obligationCount, 13)
+  assert.deepEqual(adversarial.obligations, expectedAdversarialRequirements)
+  assert.equal(zeroPhysical.performance, 'not-run-not-applicable')
+  assert.equal(cleanupStage.databaseOrStackStarted, false)
 
   const runner = readText('tests/database/ir-008/run-trusted-operation-plan-evidence.mjs')
   const cleanup = readText('tests/database/ir-008/assert-cleanup.mjs')
@@ -147,8 +149,8 @@ test('IR-008 plan evidence is static-only, secret-safe, and leaves no stack to c
   assert.match(manifestWriter, /chmodSync\(path, 0o444\)/u)
   assert.match(manifestWriter, /sha256-per-stage/u)
   assert.match(manifestWriter, /changed-ir008-evidence-artifact/u)
-  assert.doesNotMatch(JSON.stringify(evidence), /postgres(?:ql)?:\/\//iu)
-  assert.doesNotMatch(JSON.stringify(evidence), /(?:password|token|secret|api[_-]?key|service[_-]?role)["']?\s*[:=]/iu)
+  assert.doesNotMatch(JSON.stringify(manifest), /postgres(?:ql)?:\/\//iu)
+  assert.doesNotMatch(JSON.stringify(manifest), /(?:password|token|secret|api[_-]?key|service[_-]?role)["']?\s*[:=]/iu)
 })
 
 void repositoryRoot

@@ -6,6 +6,9 @@ import { join } from 'node:path'
 import test from 'node:test'
 
 const BASELINE_SHA = '3d4ac573b8bcdcf0f80569bfacc5b683c554df0d'
+// Scope historical IR-007 change-set checks to its verification commit.
+// Later authorised packets may add files without rewriting IR-007 history.
+const IR007_EXIT_SHA = '1f7b782'
 const migrationDirectory = 'supabase/migrations'
 const migrationFile = '009_ir007_base_rls_ownership.sql'
 const migrationPath = join(migrationDirectory, migrationFile)
@@ -62,6 +65,7 @@ const authorisedChangedPaths = new Set([
   'tests/evidence/write-ir-007-evidence-manifest.mjs',
   'package.json',
   'docs/implementation-execution/authorisations/IR-007-authorisation.md',
+  'docs/implementation-execution/ir-007-verification.md',
   'docs/implementation-execution/packets/IR-007-rls-and-ownership.md',
   'docs/implementation-execution/database-migration-register.md',
   'docs/implementation-execution/gate-ledger.md',
@@ -135,13 +139,10 @@ function assertRoleRevoke(sql, resource, role) {
 }
 
 function changedPathsSinceBaseline() {
-  const tracked = execFileSync('git', ['diff', '--name-only', BASELINE_SHA], {
+  const tracked = execFileSync('git', ['diff', '--name-only', BASELINE_SHA, IR007_EXIT_SHA], {
     encoding: 'utf8',
   })
-  const untracked = execFileSync('git', ['ls-files', '--others', '--exclude-standard'], {
-    encoding: 'utf8',
-  })
-  return [...new Set(`${tracked}\n${untracked}`.split('\n').filter(Boolean))].sort()
+  return tracked.split('\n').filter(Boolean).sort()
 }
 
 function readBaselinePackage() {
@@ -404,7 +405,9 @@ test('IR-007 leaves migrations 001 through 008 byte-for-byte unchanged', () => {
 
 test('IR-007 package changes are limited to its five dedicated aliases without dependency changes', () => {
   const baseline = readBaselinePackage()
-  const current = JSON.parse(readFileSync('package.json', 'utf8'))
+  const current = JSON.parse(execFileSync('git', ['show', `${IR007_EXIT_SHA}:package.json`], {
+    encoding: 'utf8',
+  }))
   assert.deepEqual(current.dependencies, baseline.dependencies)
   assert.deepEqual(current.devDependencies, baseline.devDependencies)
 

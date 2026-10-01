@@ -23,7 +23,7 @@ deliberately separated.
 | DBM-012 | IR-016 / W5 | Migration-stage activation sequencing for already-owned Storage/private-object and Realtime/publication controls. | DBM-006/007/008 and their security cases first; no activation before supporting schema/policies pass. | No new product policy model. Activation must preserve current membership checks and be testable against existing indexes. | Security transition is staged only after source/object/query manifest evidence; no global/public compatibility interval. | Refresh after any approved supporting schema/policy change, not merely because a publication changes. | Failed activation leaves the target inaccessible or delivery disabled; never restore public/global access. Verify private-object, stale-membership, and two-Group Realtime denial. | Draft |
 | DBM-013 | IR-002 / W1 | Generated database-type provenance and refresh checkpoint; not an SQL migration. Its approved first output is `src/lib/database.types.ts`. | After DBM-001/002 clean local application; then serially after approved schema/type-affecting units. | Generated output identifies CLI `2.105.0`, `public` schema source, migration identities/checksums, output checksum; it never substitutes for RLS tests. | No manual edit; output is generated from isolated local schema only. | Generate twice byte-for-byte and review the diff before consumers proceed. | Regenerate from prior approved source or remove an unconsumed artifact; never hand-edit. | Verified |
 | DBM-014 | IR-003 / W3 | `010_ir003_atomic_group_bootstrap.sql`: physical TOP-001 `bootstrap_group`, its dedicated no-login executor/grants, IR-003-specific idempotency persistence, and the minimum Group-configuration display-currency child set. SHA-256 `5c3ca06dfe29cf5388686559d124adc4ea507e9445a52c93d79d181221f4ec4f`. | After verified DBM-001–003, DBM-006, and IR-008 common contract; GATE-031 and separate IR-003 authorisation are satisfied. The supplemental DBM-002 prerequisite must be applied and verified before TOP-001 runtime/release. | Exactly one Group/configuration bootstrap transaction; display codes reference the existing ISO table and include accounting currency; idempotency key is TOP-001 + validated Profile + request UUID; forced RLS/direct-write denial and narrowly granted SECURITY DEFINER execution only. | New Groups supply explicit values only: no Bali/destination/browser/display-text inference and no duplicate configuration authority. The display set is bootstrap-immutable here. | DBM-013 only after authorised clean schema implementation and integration; never hand-edit types. | Injected failure leaves no Group/configuration/Member/Owner/audit/idempotency authority. Empty-target rollback/reapply only; populated targets use reviewed forward correction. Verify retry, changed-fingerprint conflict, same-key race, privilege confinement, performance, and exact cleanup. | Authorised candidate; Lane A integrated, Lane B PASS, Lane C blocked; not globally Implemented or Verified |
-| DBM-002 supplemental forward evolution | Shared DBM-002 / W3 | **Proposed path — `011_ir002_timezone_reference.sql` only:** controlled application-approved timezone reference/control, protected validator replacement, deterministic provenance, and reconciliation boundary. | Applies after immutable 010, but TOP-001 must not be used until both 010 and this shared prerequisite are applied and verified. | Exact relation/function/security/maintenance proposal is `ir-003-shared-dbm-002-change-control-proposal.md`; no later-IR schema or TOP. | No silent stored-value rewrite; platform changes do not automatically alter Product validity. | DBM-013 only after authorised integrated schema. | Requires separate shared authority, independent shared verification, Lane-B subset, full Lane-C rerun, and IR-003 amendment. | **PROPOSED / RESERVED / NOT AUTHORISED** |
+| DBM-002 supplemental forward evolution | Shared DBM-002 / W3 | `011_ir002_timezone_reference.sql` (bounded local implementation): controlled application-approved timezone reference/control, protected validator replacement, deterministic provenance, and reconciliation boundary. | Applies after immutable 010, but TOP-001 must not be used until both 010 and this shared prerequisite are applied and verified. | Exact relation/function/security/maintenance proposal is `ir-003-shared-dbm-002-change-control-proposal.md`; no later-IR schema or TOP. | No silent stored-value rewrite; platform changes do not automatically alter Product validity. | DBM-013 only after authorised integrated schema. | Requires separate shared authority, independent shared verification, Lane-B subset, full Lane-C rerun, and IR-003 amendment. | Locally implemented candidate; targeted probes passed; independent verification and release use pending |
 
 ## Ordering controls
 
@@ -44,14 +44,13 @@ No later packet inherits this naming authority.
 
 ## Current supplemental DBM-002 status
 
-The verified historical DBM-002 implementation remains unchanged. The Product
-owner approved controlled application-reference semantics, and supplemental
-change control froze an M2 proposal: preserve 010 unchanged and reserve the
-dedicated shared `011_ir002_timezone_reference.sql` after it. Supplemental
-Security and Architecture approvals are granted. The immutable supplemental
-Data review remains blocked on `DBM-002-DATA-001`; the bounded correction now
-freezes `name text COLLATE "C" NOT NULL PRIMARY KEY`, same-comparator
-membership/drift requirements, and the related Data regression obligation.
-One supplemental Data re-review and then separate shared DBM-002 authority
-remain required before implementation. See
-`ir-003-shared-dbm-002-change-control-proposal.md`.
+The verified historical DBM-002 implementation and immutable migration 010
+remain unchanged. The corrected shared proposal fixes `DBM-002-DATA-001` with
+an explicit `"C"` reference-name comparator; a separate Data design re-review
+and bounded local implementation authority are recorded. A candidate IANA
+2026e artifact and migration `011_ir002_timezone_reference.sql` now exist.
+One isolated local application and targeted probes passed, as recorded in
+`ir-002-timezone-reference-local-verification.md`. Independent shared exit,
+fresh complete IR-003 Lane C evidence, deployment, and release remain open.
+The earlier blocked Data review is retained as history, not current design
+status. See `ir-003-shared-dbm-002-change-control-proposal.md`.
