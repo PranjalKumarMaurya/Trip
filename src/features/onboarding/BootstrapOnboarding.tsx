@@ -34,6 +34,7 @@ function parseDisplayCurrencies(value: string): string[] {
 }
 
 function isUsableTimezone(value: string): boolean {
+  if (!/^[A-Za-z][A-Za-z0-9_+\-]*(?:\/[A-Za-z0-9_+\-]+)+$/.test(value)) return false
   try {
     new Intl.DateTimeFormat('en-US', { timeZone: value }).format()
     return true

@@ -67,6 +67,10 @@ test('IR-003 eligible signed-in user reaches the bootstrap form and receives cli
   await expect(page.getByText('End date must be on or after the start date.')).toBeVisible()
   await expect(page.getByText('Include the accounting currency in the display set.')).toBeVisible()
 
+  await page.getByLabel('IANA timezone').fill('UTC')
+  await page.getByRole('button', { name: 'Create Group' }).click()
+  await expect(page.getByText('Enter a recognised IANA timezone.')).toBeVisible()
+
   await page.setViewportSize({ width: 1280, height: 720 })
   await expect(page.getByTestId('bootstrap-onboarding')).toHaveCSS('max-width', '480px')
 })
