@@ -130,6 +130,7 @@ function migrate() {
     '013_ir005_create_invitation_candidate.sql',
     '014_ir005_accept_invitation_candidate.sql',
     '015_ir005_revoke_invitation_candidate.sql',
+    '016_ir005_role_change_candidate.sql',
   ]
   for (const file of candidates) adminSql(read(`supabase/migrations/${file}`), file)
 }
@@ -202,6 +203,11 @@ function revoke(groupId, invitationId, requestId) {
     ${quote(invitationId)}::uuid, ${quote(requestId)}::uuid)`
 }
 
+function changeRole(groupId, memberId, role, requestId) {
+  return `public.change_member_role(${quote(groupId)}::uuid,
+    ${quote(memberId)}::uuid, ${quote(role)}, ${quote(requestId)}::uuid)`
+}
+
 function success(result, outcome) {
   assert.equal(result.ok, true, result.error)
   assert.equal(result.value.outcome, outcome)
@@ -225,6 +231,16 @@ async function verify() {
   assert.equal(joined.group_id, groupA)
   success(call(actor.friend, accept(a.proof, id(2))), 'already_completed')
   denied(call(actor.friend, accept(a.proof, id(3))), 'invalid_invitation')
+  const ownerMember = psql(`SELECT member.id FROM public.group_members AS member
+    JOIN public.profiles AS profile ON profile.id=member.profile_id
+    WHERE member.group_id=${quote(groupA)}::uuid
+      AND profile.auth_user_id=${quote(actor.owner)}::uuid`)
+  denied(call(actor.friend, changeRole(groupA, joined.group_member_id, 'owner', id(19))), 'not_authorized')
+  success(call(actor.owner, changeRole(groupA, joined.group_member_id, 'owner', id(19))), 'changed')
+  success(call(actor.owner, changeRole(groupA, joined.group_member_id, 'owner', id(19))), 'already_completed')
+  denied(call(actor.owner, changeRole(groupA, joined.group_member_id, 'member', id(19))), 'idempotency_conflict')
+  success(call(actor.owner, changeRole(groupA, joined.group_member_id, 'member', id(20))), 'changed')
+  denied(call(actor.owner, changeRole(groupA, ownerMember, 'member', id(21))), 'last_owner')
 
   const b = success(call(actor.owner, issue(groupA, 'late@example.test', id(4))), 'created')
   denied(call(actor.stranger, revoke(groupA, b.invitation_id, id(5))), 'not_authorized')
@@ -236,6 +252,7 @@ async function verify() {
   denied(call(actor.owner, revoke(groupA, cross.invitation_id, id(8))), 'invalid_invitation')
   const crossJoin = success(call(actor.late, accept(cross.proof, id(9))), 'accepted')
   assert.equal(crossJoin.group_id, groupB)
+  denied(call(actor.owner, changeRole(groupA, crossJoin.group_member_id, 'owner', id(22))), 'invalid_target')
   assert.equal(psql(`SELECT count(*) FROM public.group_members AS member
     JOIN public.profiles AS profile ON profile.id=member.profile_id
     WHERE profile.auth_user_id=${quote(actor.late)}::uuid
@@ -274,7 +291,8 @@ async function verify() {
 
   assert.equal(psql(`SELECT has_table_privilege('authenticated','public.invitations','SELECT'),
     has_table_privilege('service_role','public.invitations','SELECT'),
-    has_function_privilege('anon','public.accept_invitation(text,jsonb,uuid)','EXECUTE')`), 'f|f|f')
+    has_function_privilege('anon','public.accept_invitation(text,jsonb,uuid)','EXECUTE'),
+    has_table_privilege('authenticated','public.ir005_lifecycle_requests','SELECT')`), 'f|f|f|f')
 
   const beforeFailure = psql(`SELECT (SELECT count(*) FROM public.invitations),
     (SELECT count(*) FROM public.ir005_invitation_requests),
@@ -291,7 +309,7 @@ async function verify() {
     adminSql(`GRANT INSERT (${auditColumns}) ON TABLE public.group_audit_events
       TO ir005_invitation_executor`, 'restore-audit-write')
   }
-  return { invitationCandidate: 'passed', twoGroups: 'passed', expiry: 'passed', acceptRace: 'passed', revokeRace: 'passed', rollback: 'passed', cleanup: 'pending' }
+  return { invitationCandidate: 'passed', twoGroups: 'passed', expiry: 'passed', acceptRace: 'passed', revokeRace: 'passed', lastOwner: 'passed', rollback: 'passed', cleanup: 'pending' }
 }
 
 try {
