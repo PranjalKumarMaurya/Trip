@@ -16,6 +16,8 @@ Each ISO plan had zero temporary read/write blocks. The only violation in each r
 
 The accepted IR-003 packet §8 currently requires the ISO primary-key path and bans every sequential scan of `iso_4217_currency_codes`. Migration 007 inserts 178 fixed ISO codes. That rule treats PostgreSQL's cost-based choice on this small reference table as a failure even when the indexed key exists and the scan is bounded independently of Group/Member count. These measurements do not justify waiving any latency, authorization, or large-table plan requirement.
 
+An isolated PostgreSQL probe on 2026-10-02 reapplied the actual migration 007 reference table, ran `ANALYZE`, and compared `code = 'INR'` with `code = 'INR' ORDER BY code LIMIT 1`. Both used a sequential scan on the 178-row table. Rewriting the check with ordering and a limit therefore did not provide an index-backed path. The disposable stack was removed after the probe.
+
 ## Proposed bounded decision
 
 Permit a sequential scan **only** for the static `iso_4217_currency_codes` lookup when evidence proves all of these conditions in every Lane C run:
