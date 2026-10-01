@@ -3,11 +3,42 @@ import { useEffect, useState } from 'react'
 import { AuthEntry } from './AuthEntry'
 import { useAuthSession } from './authSession'
 import { BootstrapOnboarding } from '../onboarding/BootstrapOnboarding'
+import { InvitationEntry } from '../invitations/InvitationEntry'
+import { clearPendingInvitation, pendingInvitationFromBrowser } from '../invitations/invitationLink'
 
 export function AuthBoundary() {
   const auth = useAuthSession()
   const [signOutError, setSignOutError] = useState<string | null>(null)
   const [groupAccess, setGroupAccess] = useState<'idle' | 'checking' | 'none' | 'has-group' | 'error'>('idle')
+  const [inviteProof, setInviteProof] = useState<string | null>(() => {
+    if (typeof window === 'undefined') return null
+    let storage: Storage | null = null
+    try { storage = window.localStorage } catch { /* private browsing may deny storage */ }
+    return pendingInvitationFromBrowser(window.location.hash, storage).proof
+  })
+
+  useEffect(() => {
+    const onHashChange = () => {
+      if (!window.location.hash.startsWith('#invite=')) return
+      let storage: Storage | null = null
+      try { storage = window.localStorage } catch { /* private browsing may deny storage */ }
+      setInviteProof(pendingInvitationFromBrowser(window.location.hash, storage).proof)
+    }
+    window.addEventListener('hashchange', onHashChange)
+    return () => window.removeEventListener('hashchange', onHashChange)
+  }, [])
+
+  const clearSavedInvitation = () => {
+    try { clearPendingInvitation(window.localStorage) } catch { /* storage may be unavailable */ }
+    if (window.location.hash.startsWith('#invite=')) {
+      window.history.replaceState(window.history.state, '', window.location.pathname + window.location.search)
+    }
+  }
+
+  const closeInvitation = () => {
+    clearSavedInvitation()
+    setInviteProof(null)
+  }
 
   const signOut = async () => {
     setSignOutError(null)
@@ -49,8 +80,11 @@ export function AuthBoundary() {
 
   if (auth.status === 'loading') return <AuthEntry mode="restoring" />
   if (auth.status === 'error') return <AuthEntry mode="error" onRetry={auth.retry} />
+  if (auth.status === 'signed-out' && auth.reason === 'recovery') return <AuthEntry mode="reset" />
+  if (inviteProof) {
+    return <InvitationEntry proof={inviteProof} auth={auth} onSignOut={() => void signOut()} onClose={closeInvitation} onAccepted={clearSavedInvitation} signOutError={signOutError} />
+  }
   if (auth.status === 'signed-out') {
-    if (auth.reason === 'recovery') return <AuthEntry mode="reset" />
     return <AuthEntry mode={auth.reason === 'expired' ? 'expired' : 'sign-in'} />
   }
 

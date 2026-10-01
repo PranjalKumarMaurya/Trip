@@ -6,6 +6,7 @@ type EntryMode = 'sign-in' | 'sign-up' | 'recovery' | 'reset' | 'restoring' | 'e
 interface AuthEntryProps {
   mode: EntryMode
   onRetry?: () => void
+  contextMessage?: string
 }
 
 const fieldStyle = {
@@ -27,7 +28,7 @@ const buttonStyle = {
   fontWeight: 700,
 } as const
 
-export function AuthEntry({ mode: initialMode, onRetry }: AuthEntryProps) {
+export function AuthEntry({ mode: initialMode, onRetry, contextMessage }: AuthEntryProps) {
   const [mode, setMode] = useState<EntryMode>(initialMode)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -116,6 +117,7 @@ export function AuthEntry({ mode: initialMode, onRetry }: AuthEntryProps) {
 
   return (
     <AuthFrame eyebrow="BAKCHODI IN BALI" title={title} detail="Your account session is verified by Supabase Auth." testId="auth-entry">
+      {contextMessage && <p role="status" style={{ color: 'var(--text-secondary)', fontSize: 13, marginBottom: 16 }}>{contextMessage}</p>}
       <form onSubmit={submit} className="flex flex-col gap-3" aria-label={title}>
         {isSignup && <input aria-label="Display name" required value={displayName} onChange={(event) => setDisplayName(event.target.value)} placeholder="Your name" style={fieldStyle} />}
         {!isReset && <input aria-label="Email" required type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Email" style={fieldStyle} />}
