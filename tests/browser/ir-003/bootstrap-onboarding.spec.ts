@@ -75,6 +75,15 @@ test('IR-003 eligible signed-in user reaches the bootstrap form and receives cli
   await expect(page.getByTestId('bootstrap-onboarding')).toHaveCSS('max-width', '480px')
 })
 
+test('IR-003 new user can sign out from the create-Group screen', async ({ page }) => {
+  await installEligibleAccount(page)
+  await page.route('**/auth/v1/logout*', (route) => route.fulfill({ status: 204, body: '' }))
+  await page.goto('/', { waitUntil: 'domcontentloaded' })
+  await expect(page.getByTestId('bootstrap-onboarding')).toBeVisible()
+  await page.getByRole('button', { name: 'Sign out' }).click()
+  await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible()
+})
+
 test('IR-003 sends only the frozen RPC arguments and renders terminal ONB-06 State A', async ({ page }) => {
   const rpcCalls: Record<string, unknown>[] = []
   await installEligibleAccount(page)
