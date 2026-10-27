@@ -221,14 +221,14 @@ $$;
 CREATE FUNCTION public.commit_expense(
   p_group_id uuid,
   p_description text,
-  p_category text,
   p_original_amount text,
   p_original_currency text,
-  p_fx_rate text,
-  p_fx_source text,
   p_split_method text,
   p_payers jsonb,
   p_shares jsonb,
+  p_category text DEFAULT NULL,
+  p_fx_rate text DEFAULT NULL,
+  p_fx_source text DEFAULT NULL,
   p_request_id uuid DEFAULT NULL
 )
 RETURNS uuid
@@ -344,14 +344,14 @@ CREATE FUNCTION public.update_expense(
   p_expense_id uuid,
   p_expected_version integer,
   p_description text,
-  p_category text,
   p_original_amount text,
   p_original_currency text,
-  p_fx_rate text,
-  p_fx_source text,
   p_split_method text,
   p_payers jsonb,
-  p_shares jsonb
+  p_shares jsonb,
+  p_category text DEFAULT NULL,
+  p_fx_rate text DEFAULT NULL,
+  p_fx_source text DEFAULT NULL
 )
 RETURNS integer
 LANGUAGE plpgsql
@@ -586,8 +586,8 @@ REVOKE ALL ON FUNCTION
   trip_private.split_clean_description(text),
   trip_private.split_clean_category(text),
   trip_private.split_editable_expense(uuid, integer),
-  public.commit_expense(uuid, text, text, text, text, text, text, text, jsonb, jsonb, uuid),
-  public.update_expense(uuid, integer, text, text, text, text, text, text, text, jsonb, jsonb),
+  public.commit_expense(uuid, text, text, text, text, jsonb, jsonb, text, text, text, uuid),
+  public.update_expense(uuid, integer, text, text, text, text, jsonb, jsonb, text, text, text),
   public.delete_expense(uuid, integer),
   public.record_settlement(uuid, uuid, uuid, text, text, uuid),
   public.delete_settlement(uuid),
@@ -602,8 +602,8 @@ GRANT EXECUTE ON FUNCTION
   trip_private.split_clean_description(text),
   trip_private.split_clean_category(text),
   trip_private.split_editable_expense(uuid, integer),
-  public.commit_expense(uuid, text, text, text, text, text, text, text, jsonb, jsonb, uuid),
-  public.update_expense(uuid, integer, text, text, text, text, text, text, text, jsonb, jsonb),
+  public.commit_expense(uuid, text, text, text, text, jsonb, jsonb, text, text, text, uuid),
+  public.update_expense(uuid, integer, text, text, text, text, jsonb, jsonb, text, text, text),
   public.delete_expense(uuid, integer),
   public.record_settlement(uuid, uuid, uuid, text, text, uuid),
   public.delete_settlement(uuid),

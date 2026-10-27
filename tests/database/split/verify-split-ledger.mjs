@@ -17,18 +17,20 @@ function commitSql(groupId, {
   description = 'Dinner', category = 'food', amount, currency = 'INR', rate = null, source = null,
   method = 'exact', payers, shares, requestId = null,
 }) {
-  return `SELECT public.commit_expense(${quote(groupId)}, ${text(description)}, ${text(category)}, ${text(amount)},
-    ${text(currency)}, ${text(rate)}, ${text(source)}, ${quote(method)}, ${lines(payers)}::jsonb, ${lines(shares)}::jsonb,
-    ${requestId ? `${quote(requestId)}::uuid` : 'NULL'});`
+  return `SELECT public.commit_expense(p_group_id => ${quote(groupId)}, p_description => ${text(description)},
+    p_original_amount => ${text(amount)}, p_original_currency => ${text(currency)}, p_split_method => ${quote(method)},
+    p_payers => ${lines(payers)}::jsonb, p_shares => ${lines(shares)}::jsonb, p_category => ${text(category)},
+    p_fx_rate => ${text(rate)}, p_fx_source => ${text(source)}, p_request_id => ${requestId ? `${quote(requestId)}::uuid` : 'NULL'});`
 }
 
 function updateSql(expenseId, version, {
   description = 'Dinner', category = 'food', amount, currency = 'INR', rate = null, source = null,
   method = 'exact', payers, shares,
 }) {
-  return `SELECT public.update_expense(${quote(expenseId)}, ${version === null ? 'NULL' : version}, ${text(description)},
-    ${text(category)}, ${text(amount)}, ${text(currency)}, ${text(rate)}, ${text(source)}, ${quote(method)},
-    ${lines(payers)}::jsonb, ${lines(shares)}::jsonb);`
+  return `SELECT public.update_expense(p_expense_id => ${quote(expenseId)}, p_expected_version => ${version === null ? 'NULL' : version},
+    p_description => ${text(description)}, p_original_amount => ${text(amount)}, p_original_currency => ${text(currency)},
+    p_split_method => ${quote(method)}, p_payers => ${lines(payers)}::jsonb, p_shares => ${lines(shares)}::jsonb,
+    p_category => ${text(category)}, p_fx_rate => ${text(rate)}, p_fx_source => ${text(source)});`
 }
 
 function settleSql(groupId, from, to, amount, { note = null, requestId = null } = {}) {
@@ -291,7 +293,16 @@ try {
   assert.equal(count('trip_settlements', tripA), 1)
 
   // A removed member loses all access and can no longer be a payer or share.
+  const snorkel = sqlAs(stack, user.cara, commitSql(tripA, { description: 'Snorkel', amount: '40.00', payers: [[m.cara, '40.00']], shares: [[m.cara, '20.00'], [m.ana, '20.00']] }))
+  assert.equal(snorkel.ok, true, snorkel.error)
   stack.psql(`UPDATE public.group_members SET status = 'inactive' WHERE id = ${quote(m.cara)};`)
+  expectError(sqlAs(stack, user.cara, `SELECT public.delete_expense(${quote(snorkel.rows[0][0])});`), /split_expense_not_found/u, 'removed creator delete')
+  expectError(sqlAs(stack, user.cara, `SELECT public.delete_settlement(${quote(ownerRecords.rows[0][0])});`), /split_settlement_not_found/u, 'removed member deletes settlement')
+  // Their history stays in the ledger for everyone else, and an Owner can still remove it.
+  assert.deepEqual(sqlAs(stack, user.ana, `SELECT count(*) FROM public.trip_expense_shares WHERE group_member_id = ${quote(m.cara)};`).rows, [['1']])
+  expectError(sqlAs(stack, user.ana, updateSql(snorkel.rows[0][0], 1, { description: 'Snorkel', amount: '40.00', payers: [[m.cara, '40.00']], shares: [[m.cara, '20.00'], [m.ana, '20.00']] })),
+    /split_not_allowed/u, 'non-creator edit of removed creator expense')
+  assert.equal(sqlAs(stack, user.owner, `SELECT public.delete_expense(${quote(snorkel.rows[0][0])});`).ok, true, 'owner deletes removed member expense')
   assert.deepEqual(sqlAs(stack, user.cara, 'SELECT count(*) FROM public.trip_expenses;').rows, [['0']])
   assert.deepEqual(sqlAs(stack, user.cara, 'SELECT count(*) FROM public.trip_settlements;').rows, [['0']])
   expectError(sqlAs(stack, user.cara, `SELECT public.get_split_ledger(${quote(tripA)});`), /split_not_a_member/u, 'removed member ledger')
