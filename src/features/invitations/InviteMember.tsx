@@ -9,7 +9,11 @@ type IssueState =
   | { kind: 'already-issued' }
   | { kind: 'error'; message: string; retryable: boolean }
 
-export function InviteMember({ groupId }: { groupId: string }) {
+export function InviteMember({ groupId, onIssued }: {
+  groupId: string
+  /** Called once the server confirms an invitation, e.g. to refresh the invitation list. */
+  onIssued?: () => void
+}) {
   const [email, setEmail] = useState('')
   const [state, setState] = useState<IssueState>({ kind: 'idle' })
   const [copyMessage, setCopyMessage] = useState('')
@@ -36,10 +40,12 @@ export function InviteMember({ groupId }: { groupId: string }) {
       const result = await createInvitation(groupId, recipient, requestId)
       if (result.outcome === 'already_completed') {
         setState({ kind: 'already-issued' })
+        onIssued?.()
         return
       }
       const baseUrl = new URL(import.meta.env.BASE_URL, window.location.origin).toString()
       setState({ kind: 'issued', url: invitationShareUrl(baseUrl, result.proof), recipient })
+      onIssued?.()
     } catch (error) {
       const reason = error instanceof Error ? error.message : 'creation_unavailable'
       if (reason === 'invitation_already_pending') {
@@ -54,6 +60,14 @@ export function InviteMember({ groupId }: { groupId: string }) {
         setState({ kind: 'error', message: 'We could not confirm whether the invitation was created. Retry this same request safely.', retryable: true })
       }
     }
+  }
+
+  // Forget the one-time link and start a new request for another recipient.
+  const inviteAnother = () => {
+    requestIdRef.current = null
+    setEmail('')
+    setCopyMessage('')
+    setState({ kind: 'idle' })
   }
 
   const copy = async () => {
@@ -77,7 +91,11 @@ export function InviteMember({ groupId }: { groupId: string }) {
         </label>
         <button type="button" onClick={() => void copy()} className="mt-4">Copy link</button>
         {copyMessage && <p role="status" className="mt-2" style={{ color: 'var(--text-secondary)' }}>{copyMessage}</p>}
-      </> : state.kind === 'already-issued' ? <p role="status" className="mt-3" style={{ color: 'var(--text-secondary)' }}>An invitation was issued, but its one-time link can no longer be shown. Revoke it and create a new one if you need a link to share.</p> : <form onSubmit={(event) => void issue(event)} className="mt-4 flex flex-col gap-3">
+        <button type="button" onClick={inviteAnother} className="mt-4 block" style={{ color: 'var(--text-secondary)' }}>Invite someone else</button>
+      </> : state.kind === 'already-issued' ? <>
+        <p role="status" className="mt-3" style={{ color: 'var(--text-secondary)' }}>An invitation was issued, but its one-time link can no longer be shown. Revoke it and create a new one if you need a link to share.</p>
+        <button type="button" onClick={inviteAnother} className="mt-4 block" style={{ color: 'var(--text-secondary)' }}>Invite someone else</button>
+      </> : <form onSubmit={(event) => void issue(event)} className="mt-4 flex flex-col gap-3">
         <label style={{ color: 'var(--text-secondary)' }}>Friend’s email
           <input required type="email" value={email} onChange={(event) => updateEmail(event.target.value)} className="mt-2 w-full rounded-md border px-3 py-2" style={{ color: 'var(--text-primary)', background: 'transparent', borderColor: 'var(--border)' }} />
         </label>

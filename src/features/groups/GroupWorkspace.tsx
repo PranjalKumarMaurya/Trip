@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { ArchivedTrips } from '../crew/ArchivedTrips'
 import { CrewTab } from '../crew/CrewTab'
 import { FxTab } from '../fx/FxTab'
 import { ScanTab } from '../scan/ScanTab'
@@ -23,7 +24,8 @@ export function GroupWorkspace({ groups, selectedGroupId, onSelect, onRefresh, o
   groups: MyGroupAccess[]
   selectedGroupId: string
   onSelect: (groupId: string) => void
-  onRefresh: () => void
+  /** Re-read the Trip list in the background; `preferGroupId` is selected if present. */
+  onRefresh: (preferGroupId?: string) => void
   onCreateAnother: () => void
   onSignOut: () => void
   signOutError: string | null
@@ -40,18 +42,20 @@ export function GroupWorkspace({ groups, selectedGroupId, onSelect, onRefresh, o
         {groups.map((group) => <button key={group.groupId} type="button" onClick={() => onSelect(group.groupId)} aria-current={group.groupId === selected.groupId ? 'page' : undefined} className="rounded-md border px-3 py-2" style={{ borderColor: 'var(--border)', color: 'var(--text-primary)' }}>{group.tripName}</button>)}
       </nav>
       <div className="mt-5 flex gap-4">
-        <button type="button" onClick={onRefresh} style={{ color: 'var(--text-secondary)' }}>Refresh Trips</button>
+        <button type="button" onClick={() => onRefresh()} style={{ color: 'var(--text-secondary)' }}>Refresh Trips</button>
         <button type="button" onClick={onCreateAnother} style={{ color: 'var(--text-secondary)' }}>Create another Trip</button>
         <button type="button" onClick={onSignOut} style={{ color: 'var(--text-secondary)' }}>Sign out</button>
       </div>
       {signOutError && <p role="alert" style={{ color: 'var(--accent)' }}>{signOutError}</p>}
       {/* Keyed by Trip so switching Trips remounts every tab with fresh state. */}
-      <TripSections key={selected.groupId} trip={selected} />
+      <TripSections key={selected.groupId} trip={selected} onTripsChanged={() => onRefresh()} />
+      <ArchivedTrips className="mt-10" refreshKey={groups.map((group) => `${group.groupId}:${group.role}`).join(',')}
+        onRestored={(groupId) => onRefresh(groupId)} />
     </main>
   )
 }
 
-function TripSections({ trip }: { trip: MyGroupAccess }) {
+function TripSections({ trip, onTripsChanged }: { trip: MyGroupAccess; onTripsChanged: () => void }) {
   const [tab, setTab] = useState<TabId>('trip')
   const { roster, reload } = useGroupRoster(trip.groupId)
   const current = TABS.find((entry) => entry.id === tab) ?? TABS[0]
@@ -68,7 +72,7 @@ function TripSections({ trip }: { trip: MyGroupAccess }) {
         ))}
       </div>
       <div role="tabpanel" id="trip-tab-panel" aria-labelledby={`trip-tab-${current.id}`} className="mt-6">
-        <current.Component trip={trip} roster={roster} reloadRoster={reload} />
+        <current.Component trip={trip} roster={roster} reloadRoster={reload} onTripsChanged={onTripsChanged} />
       </div>
     </>
   )

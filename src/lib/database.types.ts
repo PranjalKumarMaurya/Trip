@@ -881,6 +881,17 @@ export type Database = {
           status: string
         }[]
       }
+      get_my_archived_groups: {
+        Args: never
+        Returns: {
+          archived_at: string
+          destination: string
+          end_date: string
+          group_id: string
+          start_date: string
+          trip_name: string
+        }[]
+      }
       get_my_group_access: {
         Args: never
         Returns: {

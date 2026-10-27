@@ -1,5 +1,5 @@
 import { supabase } from '../../lib/supabase'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AuthEntry } from './AuthEntry'
 import { useAuthSession } from './authSession'
 import { BootstrapOnboarding } from '../onboarding/BootstrapOnboarding'
@@ -7,6 +7,7 @@ import { InvitationEntry } from '../invitations/InvitationEntry'
 import { clearPendingInvitation, pendingInvitationFromBrowser } from '../invitations/invitationLink'
 import { GroupWorkspace } from '../groups/GroupWorkspace'
 import { loadMyGroupAccess, type MyGroupAccess } from '../groups/myGroupAccess'
+import { ArchivedTrips } from '../crew/ArchivedTrips'
 
 export function AuthBoundary() {
   const auth = useAuthSession()
@@ -15,6 +16,15 @@ export function AuthBoundary() {
   const [groups, setGroups] = useState<MyGroupAccess[]>([])
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null)
   const [groupReload, setGroupReload] = useState(0)
+  // A workspace refresh (Crew changes, Refresh Trips, focus) re-reads Trips in the
+  // background so the open tab stays mounted; `preferredGroup` is selected if listed.
+  const backgroundReload = useRef(false)
+  const preferredGroup = useRef<string | null>(null)
+  const refreshTrips = (preferGroupId?: string) => {
+    backgroundReload.current = true
+    preferredGroup.current = preferGroupId ?? null
+    setGroupReload((value) => value + 1)
+  }
   const [creatingAnother, setCreatingAnother] = useState(false)
   const [inviteProof, setInviteProof] = useState<string | null>(() => {
     if (typeof window === 'undefined') return null
@@ -60,7 +70,10 @@ export function AuthBoundary() {
 
   useEffect(() => {
     if (!profileId) return
-    const refresh = () => setGroupReload((value) => value + 1)
+    const refresh = () => {
+      backgroundReload.current = true
+      setGroupReload((value) => value + 1)
+    }
     window.addEventListener('focus', refresh)
     return () => window.removeEventListener('focus', refresh)
   }, [profileId])
@@ -74,8 +87,10 @@ export function AuthBoundary() {
       return
     }
     let active = true
-    setGroupAccess('checking')
-    const timeout = window.setTimeout(() => {
+    const background = backgroundReload.current && groupAccess === 'has-group'
+    backgroundReload.current = false
+    if (!background) setGroupAccess('checking')
+    const timeout = background ? undefined : window.setTimeout(() => {
       if (active) setGroupAccess('error')
     }, 1500)
     void (async () => {
@@ -83,14 +98,17 @@ export function AuthBoundary() {
         const data = await loadMyGroupAccess()
         window.clearTimeout(timeout)
         if (active) {
+          const preferred = preferredGroup.current
+          preferredGroup.current = null
           setGroups(data)
-          setSelectedGroupId((previous) => data.some((group) => group.groupId === previous)
-            ? previous : data[0]?.groupId ?? null)
+          setSelectedGroupId((previous) => preferred && data.some((group) => group.groupId === preferred) ? preferred
+            : data.some((group) => group.groupId === previous) ? previous : data[0]?.groupId ?? null)
           setGroupAccess(data.length ? 'has-group' : 'none')
         }
       } catch {
         window.clearTimeout(timeout)
-        if (active) setGroupAccess('error')
+        // A failed background refresh keeps the Trips already shown.
+        if (active && !background) setGroupAccess('error')
       }
     })()
     return () => {
@@ -126,11 +144,15 @@ export function AuthBoundary() {
   }
 
   if (groupAccess === 'none' || creatingAnother) {
-    return <BootstrapOnboarding onSignOut={() => void signOut()} signOutError={signOutError} onContinue={(groupId) => { setSelectedGroupId(groupId); setCreatingAnother(false); setGroupReload((value) => value + 1) }} />
+    return <>
+      {groupAccess === 'none' && <ArchivedTrips className="mx-auto mt-10 w-[calc(100%-40px)] max-w-[440px]"
+        refreshKey="none" onRestored={(groupId) => refreshTrips(groupId)} />}
+      <BootstrapOnboarding onSignOut={() => void signOut()} signOutError={signOutError} onContinue={(groupId) => { setSelectedGroupId(groupId); setCreatingAnother(false); setGroupReload((value) => value + 1) }} />
+    </>
   }
 
   if (groupAccess === 'has-group' && selectedGroupId) {
-    return <GroupWorkspace groups={groups} selectedGroupId={selectedGroupId} onSelect={setSelectedGroupId} onRefresh={() => setGroupReload((value) => value + 1)} onCreateAnother={() => setCreatingAnother(true)} onSignOut={() => void signOut()} signOutError={signOutError} />
+    return <GroupWorkspace groups={groups} selectedGroupId={selectedGroupId} onSelect={setSelectedGroupId} onRefresh={refreshTrips} onCreateAnother={() => setCreatingAnother(true)} onSignOut={() => void signOut()} signOutError={signOutError} />
   }
 
   return (

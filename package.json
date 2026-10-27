@@ -41,7 +41,9 @@
     "db:stop": "node scripts/dev-db.mjs stop",
     "db:reset": "node scripts/dev-db.mjs reset",
     "db:types": "node scripts/dev-db.mjs types",
-    "test:db:events": "node tests/database/trip-events/verify-trip-events.mjs"
+    "test:db:events": "node tests/database/trip-events/verify-trip-events.mjs",
+    "test:crew:db": "node tests/database/crew/verify-crew-access.mjs",
+    "test:crew:live": "node tests/integration/run-crew-live.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",
