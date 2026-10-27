@@ -96,10 +96,11 @@ test('tour every screen', async ({ browser }) => {
     await owner.getByRole('tab', { name: 'Todos' }).click()
     await shot(owner, 'todos-empty')
     for (const title of ['Book airport transfer', 'Buy sunscreen', 'Exchange cash']) {
-      await owner.getByLabel(/new todo|add a todo|todo title/i).first().fill(title)
+      await owner.getByLabel('New todo').fill(title)
       await owner.keyboard.press('Enter')
+      await expect(owner.getByTestId('todo-row').filter({ hasText: title })).toBeVisible()
     }
-    await owner.getByRole('checkbox').first().check()
+    await owner.getByTestId('todo-row').filter({ hasText: 'Book airport transfer' }).getByRole('checkbox').check()
     await shot(owner, 'todos-with-items')
   })
 

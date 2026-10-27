@@ -52,12 +52,15 @@ export function useLiveRefetch(groupId: string, tables: readonly string[], refet
   return status
 }
 
+/** Quiet indicator: nothing while first connecting, "Live" once connected, "Reconnecting…" if the link drops. */
 export function LiveBadge({ status }: { status: LiveStatus }) {
-  const label = status === 'live' ? 'LIVE' : status === 'connecting' ? 'CONNECTING' : 'RECONNECTING'
+  if (status === 'connecting') return null
+  const live = status === 'live'
   return (
-    <span role="status" aria-label={status === 'live' ? 'Live updates on' : 'Live updates paused'} data-live-status={status}
-      className="font-mono" style={{ color: status === 'live' ? 'var(--accent)' : 'var(--text-tertiary)', fontSize: 9, letterSpacing: '0.22em' }}>
-      {label}
+    <span role="status" aria-label={live ? 'Live updates on' : 'Live updates paused, reconnecting'} data-live-status={status}
+      className="inline-flex items-center gap-1.5 text-xs" style={{ color: 'var(--text-tertiary)' }}>
+      <span aria-hidden="true" style={{ width: 6, height: 6, borderRadius: 999, background: live ? '#4ADE80' : 'var(--text-quaternary)' }} />
+      {live ? 'Live' : 'Reconnecting…'}
     </span>
   )
 }

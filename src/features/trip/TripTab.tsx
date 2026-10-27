@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
+import { NeonBtn } from '../../components/ui/NeonBtn'
 import type { TripTabProps } from '../workspace/tripTab'
 import { EventCard } from './EventCard'
 import { EventDialog, type SaveEvent } from './EventDialog'
 import { NextFlight } from './NextFlight'
 import { eventStatuses, nextFlight, type TripEvent } from './itinerary'
 import { createTripEvent, deleteTripEvent, updateTripEvent, useItinerary } from './tripEventsApi'
-import { dayKey, formatDay, resolveTripTimeZone, timeZoneCity, viewerTimeZone } from './tripTime'
+import { clocksDiffer, dayKey, formatDay, resolveTripTimeZone, timeZoneCity, viewerTimeZone } from './tripTime'
 import { LiveBadge } from './useLiveRefetch'
 
 type Editing = { mode: 'add' } | { mode: 'edit'; event: TripEvent }
@@ -52,27 +53,23 @@ export function TripTab({ trip, roster }: TripTabProps) {
     void reload()
   }
 
-  const showsLocal = localTimeZone !== tripZone
+  // Compare clock offsets, not names: browsers may report an old alias (Asia/Calcutta for Asia/Kolkata).
+  const showsLocal = clocksDiffer([new Date().toISOString()], tripZone, localTimeZone)
 
   return (
     <section data-testid="trip-tab" className="flex flex-col gap-6">
       <NextFlight flight={flight} tripTimeZone={tripZone} localTimeZone={localTimeZone} />
 
       <div>
-        <div className="flex items-end justify-between gap-3">
-          <div>
-            <h2 className="serif-display" style={{ color: 'var(--text-primary)', fontSize: 25 }}>Itinerary</h2>
-            <p className="font-mono mt-1" style={{ color: 'var(--text-tertiary)', fontSize: 10, letterSpacing: '0.08em' }}>
-              Trip time: {timeZoneCity(tripZone)} ({tripZone}){showsLocal ? ` · your time: ${timeZoneCity(localTimeZone)}` : ''}
-            </p>
-          </div>
-          <div className="flex shrink-0 items-center gap-3">
-            <LiveBadge status={live} />
-            <button type="button" onClick={() => setEditing({ mode: 'add' })} className="rounded-md border px-3 py-2 text-sm"
-              style={{ borderColor: 'var(--accent)', color: 'var(--accent)' }}>
-              Add event
-            </button>
-          </div>
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="serif-display" style={{ color: 'var(--text-primary)', fontSize: 25 }}>Itinerary</h2>
+          <NeonBtn type="button" variant="outline" color="#FF8B4D" className="min-h-11 shrink-0" onClick={() => setEditing({ mode: 'add' })}>
+            Add event
+          </NeonBtn>
+        </div>
+        <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs" style={{ color: 'var(--text-tertiary)' }}>
+          <span>Times in {timeZoneCity(tripZone)} time{showsLocal ? ` · yours shown below each` : ''}</span>
+          <LiveBadge status={live} />
         </div>
 
         {notice && (

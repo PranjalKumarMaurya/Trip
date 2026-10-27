@@ -88,9 +88,15 @@ export function isoToZonedInput(iso: string | null | undefined, timeZone: string
 }
 
 /** "Asia/Kolkata" -> "Kolkata", "America/Argentina/Buenos_Aires" -> "Buenos Aires". */
+// Browsers still report some zones under their old IANA names (Chromium says Asia/Calcutta).
+const LEGACY_CITY_NAMES: Record<string, string> = {
+  Calcutta: 'Kolkata', Saigon: 'Ho Chi Minh', Katmandu: 'Kathmandu', Rangoon: 'Yangon',
+  Kiev: 'Kyiv', Ulan_Bator: 'Ulaanbaatar', Dacca: 'Dhaka', Thimbu: 'Thimphu',
+}
+
 export function timeZoneCity(timeZone: string): string {
   const last = timeZone.split('/').pop() ?? timeZone
-  return last.replace(/_/gu, ' ')
+  return (LEGACY_CITY_NAMES[last] ?? last).replace(/_/gu, ' ')
 }
 
 export function formatTime(iso: string, timeZone: string): string {

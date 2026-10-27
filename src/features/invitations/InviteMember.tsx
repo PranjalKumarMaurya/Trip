@@ -1,4 +1,6 @@
 import { type FormEvent, useRef, useState } from 'react'
+import { NeonBtn } from '../../components/ui/NeonBtn'
+import { NeonInput } from '../../components/ui/NeonInput'
 import { createInvitation } from './invitationApi'
 import { invitationShareUrl } from './invitationLink'
 
@@ -87,21 +89,21 @@ export function InviteMember({ groupId, onIssued }: {
         <p className="mt-3" style={{ color: 'var(--text-secondary)' }}>For {state.recipient}. Only someone who verifies this email can join. The link works once and expires after 7 days.</p>
         <label className="mt-4 block" style={{ color: 'var(--text-secondary)' }}>
           Invitation link
-          <input readOnly value={state.url} onFocus={(event) => event.target.select()} className="mt-2 w-full rounded-md border px-3 py-2" style={{ color: 'var(--text-primary)', background: 'transparent', borderColor: 'var(--border)' }} />
+          <NeonInput readOnly value={state.url} onFocus={(event) => event.target.select()} className="mt-2" />
         </label>
-        <button type="button" onClick={() => void copy()} className="mt-4">Copy link</button>
+        <NeonBtn type="button" onClick={() => void copy()} className="mt-4 min-h-11 w-full">Copy link</NeonBtn>
         {copyMessage && <p role="status" className="mt-2" style={{ color: 'var(--text-secondary)' }}>{copyMessage}</p>}
-        <button type="button" onClick={inviteAnother} className="mt-4 block" style={{ color: 'var(--text-secondary)' }}>Invite someone else</button>
+        <NeonBtn type="button" variant="ghost" onClick={inviteAnother} className="mt-3 min-h-11 w-full">Invite someone else</NeonBtn>
       </> : state.kind === 'already-issued' ? <>
         <p role="status" className="mt-3" style={{ color: 'var(--text-secondary)' }}>An invitation was issued, but its one-time link can no longer be shown. Revoke it and create a new one if you need a link to share.</p>
-        <button type="button" onClick={inviteAnother} className="mt-4 block" style={{ color: 'var(--text-secondary)' }}>Invite someone else</button>
+        <NeonBtn type="button" variant="ghost" onClick={inviteAnother} className="mt-3 min-h-11 w-full">Invite someone else</NeonBtn>
       </> : <form onSubmit={(event) => void issue(event)} className="mt-4 flex flex-col gap-3">
         <label style={{ color: 'var(--text-secondary)' }}>Friend’s email
-          <input required type="email" value={email} onChange={(event) => updateEmail(event.target.value)} className="mt-2 w-full rounded-md border px-3 py-2" style={{ color: 'var(--text-primary)', background: 'transparent', borderColor: 'var(--border)' }} />
+          <NeonInput required type="email" autoComplete="off" placeholder="friend@example.com" value={email} onChange={(event) => updateEmail(event.target.value)} className="mt-2" />
         </label>
         <p style={{ color: 'var(--text-secondary)', fontSize: 13 }}>You will send the link yourself. Only this verified email can use it.</p>
         {state.kind === 'error' && <p role="alert" style={{ color: 'var(--accent)' }}>{state.message}</p>}
-        <button type="submit" disabled={state.kind === 'issuing' || (state.kind === 'error' && !state.retryable)}>{state.kind === 'issuing' ? 'Creating link…' : state.kind === 'error' && state.retryable ? 'Retry creating link' : 'Create link'}</button>
+        <NeonBtn type="submit" className="min-h-11 w-full" disabled={state.kind === 'issuing' || (state.kind === 'error' && !state.retryable)}>{state.kind === 'issuing' ? 'Creating link…' : state.kind === 'error' && state.retryable ? 'Retry creating link' : 'Create link'}</NeonBtn>
       </form>}
     </section>
   )

@@ -312,15 +312,23 @@ function Choice<T extends string>({ legend, name, value, options, onChange, chil
   return (
     <fieldset className="surface flex flex-col gap-3 px-3.5 py-3">
       <legend className="sr-only">{legend}</legend>
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-        <span aria-hidden="true" style={{ color: 'var(--text-secondary)', fontSize: 14 }}>{legend}</span>
-        {options.map((option) => (
-          <label key={option.value} className="flex min-h-11 items-center gap-2 text-sm" style={{ color: 'var(--text-primary)' }}>
-            <input type="radio" name={name} value={option.value} checked={value === option.value}
-              onChange={() => onChange(option.value)} style={{ accentColor: 'var(--accent)' }} />
-            {option.label}
-          </label>
-        ))}
+      <span aria-hidden="true" style={{ color: 'var(--text-secondary)', fontSize: 14 }}>{legend}</span>
+      <div className="grid grid-cols-2 gap-2">
+        {options.map((option) => {
+          const checked = value === option.value
+          return (
+            <label key={option.value} className="flex min-h-11 cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap rounded-full border px-2 text-[13px]"
+              style={{
+                borderColor: checked ? 'var(--accent)' : 'var(--border)',
+                background: checked ? 'var(--accent-soft)' : 'transparent',
+                color: checked ? 'var(--text-primary)' : 'var(--text-secondary)',
+              }}>
+              <input type="radio" name={name} value={option.value} checked={checked}
+                onChange={() => onChange(option.value)} style={{ accentColor: 'var(--accent)' }} />
+              {option.label}
+            </label>
+          )
+        })}
       </div>
       {children}
     </fieldset>
