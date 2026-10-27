@@ -30,7 +30,7 @@ export function LegalPage({ kind, onBack }: { kind: keyof typeof pages; onBack: 
   const page = pages[kind]
   return (
     <ScreenFrame testId={`legal-${kind}`} centered={false} eyebrow={<p className="eyebrow">Profile</p>} title={page.title}
-      top={<button type="button" className="text-link" onClick={onBack}><IconBack size={18} />Profile</button>}>
+      top={<button type="button" className="topbar-btn topbar-btn--back" onClick={onBack}><IconBack size={18} />Profile</button>}>
       <p role="note" className="notice notice--error mb-6" data-testid="legal-placeholder">
         Placeholder text — the owner will replace this page with the final {page.title.toLowerCase()} before launch.
       </p>

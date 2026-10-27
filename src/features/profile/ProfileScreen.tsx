@@ -46,7 +46,7 @@ export function ProfileScreen({ userId, email, profile, profileStatus, onProfile
 }) {
   const [page, setPage] = useState<Page>('main')
   const [sheet, setSheet] = useState<SheetKind>(null)
-  const top = <button type="button" className="text-link" onClick={onBack}><IconBack size={18} />{backLabel}</button>
+  const top = <button type="button" className="topbar-btn topbar-btn--back" onClick={onBack}><IconBack size={18} /><span className="truncate">{backLabel}</span></button>
 
   if (page !== 'main') return <LegalPage kind={page} onBack={() => setPage('main')} />
 
@@ -181,7 +181,7 @@ function AvatarEditor({ userId, profile, onChanged }: { userId: string; profile:
           <NeonBtn type="button" variant="outline" size="lg" disabled={busy !== null} onClick={() => fileRef.current?.click()}>
             <IconCamera size={18} />{busy === 'photo' ? 'Saving…' : profile.avatarPath ? 'Change photo' : 'Add photo'}
           </NeonBtn>
-          {profile.avatarPath && <button type="button" className="text-link self-start" disabled={busy !== null} onClick={() => void removePhoto()}>Remove photo</button>}
+          {profile.avatarPath && <NeonBtn type="button" variant="ghost" size="lg" disabled={busy !== null} onClick={() => void removePhoto()}>Remove photo</NeonBtn>}
         </div>
       </div>
       <p className="mt-5 field-label">Or pick an emoji</p>

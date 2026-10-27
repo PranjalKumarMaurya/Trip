@@ -48,8 +48,8 @@ export function GroupWorkspace({ trip, onBack, onRefresh, onOpenProfile, profile
     <main data-testid="group-workspace" className="mx-auto flex min-h-dvh w-full max-w-[480px] flex-col">
       <header className="app-topbar app-topbar--stacked">
         <div className="flex items-center gap-2">
-          <button type="button" className="text-link" style={{ textDecoration: 'none', marginLeft: -4 }} onClick={onBack}>
-            <IconBack size={20} />Trips
+          <button type="button" className="topbar-btn topbar-btn--back" onClick={onBack}>
+            <IconBack size={18} />Trips
           </button>
           <span className="flex-1" />
           <button type="button" className="round-btn" aria-label={owner ? 'Trip settings' : 'Trip details'} aria-haspopup="dialog"

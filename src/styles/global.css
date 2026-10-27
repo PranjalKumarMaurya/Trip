@@ -629,3 +629,6 @@ input[type="date"].is-empty::-webkit-datetime-edit { color: var(--text-tertiary)
 .details-list { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr); gap: 10px 12px; font-size: 14px; }
 .details-list dt { color: var(--text-tertiary); }
 .details-list dd { color: var(--text-primary); overflow-wrap: anywhere; }
+
+/* Back control in a top row: a pill button with a chevron. */
+.topbar-btn--back { max-width: 70%; padding: 0 16px 0 10px; }
