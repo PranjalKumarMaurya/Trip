@@ -20,6 +20,7 @@ function fakeStore(overrides: Partial<ParseStore> = {}) {
     tripContext: async () => trip,
     download: async () => ({ bytes: new Uint8Array([37, 80, 68, 70]), mimeType: 'application/pdf' }),
     saveResult: async (_id, result) => { saved.push(result) },
+    claimParse: async () => 'claimed',
     ...overrides,
   }
   return { store, saved }

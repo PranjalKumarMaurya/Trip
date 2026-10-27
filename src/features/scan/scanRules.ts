@@ -172,6 +172,8 @@ export function formToEventInput(form: EventForm): { errors: FormErrors; input: 
 export type ParseFailure =
   | 'not_authenticated' | 'document_not_found' | 'unsupported_for_parsing' | 'too_large_to_parse'
   | 'document_unavailable' | 'parser_unavailable' | 'parse_failed' | 'network' | 'unknown'
+  /** The daily automatic-reading limit: yours, or the whole Trip's. */
+  | 'parse_limit_reached' | 'trip_parse_limit_reached'
 
 export function parseFailureMessage(code: ParseFailure): string {
   switch (code) {
@@ -179,6 +181,8 @@ export function parseFailureMessage(code: ParseFailure): string {
     case 'too_large_to_parse': return 'This image is too large to read automatically. Enter the details yourself.'
     case 'parser_unavailable': return 'Automatic reading is not available right now. Enter the details yourself.'
     case 'parse_failed': return 'We could not read this document. Enter the details yourself.'
+    case 'parse_limit_reached': return 'You’ve used today’s automatic reads. Enter the details yourself, or try again tomorrow. The document is saved.'
+    case 'trip_parse_limit_reached': return 'This Trip has used today’s automatic reads. Enter the details yourself, or try again tomorrow. The document is saved.'
     case 'document_not_found':
     case 'document_unavailable': return 'This document is no longer available to you.'
     case 'not_authenticated': return 'Your session has ended. Sign in again to read documents.'

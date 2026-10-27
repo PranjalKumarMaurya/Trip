@@ -1077,6 +1077,62 @@ export type Database = {
           },
         ]
       }
+      trip_parse_usage: {
+        Row: {
+          created_at: string
+          document_id: string | null
+          group_id: string
+          group_member_id: string
+          id: string
+          profile_id: string
+        }
+        Insert: {
+          created_at?: string
+          document_id?: string | null
+          group_id: string
+          group_member_id: string
+          id?: string
+          profile_id: string
+        }
+        Update: {
+          created_at?: string
+          document_id?: string | null
+          group_id?: string
+          group_member_id?: string
+          id?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_parse_usage_document_same_group"
+            columns: ["group_id", "document_id"]
+            isOneToOne: false
+            referencedRelation: "trip_documents"
+            referencedColumns: ["group_id", "id"]
+          },
+          {
+            foreignKeyName: "trip_parse_usage_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trip_parse_usage_member_same_group"
+            columns: ["group_id", "group_member_id"]
+            isOneToOne: false
+            referencedRelation: "group_members"
+            referencedColumns: ["group_id", "id"]
+          },
+          {
+            foreignKeyName: "trip_parse_usage_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       trip_settlements: {
         Row: {
           amount: number
@@ -1273,6 +1329,14 @@ export type Database = {
           target_membership_id: string
         }
         Returns: Json
+      }
+      claim_document_parse: {
+        Args: {
+          p_document_id: string
+          p_member_limit: number
+          p_trip_limit: number
+        }
+        Returns: string
       }
       commit_expense: {
         Args: {

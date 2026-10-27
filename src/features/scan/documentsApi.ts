@@ -73,16 +73,16 @@ export async function uploadTripDocument(groupId: string, groupMemberId: string,
 export type ParseOutcome = { ok: true; draft: EventDraft } | { ok: false; code: ParseFailure }
 
 const PARSE_FAILURES: readonly string[] = ['not_authenticated', 'document_not_found', 'unsupported_for_parsing',
-  'too_large_to_parse', 'document_unavailable', 'parser_unavailable', 'parse_failed']
+  'too_large_to_parse', 'document_unavailable', 'parser_unavailable', 'parse_failed', 'parse_limit_reached']
 
 export async function parseTripDocument(documentId: string, trip: TripContext): Promise<ParseOutcome> {
   const { data, error } = await supabase.functions.invoke<{ draft?: unknown }>('parse-document', { body: { documentId } })
   if (error) {
     if (error instanceof FunctionsFetchError) return { ok: false, code: 'network' }
     if (error instanceof FunctionsHttpError) {
-      const body = await (error.context as Response).json().catch(() => null) as { error?: unknown } | null
+      const body = await (error.context as Response).json().catch(() => null) as { error?: unknown; scope?: unknown } | null
       const code = typeof body?.error === 'string' && PARSE_FAILURES.includes(body.error) ? body.error as ParseFailure : 'unknown'
-      return { ok: false, code }
+      return { ok: false, code: code === 'parse_limit_reached' && body?.scope === 'trip' ? 'trip_parse_limit_reached' : code }
     }
     return { ok: false, code: 'unknown' }
   }

@@ -4,13 +4,15 @@
 // the service-role key and never creates Events.
 //
 // Secrets: ANTHROPIC_API_KEY (required for real parsing), SCAN_PARSE_MODEL
-// (optional), SCAN_PARSE_STUB=1 (local stacks and tests only: deterministic draft).
+// (optional), SCAN_PARSE_STUB=1 (local stacks and tests only: deterministic draft),
+// SCAN_PARSE_DAILY_LIMIT_MEMBER / SCAN_PARSE_DAILY_LIMIT_TRIP (parses per person
+// and per Trip in any 24 hours; default 20 and 100). The stub counts too.
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import Anthropic from 'npm:@anthropic-ai/sdk@1'
 import { DOCUMENT_BUCKET } from '../_shared/documentDraft.ts'
 import {
   EXTRACTION_SCHEMA, EXTRACTION_SYSTEM_PROMPT, type Extractor, type ParseStore,
-  buildExtractionPrompt, bytesToBase64, createParseHandler, createStubExtractor, parseModelText,
+  buildExtractionPrompt, bytesToBase64, createParseHandler, createStubExtractor, parseLimitsFromEnv, parseModelText,
 } from './handler.ts'
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
@@ -41,6 +43,13 @@ function openStore(authorization: string): ParseStore {
       const { data, error } = await client.storage.from(DOCUMENT_BUCKET).download(path)
       if (error || !data) return null
       return { bytes: new Uint8Array(await data.arrayBuffer()), mimeType: data.type }
+    },
+    async claimParse(documentId, limits) {
+      const { data, error } = await client.rpc('claim_document_parse', {
+        p_document_id: documentId, p_member_limit: limits.member, p_trip_limit: limits.trip,
+      })
+      if (error || (data !== 'claimed' && data !== 'member_limit' && data !== 'trip_limit')) throw new Error('claim_failed')
+      return data
     },
     async saveResult(documentId, result) {
       const { error } = await client.from('trip_documents').update(result.status === 'parsed'
@@ -78,4 +87,7 @@ const extractor: Extractor | null = Deno.env.get('SCAN_PARSE_STUB') === '1'
   : apiKey ? anthropicExtractor(apiKey, Deno.env.get('SCAN_PARSE_MODEL') || 'claude-haiku-4-5-20251001') : null
 
 // Log only outcome codes: never document content, names, or tokens.
-Deno.serve(createParseHandler({ openStore, extractor, log: (event) => console.log(`parse-document ${event}`) }))
+Deno.serve(createParseHandler({
+  openStore, extractor, limits: parseLimitsFromEnv((name) => Deno.env.get(name)),
+  log: (event) => console.log(`parse-document ${event}`),
+}))
