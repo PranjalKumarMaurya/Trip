@@ -47,7 +47,7 @@ export function CrewStatusStrip({ trip, roster, events, audience, tripTimeZone }
           const firstName = member.displayName.trim().split(/\s+/u)[0] || member.displayName
           return (
             <li key={member.groupMemberId} data-testid="crew-status-member" data-phase={status.phase}
-              className="surface relative flex w-[116px] shrink-0 flex-col items-center gap-1 px-2 pb-2.5 pt-3 text-center"
+              className="surface relative flex w-[120px] shrink-0 flex-col items-center gap-1 px-2 pb-2.5 pt-3 text-center"
               style={{ scrollSnapAlign: 'start', borderColor: isMe ? 'rgba(255,139,77,0.4)' : undefined, opacity: RESTING.has(status.phase) ? 0.6 : 1 }}>
               {MOVING.has(status.phase) && <span aria-hidden="true" className="animate-pulse-soft absolute right-2 top-2"
                 style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--accent)' }} />}
@@ -64,7 +64,7 @@ export function CrewStatusStrip({ trip, roster, events, audience, tripTimeZone }
               <span className="w-full truncate" style={{ color: 'var(--text-primary)', fontSize: 13, fontWeight: 500 }} title={status.label}>{status.label}</span>
               {status.detail && <>
                 <span className="sr-only">, </span>
-                <span className="font-mono w-full truncate" style={{ color: 'var(--text-tertiary)', fontSize: 10.5 }}>{status.detail}</span>
+                <span className="font-mono line-clamp-2 w-full" style={{ color: 'var(--text-tertiary)', fontSize: 10.5, lineHeight: 1.35 }}>{status.detail}</span>
               </>}
             </li>
           )

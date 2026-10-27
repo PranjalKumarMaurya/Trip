@@ -112,9 +112,9 @@ export function InviteMember({ groupId, tripName, onIssued }: {
         </label>
         <NeonBtn type="button" onClick={() => void copy()} className="mt-4 min-h-11 w-full">Copy link</NeonBtn>
         <div className="mt-3 flex gap-3">
-          {nativeShare && <NeonBtn type="button" variant="outline" onClick={() => void share()} className="min-h-11 flex-1">Share…</NeonBtn>}
+          {nativeShare && <NeonBtn type="button" variant="outline" onClick={() => void share()} className="min-h-11 shrink-0 px-5">Share…</NeonBtn>}
           {shareDetails && <a href={shareDetails.whatsAppUrl} target="_blank" rel="noopener noreferrer"
-            className="font-ui inline-flex min-h-11 flex-1 items-center justify-center rounded-full px-4 text-sm transition-all duration-200 hover:brightness-110"
+            className="font-ui inline-flex min-h-11 min-w-0 flex-1 items-center justify-center whitespace-nowrap rounded-full px-4 text-sm transition-all duration-200 hover:brightness-110"
             style={{ border: '1px solid rgba(37,211,102,0.45)', color: '#5FE08D', fontWeight: 500, letterSpacing: 0.2 }}>Send on WhatsApp</a>}
         </div>
         {copyMessage && <p role="status" className="mt-2" style={{ color: 'var(--text-secondary)' }}>{copyMessage}</p>}

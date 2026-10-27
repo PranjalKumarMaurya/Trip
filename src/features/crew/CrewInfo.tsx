@@ -21,11 +21,11 @@ export function CrewInfo({ id, name, isMe, profile, loading, error }: {
       ) : details.length === 0 ? (
         <p style={{ color: 'var(--text-secondary)' }}>{isMe ? 'You haven’t shared any details yet.' : `${name} hasn’t shared any details yet.`}</p>
       ) : (
-        <dl className="grid gap-x-4 gap-y-2" style={{ gridTemplateColumns: 'auto minmax(0, 1fr)' }}>
+        <dl className="flex flex-col gap-3">
           {details.map((detail) => (
-            <div key={detail.key} className="contents">
-              <dt style={{ color: 'var(--text-tertiary)' }}>{detail.label}</dt>
-              <dd className="flex min-w-0 items-center gap-3" style={{ color: 'var(--text-primary)' }}>
+            <div key={detail.key}>
+              <dt className="text-xs" style={{ color: 'var(--text-tertiary)' }}>{detail.label}</dt>
+              <dd className="mt-0.5 flex min-w-0 items-center justify-between gap-3" style={{ color: 'var(--text-primary)' }}>
                 {detail.href
                   ? <a href={detail.href} className="break-words underline decoration-[color:var(--border-strong)] underline-offset-4" aria-label={`Call ${name}: ${detail.value}`}>{detail.value}</a>
                   : <span className={`min-w-0 break-words ${detail.copyable ? 'font-mono' : ''}`}>{detail.value}</span>}

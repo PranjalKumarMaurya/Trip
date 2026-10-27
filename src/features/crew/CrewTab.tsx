@@ -142,22 +142,24 @@ export function CrewTab({ trip, roster, reloadRoster, onTripsChanged }: TripTabP
             const emoji = profileOf(member.groupMemberId)?.avatarEmoji
             return (
               <li key={member.groupMemberId} style={{ color: 'var(--text-primary)' }}>
-                <div className="flex items-center justify-between gap-3" style={{ minHeight: 44 }}>
+                <div className="flex items-center justify-between gap-3" style={{ minHeight: 48 }}>
                   <button type="button" aria-expanded={open} aria-controls={infoId} aria-label={`Details for ${label}`}
-                    onClick={() => setExpanded(open ? null : member.groupMemberId)} className="flex min-h-11 min-w-0 flex-1 items-center gap-2.5 text-left">
+                    onClick={() => setExpanded(open ? null : member.groupMemberId)} className="flex min-h-12 min-w-0 flex-1 items-center gap-3 text-left">
                     <span aria-hidden="true" className="flex shrink-0 items-center justify-center" style={{
-                      width: 30, height: 30, borderRadius: '50%', background: 'var(--accent-soft)', border: '1px solid var(--border-strong)',
-                      fontSize: emoji ? 16 : 13, fontWeight: 600,
+                      width: 32, height: 32, borderRadius: '50%', background: 'var(--accent-soft)', border: '1px solid var(--border-strong)',
+                      fontSize: emoji ? 17 : 13, fontWeight: 600,
                     }}>{emoji || member.displayName.trim().charAt(0).toUpperCase()}</span>
-                    <span className="min-w-0 truncate">{label}</span>
-                    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"
-                      className="shrink-0 transition-transform" style={{ color: 'var(--text-tertiary)', transform: open ? 'rotate(180deg)' : undefined }}><path d="m6 9 6 6 6-6" /></svg>
+                    <span className="min-w-0">
+                      <span className="flex items-center gap-1.5">
+                        <span className="min-w-0 truncate">{label}</span>
+                        <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"
+                          className="shrink-0 transition-transform" style={{ color: 'var(--text-tertiary)', transform: open ? 'rotate(180deg)' : undefined }}><path d="m6 9 6 6 6-6" /></svg>
+                      </span>
+                      <span className="block" style={{ color: 'var(--text-secondary)', fontSize: 13 }}>{member.role === 'owner' ? 'Owner' : 'Member'}</span>
+                    </span>
                   </button>
-                  <span className="flex shrink-0 items-center gap-3">
-                    <span style={{ color: 'var(--text-secondary)' }}>{member.role === 'owner' ? 'Owner' : 'Member'}</span>
-                    {manageable && <button type="button" aria-label={`Manage ${member.displayName}`} onClick={() => { setNotice(''); setSheet({ kind: 'member', member }) }}
-                      className={buttonClass} style={quietButtonStyle}>Manage</button>}
-                  </span>
+                  {manageable && <button type="button" aria-label={`Manage ${member.displayName}`} onClick={() => { setNotice(''); setSheet({ kind: 'member', member }) }}
+                    className={`${buttonClass} shrink-0`} style={quietButtonStyle}>Manage</button>}
                 </div>
                 {open && <CrewInfo id={infoId} name={member.displayName} isMe={isMe} profile={profileOf(member.groupMemberId)}
                   loading={profiles.loading} error={profiles.error} />}
