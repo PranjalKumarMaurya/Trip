@@ -697,6 +697,87 @@ export type Database = {
         }
         Relationships: []
       }
+      trip_events: {
+        Row: {
+          airline: string | null
+          arr_code: string | null
+          booking_ref: string | null
+          created_at: string
+          created_by: string
+          dep_code: string | null
+          ends_at: string | null
+          event_type: string
+          flight_no: string | null
+          group_id: string
+          id: string
+          location: string | null
+          location_to: string | null
+          map_url: string | null
+          notes: string | null
+          starts_at: string
+          terminal: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          airline?: string | null
+          arr_code?: string | null
+          booking_ref?: string | null
+          created_at?: string
+          created_by: string
+          dep_code?: string | null
+          ends_at?: string | null
+          event_type: string
+          flight_no?: string | null
+          group_id: string
+          id?: string
+          location?: string | null
+          location_to?: string | null
+          map_url?: string | null
+          notes?: string | null
+          starts_at: string
+          terminal?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          airline?: string | null
+          arr_code?: string | null
+          booking_ref?: string | null
+          created_at?: string
+          created_by?: string
+          dep_code?: string | null
+          ends_at?: string | null
+          event_type?: string
+          flight_no?: string | null
+          group_id?: string
+          id?: string
+          location?: string | null
+          location_to?: string | null
+          map_url?: string | null
+          notes?: string | null
+          starts_at?: string
+          terminal?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_events_creator_same_group"
+            columns: ["group_id", "created_by"]
+            isOneToOne: false
+            referencedRelation: "group_members"
+            referencedColumns: ["group_id", "id"]
+          },
+          {
+            foreignKeyName: "trip_events_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       users: {
         Row: {
           color: string | null

@@ -20,7 +20,8 @@ Living status for the multi-user Trip app. Update it in the same commit as the w
 | Invite one recipient by email, accept, join as Member; expiry, revoke, races, last-Owner, transfer, leave/remove, archive | `npm run test:ir005:candidate` (14 checks) |
 | Switch between Trips; Member sees only joined Trips | `npm run test:journey:live` |
 | Trip workspace tab bar; Crew tab with roster and Owner invite form | mocked browser tests + live journey |
-| All migrations 001–023 apply as hosted `postgres` | every suite above applies them that way |
+| Shared Trip itinerary table `trip_events` (migration 024): Trip isolation, member-only writes, no creator impersonation, removal cuts access | `npm run test:db:events` |
+| All migrations 001–024 apply as hosted `postgres` | every suite above applies them that way |
 
 Unit tests: `npm run test:unit`. Mocked browser tests: `PLAYWRIGHT_BROWSERS_PATH=0 npx playwright test tests/browser/ir-003 tests/browser/ir-004 tests/browser/ir-005 tests/browser/integration/new-user-candidate.spec.ts`.
 
@@ -41,7 +42,7 @@ Unit tests: `npm run test:unit`. Mocked browser tests: `PLAYWRIGHT_BROWSERS_PATH
 
 - `npm run db:start` starts a local Supabase with every migration and writes `.env.development.local`; then `npm run dev`. `npm run db:types` regenerates `src/lib/database.types.ts`; `npm run db:stop` stops it.
 - Tests need the `docker` and `psql` commands. In the `claude-box` distrobox, `docker` forwards to the host daemon.
-- New suites should use `tests/support/local-stack.mjs` with their own `projectId` and `basePort`.
+- New suites should use `tests/support/local-stack.mjs` (own `projectId` and `basePort`) and `tests/support/db-fixtures.mjs` (`createUsers`, `createTrip`, `sqlAs`); `tests/database/trip-events/verify-trip-events.mjs` is the template.
 
 ## Parallel workstreams
 
