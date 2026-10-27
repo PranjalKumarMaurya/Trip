@@ -45,6 +45,11 @@ export function isValidTimeZone(timeZone: string): boolean {
   }
 }
 
+/** The Trip's timezone if usable, else UTC, so bad data never crashes the tab. */
+export function resolveTripTimeZone(value: unknown): string {
+  return typeof value === 'string' && value !== '' && isValidTimeZone(value) ? value : 'UTC'
+}
+
 const INPUT_PATTERN = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/u
 
 /**

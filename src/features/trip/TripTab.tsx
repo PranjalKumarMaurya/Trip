@@ -5,7 +5,7 @@ import { EventDialog, type SaveEvent } from './EventDialog'
 import { NextFlight } from './NextFlight'
 import { eventStatuses, nextFlight, type TripEvent } from './itinerary'
 import { createTripEvent, deleteTripEvent, updateTripEvent, useItinerary } from './tripEventsApi'
-import { dayKey, formatDay, timeZoneCity, viewerTimeZone } from './tripTime'
+import { dayKey, formatDay, resolveTripTimeZone, timeZoneCity, viewerTimeZone } from './tripTime'
 import { LiveBadge } from './useLiveRefetch'
 
 type Editing = { mode: 'add' } | { mode: 'edit'; event: TripEvent }
@@ -16,6 +16,7 @@ export function TripTab({ trip, roster }: TripTabProps) {
   const [now, setNow] = useState(() => Date.now())
   const [localTimeZone] = useState(viewerTimeZone)
   const [notice, setNotice] = useState<string | null>(null)
+  const tripZone = resolveTripTimeZone(trip.timezone)
 
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 30_000)
@@ -28,13 +29,13 @@ export function TripTab({ trip, roster }: TripTabProps) {
   const days = useMemo(() => {
     const groups: { key: string; label: string; events: TripEvent[] }[] = []
     for (const event of events) {
-      const key = dayKey(event.starts_at, trip.timezone)
+      const key = dayKey(event.starts_at, tripZone)
       const last = groups[groups.length - 1]
       if (last?.key === key) last.events.push(event)
-      else groups.push({ key, label: formatDay(event.starts_at, trip.timezone), events: [event] })
+      else groups.push({ key, label: formatDay(event.starts_at, tripZone), events: [event] })
     }
     return groups
-  }, [events, trip.timezone])
+  }, [events, tripZone])
 
   const save: SaveEvent = async (payload, people, overwrite) => {
     const saved = editing?.mode === 'edit'
@@ -51,18 +52,18 @@ export function TripTab({ trip, roster }: TripTabProps) {
     void reload()
   }
 
-  const showsLocal = localTimeZone !== trip.timezone
+  const showsLocal = localTimeZone !== tripZone
 
   return (
     <section data-testid="trip-tab" className="flex flex-col gap-6">
-      <NextFlight flight={flight} tripTimeZone={trip.timezone} localTimeZone={localTimeZone} />
+      <NextFlight flight={flight} tripTimeZone={tripZone} localTimeZone={localTimeZone} />
 
       <div>
         <div className="flex items-end justify-between gap-3">
           <div>
             <h2 className="serif-display" style={{ color: 'var(--text-primary)', fontSize: 25 }}>Itinerary</h2>
             <p className="font-mono mt-1" style={{ color: 'var(--text-tertiary)', fontSize: 10, letterSpacing: '0.08em' }}>
-              Trip time: {timeZoneCity(trip.timezone)} ({trip.timezone}){showsLocal ? ` · your time: ${timeZoneCity(localTimeZone)}` : ''}
+              Trip time: {timeZoneCity(tripZone)} ({tripZone}){showsLocal ? ` · your time: ${timeZoneCity(localTimeZone)}` : ''}
             </p>
           </div>
           <div className="flex shrink-0 items-center gap-3">
@@ -99,7 +100,7 @@ export function TripTab({ trip, roster }: TripTabProps) {
                 <ol className="flex flex-col gap-3">
                   {day.events.map((event) => (
                     <EventCard key={event.id} event={event} status={statuses.get(event.id) ?? 'upcoming'}
-                      tripTimeZone={trip.timezone} localTimeZone={localTimeZone}
+                      tripTimeZone={tripZone} localTimeZone={localTimeZone}
                       audienceNames={(audience.get(event.id) ?? []).map((id) => names.get(id) ?? 'a former member')}
                       onEdit={() => setEditing({ mode: 'edit', event })} onDelete={() => remove(event)} />
                   ))}
@@ -115,7 +116,7 @@ export function TripTab({ trip, roster }: TripTabProps) {
           key={editing.mode === 'edit' ? editing.event.id : 'add'}
           event={editing.mode === 'edit' ? editing.event : null}
           initialAudience={editing.mode === 'edit' ? audience.get(editing.event.id) ?? [] : []}
-          tripTimeZone={trip.timezone}
+          tripTimeZone={tripZone}
           roster={roster}
           onSave={save}
           onClose={() => setEditing(null)}

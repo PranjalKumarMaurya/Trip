@@ -5,7 +5,8 @@ import {
   countdown, emptyEventForm, eventStatuses, formatCountdown, nextFlight, safeMapUrl, sortEvents, validateEventForm,
 } from '../../src/features/trip/itinerary.ts'
 import {
-  clocksDiffer, dayKey, dualTime, formatDay, formatSpan, formatTime, isoToZonedInput, timeZoneCity, timeZoneOffsetMs, zonedInputToIso,
+  clocksDiffer, dayKey, dualTime, formatDay, formatSpan, formatTime, isoToZonedInput, resolveTripTimeZone, timeZoneCity, timeZoneOffsetMs,
+  zonedInputToIso,
 } from '../../src/features/trip/tripTime.ts'
 
 test('typed times are read as wall-clock time in the Trip timezone', () => {
@@ -164,4 +165,9 @@ test('event form validation and payload', () => {
     assert.equal(dinner.payload.starts_at, '2026-11-01T12:00:00.000Z')
   }
   assert.equal(validateEventForm({ ...emptyEventForm, eventType: 'party', title: 'x', startsAt: '2026-11-01T20:00' }, 'UTC').ok, false)
+})
+
+test('an unusable Trip timezone falls back to UTC instead of crashing', () => {
+  assert.equal(resolveTripTimeZone('Asia/Makassar'), 'Asia/Makassar')
+  for (const bad of [undefined, null, '', 'Mars/Olympus', 42]) assert.equal(resolveTripTimeZone(bad), 'UTC')
 })
