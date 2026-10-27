@@ -11,12 +11,19 @@ const playwright = resolve(root, 'node_modules/.bin/playwright')
 const projectId = 'bachelor-trip-app-journey-live'
 const container = `supabase_db_${projectId}`
 const port = '58522'
+const verifyEmail = process.env.TRIP_VERIFY_EMAIL === '1'
 let workdir = ''
 let started = false
 
 function run(name, args, { input, env = process.env, label = 'command' } = {}) {
   const result = spawnSync(name, args, { cwd: root, encoding: 'utf8', input, env })
-  if (result.error || result.status !== 0) throw new Error(`${label}-failed`)
+  if (result.error || result.status !== 0) {
+    if (label === 'live-browser-journey') {
+      const diagnostic = `${result.stdout}\n${result.stderr}`.match(/Error: ([a-z0-9-]+)/u)?.[1]
+      if (diagnostic) console.error(diagnostic)
+    }
+    throw new Error(`${label}-failed`)
+  }
   return result.stdout
 }
 
@@ -58,7 +65,7 @@ enabled = false
 enabled = false
 port = 58523
 [inbucket]
-enabled = false
+enabled = ${verifyEmail}
 port = 58524
 smtp_port = 58525
 [storage]
@@ -67,7 +74,7 @@ enabled = true
 enabled = true
 site_url = "http://127.0.0.1:4173"
 [auth.email]
-enable_confirmations = false
+enable_confirmations = ${verifyEmail}
 [edge_runtime]
 enabled = false
 [analytics]
@@ -122,14 +129,20 @@ try {
   start()
   migrate()
   const key = anonKey()
-  run(playwright, ['test', 'tests/browser/integration/live-journey.spec.ts'], {
+  if (verifyEmail) {
+    const mailboxRoot = await fetch('http://127.0.0.1:58524/')
+    console.log(JSON.stringify({ mailboxRootStatus: mailboxRoot.status }))
+  }
+  run(playwright, ['test', verifyEmail
+    ? 'tests/browser/integration/email-verification.spec.ts'
+    : 'tests/browser/integration/live-journey.spec.ts'], {
     env: {
       ...process.env, PLAYWRIGHT_BROWSERS_PATH: '0', TRIP_LIVE_JOURNEY: '1',
       VITE_SUPABASE_URL: 'http://127.0.0.1:58521', VITE_SUPABASE_ANON_KEY: key,
     }, label: 'live-browser-journey',
   })
   stop()
-  console.log(JSON.stringify({ liveJourneyCandidate: 'passed', twoAccounts: 'passed', cleanup: 'passed' }))
+  console.log(JSON.stringify({ liveJourneyCandidate: 'passed', emailVerification: verifyEmail ? 'passed' : 'not_run', twoAccounts: 'passed', cleanup: 'passed' }))
 } catch (error) {
   try { stop() } catch { /* preserve primary error */ }
   const message = error instanceof Error && /^[a-z0-9-]+$/u.test(error.message) ? error.message : 'live-journey-failed'
