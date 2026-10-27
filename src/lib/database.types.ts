@@ -697,6 +697,76 @@ export type Database = {
         }
         Relationships: []
       }
+      trip_documents: {
+        Row: {
+          created_at: string
+          event_id: string | null
+          extracted: Json | null
+          file_name: string
+          group_id: string
+          id: string
+          mime_type: string
+          parse_error: string | null
+          parse_status: string
+          size_bytes: number
+          storage_path: string
+          updated_at: string
+          uploaded_by: string
+        }
+        Insert: {
+          created_at?: string
+          event_id?: string | null
+          extracted?: Json | null
+          file_name: string
+          group_id: string
+          id?: string
+          mime_type: string
+          parse_error?: string | null
+          parse_status?: string
+          size_bytes: number
+          storage_path: string
+          updated_at?: string
+          uploaded_by: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string | null
+          extracted?: Json | null
+          file_name?: string
+          group_id?: string
+          id?: string
+          mime_type?: string
+          parse_error?: string | null
+          parse_status?: string
+          size_bytes?: number
+          storage_path?: string
+          updated_at?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_documents_event_same_group"
+            columns: ["group_id", "event_id"]
+            isOneToOne: false
+            referencedRelation: "trip_events"
+            referencedColumns: ["group_id", "id"]
+          },
+          {
+            foreignKeyName: "trip_documents_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trip_documents_uploader_same_group"
+            columns: ["group_id", "uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "group_members"
+            referencedColumns: ["group_id", "id"]
+          },
+        ]
+      }
       trip_event_audience: {
         Row: {
           created_at: string
@@ -811,6 +881,242 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "groups"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      trip_expense_payers: {
+        Row: {
+          amount: number
+          expense_id: string
+          group_id: string
+          group_member_id: string
+        }
+        Insert: {
+          amount: number
+          expense_id: string
+          group_id: string
+          group_member_id: string
+        }
+        Update: {
+          amount?: number
+          expense_id?: string
+          group_id?: string
+          group_member_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_expense_payers_expense_same_group"
+            columns: ["group_id", "expense_id"]
+            isOneToOne: false
+            referencedRelation: "trip_expenses"
+            referencedColumns: ["group_id", "id"]
+          },
+          {
+            foreignKeyName: "trip_expense_payers_member_same_group"
+            columns: ["group_id", "group_member_id"]
+            isOneToOne: false
+            referencedRelation: "group_members"
+            referencedColumns: ["group_id", "id"]
+          },
+        ]
+      }
+      trip_expense_shares: {
+        Row: {
+          amount: number
+          expense_id: string
+          group_id: string
+          group_member_id: string
+        }
+        Insert: {
+          amount: number
+          expense_id: string
+          group_id: string
+          group_member_id: string
+        }
+        Update: {
+          amount?: number
+          expense_id?: string
+          group_id?: string
+          group_member_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_expense_shares_expense_same_group"
+            columns: ["group_id", "expense_id"]
+            isOneToOne: false
+            referencedRelation: "trip_expenses"
+            referencedColumns: ["group_id", "id"]
+          },
+          {
+            foreignKeyName: "trip_expense_shares_member_same_group"
+            columns: ["group_id", "group_member_id"]
+            isOneToOne: false
+            referencedRelation: "group_members"
+            referencedColumns: ["group_id", "id"]
+          },
+        ]
+      }
+      trip_expenses: {
+        Row: {
+          accounting_amount: number
+          accounting_currency: string
+          category: string | null
+          created_at: string
+          created_by: string
+          description: string
+          fx_captured_at: string | null
+          fx_rate: number | null
+          fx_source: string | null
+          group_id: string
+          id: string
+          original_amount: number
+          original_currency: string
+          request_id: string | null
+          split_method: string
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          accounting_amount: number
+          accounting_currency: string
+          category?: string | null
+          created_at?: string
+          created_by: string
+          description: string
+          fx_captured_at?: string | null
+          fx_rate?: number | null
+          fx_source?: string | null
+          group_id: string
+          id?: string
+          original_amount: number
+          original_currency: string
+          request_id?: string | null
+          split_method: string
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          accounting_amount?: number
+          accounting_currency?: string
+          category?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string
+          fx_captured_at?: string | null
+          fx_rate?: number | null
+          fx_source?: string | null
+          group_id?: string
+          id?: string
+          original_amount?: number
+          original_currency?: string
+          request_id?: string | null
+          split_method?: string
+          updated_at?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_expenses_accounting_currency_fkey"
+            columns: ["accounting_currency"]
+            isOneToOne: false
+            referencedRelation: "iso_4217_currency_codes"
+            referencedColumns: ["code"]
+          },
+          {
+            foreignKeyName: "trip_expenses_creator_same_group"
+            columns: ["group_id", "created_by"]
+            isOneToOne: false
+            referencedRelation: "group_members"
+            referencedColumns: ["group_id", "id"]
+          },
+          {
+            foreignKeyName: "trip_expenses_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trip_expenses_original_currency_fkey"
+            columns: ["original_currency"]
+            isOneToOne: false
+            referencedRelation: "iso_4217_currency_codes"
+            referencedColumns: ["code"]
+          },
+        ]
+      }
+      trip_settlements: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          from_member: string
+          group_id: string
+          id: string
+          note: string | null
+          recorded_by: string
+          request_id: string | null
+          to_member: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency: string
+          from_member: string
+          group_id: string
+          id?: string
+          note?: string | null
+          recorded_by: string
+          request_id?: string | null
+          to_member: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          from_member?: string
+          group_id?: string
+          id?: string
+          note?: string | null
+          recorded_by?: string
+          request_id?: string | null
+          to_member?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_settlements_currency_fkey"
+            columns: ["currency"]
+            isOneToOne: false
+            referencedRelation: "iso_4217_currency_codes"
+            referencedColumns: ["code"]
+          },
+          {
+            foreignKeyName: "trip_settlements_from_same_group"
+            columns: ["group_id", "from_member"]
+            isOneToOne: false
+            referencedRelation: "group_members"
+            referencedColumns: ["group_id", "id"]
+          },
+          {
+            foreignKeyName: "trip_settlements_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trip_settlements_recorder_same_group"
+            columns: ["group_id", "recorded_by"]
+            isOneToOne: false
+            referencedRelation: "group_members"
+            referencedColumns: ["group_id", "id"]
+          },
+          {
+            foreignKeyName: "trip_settlements_to_same_group"
+            columns: ["group_id", "to_member"]
+            isOneToOne: false
+            referencedRelation: "group_members"
+            referencedColumns: ["group_id", "id"]
           },
         ]
       }
@@ -936,6 +1242,41 @@ export type Database = {
         }
         Returns: Json
       }
+      commit_expense: {
+        Args: {
+          p_category?: string
+          p_description: string
+          p_fx_rate?: string
+          p_fx_source?: string
+          p_group_id: string
+          p_original_amount: string
+          p_original_currency: string
+          p_payers: Json
+          p_request_id?: string
+          p_shares: Json
+          p_split_method: string
+        }
+        Returns: string
+      }
+      create_event_from_document: {
+        Args: {
+          p_airline?: string
+          p_arr_code?: string
+          p_booking_ref?: string
+          p_dep_code?: string
+          p_document_id: string
+          p_ends_at?: string
+          p_event_type: string
+          p_flight_no?: string
+          p_location?: string
+          p_location_to?: string
+          p_notes?: string
+          p_starts_at: string
+          p_terminal?: string
+          p_title: string
+        }
+        Returns: string
+      }
       create_invitation: {
         Args: {
           group_id: string
@@ -954,6 +1295,14 @@ export type Database = {
           target_membership_id: string
         }
         Returns: Json
+      }
+      delete_expense: {
+        Args: { p_expected_version?: number; p_expense_id: string }
+        Returns: undefined
+      }
+      delete_settlement: {
+        Args: { p_settlement_id: string }
+        Returns: undefined
       }
       get_group_audit_summary: {
         Args: { p_group_id: string; p_limit?: number }
@@ -1000,6 +1349,7 @@ export type Database = {
           trip_name: string
         }[]
       }
+      get_split_ledger: { Args: { p_group_id: string }; Returns: Json }
       inspect_invitation: { Args: { invitation_proof: string }; Returns: Json }
       ir003_bootstrap_group_impl: {
         Args: {
@@ -1095,6 +1445,17 @@ export type Database = {
         }
         Returns: Json
       }
+      record_settlement: {
+        Args: {
+          p_amount: string
+          p_from_member: string
+          p_group_id: string
+          p_note?: string
+          p_request_id?: string
+          p_to_member: string
+        }
+        Returns: string
+      }
       revoke_invitation: {
         Args: { group_id: string; invitation_id: string; request_id: string }
         Returns: Json
@@ -1119,6 +1480,22 @@ export type Database = {
           successor_membership_id: string
         }
         Returns: Json
+      }
+      update_expense: {
+        Args: {
+          p_category?: string
+          p_description: string
+          p_expected_version: number
+          p_expense_id: string
+          p_fx_rate?: string
+          p_fx_source?: string
+          p_original_amount: string
+          p_original_currency: string
+          p_payers: Json
+          p_shares: Json
+          p_split_method: string
+        }
+        Returns: number
       }
     }
     Enums: {
