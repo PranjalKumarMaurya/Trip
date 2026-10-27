@@ -1,6 +1,6 @@
 import { spawnSync } from 'node:child_process'
 import { expect, test, type Browser, type Locator, type Page } from '@playwright/test'
-import { setTripSettings } from '../support/trip-frame'
+import { createTrip as createSharedTrip, signUp as sharedSignUp } from '../support/trip-frame'
 
 test.skip(process.env.TRIP_SPLIT_MODES_LIVE !== '1', 'requires disposable local Supabase stack (npm run test:split:modes:live)')
 test.use({ locale: 'en-US', timezoneId: 'Asia/Kolkata' })
@@ -15,23 +15,12 @@ const shot = async (dialog: Locator, name: string) => { if (shots) await dialog.
 // can follow changes to the signup / Trips home screens. ---
 
 async function signUp(page: Page, name: string, email: string) {
-  await page.getByRole('button', { name: 'Create an account' }).click()
-  await page.getByLabel('Display name').fill(name)
-  await page.getByLabel('Email').fill(email)
-  await page.getByLabel('Password').fill('LongerPass123!')
-  await page.getByRole('button', { name: 'Create account' }).click()
+  await sharedSignUp(page, name, email)
 }
 
+/** Trips home -> ＋ -> an INR Trip (UPI links are INR-only) -> Open Trip. */
 async function createTrip(page: Page, name: string) {
-  await expect(page.getByTestId('bootstrap-onboarding')).toBeVisible()
-  await page.getByLabel('Trip name').fill(name)
-  await page.getByLabel('Destination').fill('Goa')
-  await page.getByLabel('Start date').fill('2026-11-01')
-  await page.getByLabel('End date').fill('2026-11-05')
-  await setTripSettings(page, { timezone: 'Asia/Kolkata', currency: 'INR' })
-  await page.getByRole('button', { name: 'Create Trip' }).click()
-  await page.getByRole('button', { name: 'Open Trip' }).click()
-  await expect(page.getByTestId('group-workspace')).toContainText(name)
+  await createSharedTrip(page, { name, currency: 'INR' })
 }
 
 /** The owner invites `email`; a new browser context signs up through the link and opens the Trip. */

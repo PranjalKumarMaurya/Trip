@@ -1,4 +1,5 @@
 import { expect, test, type Browser, type Page } from '@playwright/test'
+import { openTrip } from '../support/trip-frame'
 
 // Real stack seeded by tests/integration/run-extras-live.mjs: a Bali Trip that
 // is under way, flights with "who's on this", one member's shared details, and
@@ -30,7 +31,7 @@ async function signIn(page: Page, email: string) {
   await page.getByLabel('Email').fill(email)
   await page.getByLabel('Password').fill(PASSWORD)
   await page.getByRole('button', { name: 'Sign in', exact: true }).click()
-  await expect(page.getByTestId('group-workspace').getByRole('heading', { name: TRIP })).toBeVisible()
+  await openTrip(page, TRIP)
 }
 
 const openTab = (page: Page, name: string) => page.getByRole('tab', { name }).click()
