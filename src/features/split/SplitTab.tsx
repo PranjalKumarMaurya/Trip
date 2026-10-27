@@ -5,8 +5,9 @@ import { ExpenseForm, formatWhen, type SplitMember } from './ExpenseForm'
 import { CATEGORIES, expenseMemberIds } from './expenseDraft'
 import {
   computeBalances, computeGroupTotals, suggestSettlements, type Ledger, type LedgerExpense, type LedgerSettlement,
+  type ShareLine, type SplitMethod,
 } from './ledger'
-import { formatMoney } from './money'
+import { formatMoney, formatPercent } from './money'
 import { SettleUpDialog } from './SettleUpDialog'
 import { deleteExpense, deleteSettlement, SplitRequestError } from './splitApi'
 import { splitErrorMessage } from './splitErrors'
@@ -16,6 +17,21 @@ import { useSplitLedger } from './useSplitLedger'
 type Dialog = { kind: 'add' } | { kind: 'edit'; expense: LedgerExpense } | { kind: 'settle' } | null
 
 const eyebrow = { color: 'var(--text-tertiary)', fontSize: 10, letterSpacing: '0.22em' } as const
+
+const METHOD_TEXT: Record<SplitMethod, string> = {
+  equal: 'split equally',
+  exact: 'exact amounts',
+  percent: 'split by percent',
+  shares: 'split by shares',
+}
+
+/** The input behind a percent or shares line, e.g. " (70%)" or " (2 shares)". */
+function weightText(method: SplitMethod, share: ShareLine): string {
+  if (share.weight === undefined) return ''
+  if (method === 'percent') return ` (${formatPercent(share.weight)}%)`
+  if (method === 'shares') return ` (${share.weight} share${share.weight === 1n ? '' : 's'})`
+  return ''
+}
 
 export function SplitTab({ trip, roster, reloadRoster }: TripTabProps) {
   const { state, reload } = useSplitLedger(trip.groupId)
@@ -277,7 +293,7 @@ function ExpenseCard({ expense, me, canChange, involvesFormer, nameOf, money, ti
             <p className="serif-display truncate" style={{ color: 'var(--text-primary)', fontSize: 16 }}>{expense.description}</p>
             <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
               Paid by {listNames([...expense.payers].sort((a, b) => (a.amount === b.amount ? 0 : a.amount > b.amount ? -1 : 1)).map((payer) => nameOf(payer.memberId)))}
-              {' · '}{expense.splitMethod === 'equal' ? 'split equally' : 'exact amounts'} between {expense.shares.length}
+              {' · '}{METHOD_TEXT[expense.splitMethod]} between {expense.shares.length}
               {category ? ` · ${category}` : ''}
             </p>
           </div>
@@ -310,7 +326,7 @@ function ExpenseCard({ expense, me, canChange, involvesFormer, nameOf, money, ti
             ))}
             {expense.shares.map((share) => (
               <div key={`s-${share.memberId}`} className="contents">
-                <dt>{nameOf(share.memberId)}’s share</dt><dd className="font-mono text-right">{money(share.amount)}</dd>
+                <dt>{nameOf(share.memberId)}’s share{weightText(expense.splitMethod, share)}</dt><dd className="font-mono text-right">{money(share.amount)}</dd>
               </div>
             ))}
           </dl>

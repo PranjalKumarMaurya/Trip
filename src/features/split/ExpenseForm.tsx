@@ -1,7 +1,7 @@
 import { type FormEvent, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import { NeonBtn } from '../../components/ui/NeonBtn'
 import {
-  CATEGORIES, draftFromExpense, emptyDraft, evaluateDraft, type DraftField, type ExpenseDraft, type TotalCheck,
+  CATEGORIES, draftFromExpense, emptyDraft, evaluateDraft, switchSplitMode, type DraftField, type ExpenseDraft, type TotalCheck,
 } from './expenseDraft'
 import { fetchLiveRate } from './fxRate'
 import type { LedgerExpense } from './ledger'
@@ -9,6 +9,7 @@ import { equalSplit, formatMoney, type MoneyLine } from './money'
 import { commitExpense, SplitRequestError, updateExpense } from './splitApi'
 import { Field, SplitDialog, inputClass, inputStyle } from './SplitDialog'
 import { splitErrorMessage } from './splitErrors'
+import { SPLIT_OPTIONS, WeightFields } from './SplitWeights'
 
 const COMMON_CURRENCIES = ['INR', 'IDR', 'USD', 'EUR', 'GBP', 'SGD', 'THB', 'AED', 'JPY', 'AUD', 'MYR', 'VND', 'LKR', 'NPR']
 
@@ -207,10 +208,14 @@ export function ExpenseForm({ groupId, accountingCurrency, timezone, me, members
               )}
             </Choice>
 
-            <Choice legend="Split" name="split-mode" value={draft.splitMode}
-              options={[{ value: 'equal', label: 'Equally' }, { value: 'exact', label: 'Exact amounts' }]}
-              onChange={(splitMode) => update({ splitMode })}>
-              {draft.splitMode === 'equal' ? (
+            <Choice legend="Split" name="split-mode" value={draft.splitMode} options={SPLIT_OPTIONS}
+              onChange={(splitMode) => update(switchSplitMode(draft, splitMode))}>
+              {draft.splitMode === 'percent' || draft.splitMode === 'shares' ? (
+                <WeightFields mode={draft.splitMode} members={members} evaluation={evaluation} currency={currency}
+                  accountingCurrency={accountingCurrency} money={money} error={evaluation.errors.shares}
+                  values={draft.splitMode === 'percent' ? draft.sharePercents : draft.shareWeights}
+                  onChange={(values) => update(draft.splitMode === 'percent' ? { sharePercents: values } : { shareWeights: values })} />
+              ) : draft.splitMode === 'equal' ? (
                 <>
                   <div className="flex items-center justify-between">
                     <span style={{ color: 'var(--text-tertiary)', fontSize: 12 }}>Split between</span>

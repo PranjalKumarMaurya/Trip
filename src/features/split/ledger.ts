@@ -1,8 +1,24 @@
 // Trip ledger: parsing the server snapshot, balances, totals, and settle-up.
-import { byMemberId, equalSplit, minorUnits, parseAmount, sumLines, type MoneyLine } from './money.ts'
+import {
+  byMemberId, equalSplit, FULL_PERCENT, minorUnits, parseAmount, PERCENT_DECIMALS, sumLines, weightedSplit, type MoneyLine,
+} from './money.ts'
 
-export type SplitMethod = 'equal' | 'exact'
+export type SplitMethod = 'equal' | 'exact' | 'percent' | 'shares'
 export type FxSource = 'manual' | 'open.er-api.com'
+
+export const SPLIT_METHODS: readonly SplitMethod[] = ['equal', 'exact', 'percent', 'shares']
+const isSplitMethod = (value: unknown): value is SplitMethod => SPLIT_METHODS.includes(value as SplitMethod)
+
+/** True for the modes whose shares are computed from a stored weight per person. */
+export const isWeighted = (method: SplitMethod): method is 'percent' | 'shares' => method === 'percent' || method === 'shares'
+
+/**
+ * A final share. Percent and shares splits also carry the input it came from:
+ * basis points (1% = 100) for percent, the whole number of shares for shares.
+ */
+export interface ShareLine extends MoneyLine {
+  weight?: bigint
+}
 
 export interface LedgerExpense {
   id: string
@@ -21,7 +37,7 @@ export interface LedgerExpense {
   createdAt: string
   updatedAt: string
   payers: MoneyLine[]
-  shares: MoneyLine[]
+  shares: ShareLine[]
 }
 
 export interface LedgerSettlement {
@@ -66,6 +82,28 @@ export function isReconciled(expense: Pick<LedgerExpense, 'accountingAmount' | '
     && sumLines(expense.payers) === expense.accountingAmount && sumLines(expense.shares) === expense.accountingAmount
 }
 
+/**
+ * Percent and shares lines need a valid weight on every share (percents total
+ * exactly 100); equal and exact lines carry none. Null when that does not hold.
+ */
+function parseShares(raw: unknown, decimals: number, method: SplitMethod): ShareLine[] | null {
+  const lines: ShareLine[] | null = parseLines(raw, decimals)
+  if (!lines || !Array.isArray(raw)) return null
+  for (const [index, line] of lines.entries()) {
+    const entry = raw[index] as Json
+    const text = str(entry.weight)
+    if (!isWeighted(method)) {
+      if (entry.weight !== undefined && entry.weight !== null) return null
+      continue
+    }
+    const weight = text === null ? null : parseAmount(text, method === 'percent' ? PERCENT_DECIMALS : 0)
+    if (weight === null || weight <= 0n) return null
+    line.weight = weight
+  }
+  if (method === 'percent' && lines.reduce((total, line) => total + (line.weight ?? 0n), 0n) !== FULL_PERCENT) return null
+  return lines
+}
+
 function parseExpense(raw: unknown): LedgerExpense | null {
   if (!isObject(raw)) return null
   const originalCurrency = str(raw.original_currency)
@@ -76,8 +114,8 @@ function parseExpense(raw: unknown): LedgerExpense | null {
   const originalAmount = parseAmount(str(raw.original_amount) ?? '', minorUnits(originalCurrency))
   const accountingAmount = parseAmount(str(raw.accounting_amount) ?? '', decimals)
   const payers = parseLines(raw.payers, decimals)
-  const shares = parseLines(raw.shares, decimals)
-  const splitMethod = raw.split_method === 'equal' || raw.split_method === 'exact' ? raw.split_method : null
+  const splitMethod = isSplitMethod(raw.split_method) ? raw.split_method : null
+  const shares = splitMethod ? parseShares(raw.shares, decimals, splitMethod) : null
   const fxSource = raw.fx_source === 'manual' || raw.fx_source === 'open.er-api.com' ? raw.fx_source : null
   const createdBy = str(raw.created_by)
   if (originalAmount === null || accountingAmount === null || !payers || !shares || !splitMethod || !createdBy) return null
@@ -219,6 +257,20 @@ export function suggestSettlements(balances: ReadonlyMap<string, bigint>, dust =
 /** True when an equal-split Expense's shares follow the documented remainder rule. */
 export function followsEqualRule(expense: Pick<LedgerExpense, 'accountingAmount' | 'shares'>): boolean {
   const expected = equalSplit(expense.accountingAmount, expense.shares.map((share) => share.memberId))
+  const actual = [...expense.shares].sort((a, b) => byMemberId(a.memberId, b.memberId))
+  return expected.length === actual.length && expected.every((line, index) => line.amount === actual[index].amount)
+}
+
+/**
+ * True when an Expense's shares are exactly what its method gives: the equal
+ * rule, or the largest-remainder split of its stored percents or shares.
+ * Exact splits have no rule beyond summing to the total.
+ */
+export function followsSplitRule(expense: Pick<LedgerExpense, 'accountingAmount' | 'shares' | 'splitMethod'>): boolean {
+  if (expense.splitMethod === 'equal') return followsEqualRule(expense)
+  if (!isWeighted(expense.splitMethod)) return true
+  if (expense.shares.some((share) => share.weight === undefined)) return false
+  const expected = weightedSplit(expense.accountingAmount, expense.shares.map((share) => ({ memberId: share.memberId, weight: share.weight ?? 0n })))
   const actual = [...expense.shares].sort((a, b) => byMemberId(a.memberId, b.memberId))
   return expected.length === actual.length && expected.every((line, index) => line.amount === actual[index].amount)
 }

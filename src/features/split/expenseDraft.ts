@@ -1,11 +1,14 @@
 // Add/Edit expense form state -> validated, exactly reconciling RPC request.
 // Payer and exact-share inputs are typed in the expense's own currency; they
 // are carried into the accounting currency by largest-remainder allocation so
-// the stored rows still sum exactly to the converted total.
-import type { FxSource, LedgerExpense, SplitMethod } from './ledger.ts'
+// the stored rows still sum exactly to the converted total. Equal, percent and
+// shares splits are applied to the accounting total directly, by the same rules
+// the server re-checks.
+import { isWeighted, type FxSource, type LedgerExpense, type SplitMethod } from './ledger.ts'
 import {
-  allocateProportionally, byMemberId, convertAmount, equalSplit, minorUnits, parseAmount, parseRate, sumLines,
-  toDecimalString, type MoneyLine,
+  allocateProportionally, byMemberId, convertAmount, equalSplit, formatPercent, FULL_PERCENT, MAX_SHARE_WEIGHT,
+  minorUnits, parseAmount, parsePercent, parseRate, parseShareWeight, sumLines, toDecimalString, weightedSplit,
+  type MoneyLine, type WeightLine,
 } from './money.ts'
 
 export const CATEGORIES = [
@@ -30,6 +33,10 @@ export interface ExpenseDraft {
   splitMode: SplitMethod
   included: string[]
   shareAmounts: Record<string, string>
+  /** Percent split: each person's percent as typed ("33.33"); blank or 0 leaves them out. */
+  sharePercents: Record<string, string>
+  /** Shares split: each person's whole number of shares; blank or 0 leaves them out. */
+  shareWeights: Record<string, string>
 }
 
 export interface DraftContext {
@@ -47,7 +54,8 @@ export interface ExpenseRequest {
   fxSource: FxSource | null
   splitMethod: SplitMethod
   payers: { member_id: string; amount: string }[]
-  shares: { member_id: string; amount: string }[]
+  /** `weight` is sent for percent ("33.33") and shares ("2") splits only. */
+  shares: { member_id: string; amount: string; weight?: string }[]
 }
 
 export type DraftField = 'description' | 'amount' | 'currency' | 'rate' | 'payers' | 'shares'
@@ -66,6 +74,10 @@ export interface DraftEvaluation {
   accountingMinor: bigint | null
   payerCheck: TotalCheck | null
   shareCheck: TotalCheck | null
+  /** Percent split: entered and required percent, in basis points (100% = 10000). */
+  percentCheck: TotalCheck | null
+  /** Shares split: the total number of shares entered. */
+  shareCount: bigint | null
   /** Accounting lines that will be stored, when the draft is valid. */
   payers: MoneyLine[]
   shares: MoneyLine[]
@@ -86,7 +98,19 @@ export function emptyDraft(context: DraftContext, me: string): ExpenseDraft {
     splitMode: 'equal',
     included: [...context.memberIds],
     shareAmounts: {},
+    sharePercents: {},
+    shareWeights: {},
   }
+}
+
+/**
+ * Change the split mode, keeping every mode's own inputs. Switching to shares
+ * with none entered starts everyone in the equal-split list at 1 share.
+ */
+export function switchSplitMode(draft: ExpenseDraft, splitMode: SplitMethod): ExpenseDraft {
+  const hasWeights = Object.values(draft.shareWeights).some((value) => value.trim() !== '')
+  if (splitMode !== 'shares' || hasWeights) return { ...draft, splitMode }
+  return { ...draft, splitMode, shareWeights: Object.fromEntries(draft.included.map((id) => [id, '1'])) }
 }
 
 const currencyCode = (value: string) => value.trim().toUpperCase()
@@ -104,13 +128,26 @@ function enteredLines(amounts: Record<string, string>, memberIds: readonly strin
   return lines
 }
 
+/** Typed percents or shares as positive weights; blank or zero leaves a person out. Null if any is invalid. */
+function enteredWeights(values: Record<string, string>, memberIds: readonly string[], parse: (raw: string) => bigint | null): WeightLine[] | null {
+  const lines: WeightLine[] = []
+  for (const memberId of memberIds) {
+    const raw = (values[memberId] ?? '').trim()
+    if (!raw) continue
+    const weight = parse(raw)
+    if (weight === null) return null
+    if (weight > 0n) lines.push({ memberId, weight })
+  }
+  return lines
+}
+
 export function evaluateDraft(draft: ExpenseDraft, context: DraftContext): DraftEvaluation {
   const errors: DraftEvaluation['errors'] = {}
   const currency = currencyCode(draft.currency)
   const accounting = context.accountingCurrency
   const result: DraftEvaluation = {
     errors, currency, originalMinor: null, accountingMinor: null, payerCheck: null, shareCheck: null,
-    payers: [], shares: [], request: null,
+    percentCheck: null, shareCount: null, payers: [], shares: [], request: null,
   }
 
   const description = draft.description.trim()
@@ -169,10 +206,33 @@ export function evaluateDraft(draft: ExpenseDraft, context: DraftContext): Draft
   }
 
   // Shares.
+  let weights: WeightLine[] = []
   if (draft.splitMode === 'equal') {
     const people = draft.included.filter((id) => context.memberIds.includes(id))
     if (!people.length) errors.shares = 'Choose at least one person to split with.'
     else if (accountingTotal !== null) result.shares = equalSplit(accountingTotal, people)
+  } else if (draft.splitMode === 'percent') {
+    const lines = enteredWeights(draft.sharePercents, context.memberIds, parsePercent)
+    if (lines === null) errors.shares = 'Use percents from 0 to 100 with at most 2 decimal places, like 33.33.'
+    else {
+      const entered = lines.reduce((total, line) => total + line.weight, 0n)
+      result.percentCheck = { entered, required: FULL_PERCENT, matches: entered === FULL_PERCENT }
+      if (!lines.length) errors.shares = 'Enter each person’s percent, or split equally.'
+      else if (entered !== FULL_PERCENT) errors.shares = 'Percents must add up to 100%.'
+      else {
+        weights = lines
+        if (accountingTotal !== null) result.shares = weightedSplit(accountingTotal, lines)
+      }
+    }
+  } else if (draft.splitMode === 'shares') {
+    const lines = enteredWeights(draft.shareWeights, context.memberIds, parseShareWeight)
+    if (lines === null) errors.shares = `Use whole numbers of shares from 0 to ${MAX_SHARE_WEIGHT}, like 1 or 2.`
+    else if (!lines.length) errors.shares = 'Give at least one person a share, or split equally.'
+    else {
+      weights = lines
+      result.shareCount = lines.reduce((total, line) => total + line.weight, 0n)
+      if (accountingTotal !== null) result.shares = weightedSplit(accountingTotal, lines)
+    }
   } else {
     const lines = errors.currency ? null : enteredLines(draft.shareAmounts, context.memberIds, decimals)
     if (lines === null) errors.shares = `Use ${currency} amounts with a dot and at most ${decimals} decimal places.`
@@ -188,6 +248,8 @@ export function evaluateDraft(draft: ExpenseDraft, context: DraftContext): Draft
   if (Object.keys(errors).length || accountingTotal === null || result.originalMinor === null) return result
   const accountingDecimals = minorUnits(accounting)
   const wire = (lines: MoneyLine[]) => lines.map((line) => ({ member_id: line.memberId, amount: toDecimalString(line.amount, accountingDecimals) }))
+  const weightOf = new Map(weights.map((line) => [line.memberId, line.weight]))
+  const weightText = (weight: bigint) => (draft.splitMode === 'percent' ? formatPercent(weight) : weight.toString())
   result.request = {
     description,
     category: CATEGORIES.some((entry) => entry.id === draft.category) ? draft.category : null,
@@ -197,7 +259,9 @@ export function evaluateDraft(draft: ExpenseDraft, context: DraftContext): Draft
     fxSource: converts ? draft.rateSource : null,
     splitMethod: draft.splitMode,
     payers: wire(result.payers),
-    shares: wire(result.shares),
+    shares: isWeighted(draft.splitMode)
+      ? wire(result.shares).map((line) => ({ ...line, weight: weightText(weightOf.get(line.member_id) ?? 0n) }))
+      : wire(result.shares),
   }
   return result
 }
@@ -209,6 +273,13 @@ function toOriginal(expense: LedgerExpense, lines: MoneyLine[]): Record<string, 
     ? lines
     : allocateProportionally(expense.originalAmount, lines)
   return Object.fromEntries(original.map((line) => [line.memberId, toDecimalString(line.amount, decimals)]))
+}
+
+/** Stored weights back into the inputs they were typed as. */
+function weightInputs(expense: LedgerExpense, method: 'percent' | 'shares'): Record<string, string> {
+  if (expense.splitMethod !== method) return {}
+  return Object.fromEntries(expense.shares.map((share) => [share.memberId,
+    method === 'percent' ? formatPercent(share.weight ?? 0n) : (share.weight ?? 0n).toString()]))
 }
 
 export function draftFromExpense(expense: LedgerExpense, context: DraftContext): ExpenseDraft {
@@ -224,8 +295,10 @@ export function draftFromExpense(expense: LedgerExpense, context: DraftContext):
     payerId: single ? expense.payers[0].memberId : (context.memberIds[0] ?? ''),
     payerAmounts: single ? {} : toOriginal(expense, expense.payers),
     splitMode: expense.splitMethod,
-    included: expense.splitMethod === 'equal' ? expense.shares.map((share) => share.memberId) : [...context.memberIds],
+    included: expense.splitMethod === 'exact' ? [...context.memberIds] : expense.shares.map((share) => share.memberId),
     shareAmounts: expense.splitMethod === 'exact' ? toOriginal(expense, expense.shares) : {},
+    sharePercents: weightInputs(expense, 'percent'),
+    shareWeights: weightInputs(expense, 'shares'),
   }
 }
 

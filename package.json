@@ -49,6 +49,8 @@
     "test:trip:live": "node tests/integration/run-trip-todos-live.mjs",
     "test:split:db": "node tests/database/split/verify-split-ledger.mjs",
     "test:split:live": "node tests/integration/run-split-live.mjs",
+    "test:split:modes:db": "node tests/database/split/verify-split-modes.mjs",
+    "test:split:unit": "node --test tests/unit/split-*.test.ts",
     "test:scan:db": "node tests/database/scan/verify-scan-documents.mjs",
     "test:scan:live": "node tests/integration/run-scan-fx-live.mjs",
     "test:scan:unit": "node --test tests/unit/scan-*.test.ts",
