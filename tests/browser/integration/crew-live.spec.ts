@@ -1,28 +1,10 @@
 import { expect, test, type Page } from '@playwright/test'
-import { closeTripSwitcher, createAnotherTrip, expectTripCount, openTripSwitcher, refreshTrips, setTripSettings, switchTrip } from '../support/trip-frame'
+import { createTrip as createTripFromHome, expectTripCount, goToTrips, openTrip, refreshTrips, signUp, switchTrip, tripsHome } from '../support/trip-frame'
 
 test.skip(process.env.TRIP_CREW_LIVE !== '1', 'requires disposable local Supabase stack (npm run test:crew:live)')
 
-async function signUp(page: Page, name: string, email: string) {
-  await page.getByRole('button', { name: 'Create an account' }).click()
-  await page.getByLabel('Display name').fill(name)
-  await page.getByLabel('Email').fill(email)
-  await page.getByLabel('Password').fill('LongerPass123!')
-  await page.getByRole('button', { name: 'Create account' }).click()
-}
-
-async function createTrip(page: Page, name: string, destination: string) {
-  await expect(page.getByTestId('bootstrap-onboarding')).toBeVisible()
-  await page.getByLabel('Trip name').fill(name)
-  await page.getByLabel('Destination').fill(destination)
-  await page.getByLabel('Start date').fill('2026-11-01')
-  await page.getByLabel('End date').fill('2026-11-05')
-  await setTripSettings(page, { timezone: 'Asia/Kolkata', currency: 'INR' })
-  await page.getByRole('button', { name: 'Create Trip' }).click()
-  await expect(page.getByTestId('bootstrap-success-state-a')).toContainText(name)
-  await page.getByRole('button', { name: 'Open Trip' }).click()
-  await expect(page.getByTestId('group-workspace').getByRole('heading', { name })).toBeVisible()
-}
+// Signup -> Trips home -> + -> Create Trip -> Open Trip.
+const createTrip = (page: Page, name: string, destination: string) => createTripFromHome(page, { name, destination })
 
 async function invite(page: Page, email: string) {
   await page.getByLabel('Friend’s email').fill(email)
@@ -80,14 +62,12 @@ test('Owner manages invitations, roles, leaving, removal, archive and restore ag
     await owner.goto('/')
     await signUp(owner, 'Olive Owner', 'olive-crew@example.test')
     await createTrip(owner, 'Goa weekend', 'Goa')
-    await createAnotherTrip(owner)
     await createTrip(owner, 'Jaipur weekend', 'Jaipur')
     await owner.getByRole('tab', { name: 'Crew' }).click()
     expect(await confirmSheet(owner, 'Archive Trip')).toContain('Jaipur weekend is archived')
-    await expect(owner.getByTestId('group-workspace').getByRole('heading', { name: 'Goa weekend' })).toBeVisible()
-    // Archived Trips live in the Trip switcher, below the active ones.
-    const tripList = await openTripSwitcher(owner)
-    await expect(tripList.getByRole('button')).toHaveCount(1)
+    // The archived Trip closes and the Trips home lists it under Archived Trips.
+    await expect(tripsHome(owner)).toBeVisible()
+    await expect(tripsHome(owner).getByTestId('trip-card')).toHaveCount(1)
     const archived = owner.getByTestId('archived-trips')
     await expect(archived).toContainText('Jaipur weekend')
     await archived.getByRole('button', { name: 'Restore Jaipur weekend' }).click()
@@ -95,12 +75,9 @@ test('Owner manages invitations, roles, leaving, removal, archive and restore ag
     await restore.getByRole('button', { name: 'Restore Trip' }).click()
     await expect(restore.getByRole('status')).toHaveText('Jaipur weekend is active again.')
     await restore.getByRole('button', { name: 'Done' }).click()
-    await expect(owner.getByTestId('trips-sheet')).toHaveCount(0)
     await expect(owner.getByTestId('group-workspace').getByRole('heading', { name: 'Jaipur weekend' })).toBeVisible()
-    await openTripSwitcher(owner)
-    await expect(tripList.getByRole('button')).toHaveCount(2)
+    await expectTripCount(owner, 2)
     await expect(owner.getByTestId('archived-trips')).toHaveCount(0)
-    await closeTripSwitcher(owner)
     await switchTrip(owner, 'Goa weekend')
     await expect(owner.getByTestId('group-workspace').getByRole('heading', { name: 'Goa weekend' })).toBeVisible()
 
@@ -159,7 +136,7 @@ test('Owner manages invitations, roles, leaving, removal, archive and restore ag
     await expect(memberRow(owner, 'Farah Friend')).toContainText('Owner')
     const staleOwner = await ownerContext.newPage()
     await staleOwner.goto('/')
-    await switchTrip(staleOwner, 'Goa weekend')
+    await openTrip(staleOwner, 'Goa weekend')
     await staleOwner.getByRole('tab', { name: 'Crew' }).click()
     await expect(memberRow(staleOwner, 'Farah Friend')).toContainText('Owner')
 
@@ -176,7 +153,7 @@ test('Owner manages invitations, roles, leaving, removal, archive and restore ag
 
     // Farah leaves and loses the Trip; Olive sees her as a former member.
     expect(await confirmSheet(friend, 'Leave Trip')).toBe('You left Goa weekend.')
-    await expect(friend.getByTestId('bootstrap-onboarding')).toBeVisible()
+    await expect(friend.getByTestId('trips-empty')).toBeVisible()
     await expect(friend.getByTestId('archived-trips')).toHaveCount(0)
     await crew(owner).getByRole('button', { name: 'Refresh crew' }).click()
     await expect(memberRow(owner, 'Farah Friend')).toHaveCount(0)
@@ -198,13 +175,13 @@ test('Owner manages invitations, roles, leaving, removal, archive and restore ag
     await friend.getByRole('tab', { name: 'Crew' }).click()
     expect(await manage(friend, 'Olive Owner', 'Remove from Trip')).toBe('Olive Owner was removed. Their history stays in the Trip.')
     await expect(memberRow(friend, 'Olive Owner')).toHaveCount(0)
-    await refreshTrips(owner)
+    await goToTrips(owner)
     await expectTripCount(owner, 1)
-    await expect(owner.getByTestId('group-workspace').getByRole('heading', { name: 'Jaipur weekend' })).toBeVisible()
+    await openTrip(owner, 'Jaipur weekend')
 
-    // Farah archives her only Trip, lands on onboarding with its restore entry, and restores it.
+    // Farah archives her only Trip, lands on the empty Trips home with its restore entry, and restores it.
     expect(await confirmSheet(friend, 'Archive Trip')).toContain('Goa weekend is archived')
-    await expect(friend.getByTestId('bootstrap-onboarding')).toBeVisible()
+    await expect(friend.getByTestId('trips-empty')).toBeVisible()
     const friendArchived = friend.getByTestId('archived-trips')
     await expect(friendArchived).toContainText('Goa weekend')
     await friendArchived.getByRole('button', { name: 'Restore Goa weekend' }).click()

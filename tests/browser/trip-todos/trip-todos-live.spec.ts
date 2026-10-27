@@ -1,5 +1,5 @@
 import { expect, test, type Locator, type Page } from '@playwright/test'
-import { setTripSettings } from '../support/trip-frame'
+import { createTrip as createTripFromHome, signUp } from '../support/trip-frame'
 
 // Real stack: two Auth accounts in one Trip, itinerary and shared todos kept
 // live between them over Supabase Realtime. Run with `npm run test:trip:live`.
@@ -16,25 +16,10 @@ function wallClock(days: number, time: string, timeZone: string) {
   return `${day}T${time}`
 }
 
-async function signUp(page: Page, name: string, email: string) {
-  await page.getByRole('button', { name: 'Create an account' }).click()
-  await page.getByLabel('Display name').fill(name)
-  await page.getByLabel('Email').fill(email)
-  await page.getByLabel('Password').fill('LongerPass123!')
-  await page.getByRole('button', { name: 'Create account' }).click()
-}
-
-async function createTrip(page: Page) {
-  await expect(page.getByTestId('bootstrap-onboarding')).toBeVisible()
-  await page.getByLabel('Trip name').fill('Bali bachelor')
-  await page.getByLabel('Destination').fill('Bali')
-  await page.getByLabel('Start date').fill('2026-11-01')
-  await page.getByLabel('End date').fill('2026-11-08')
-  await setTripSettings(page, { timezone: TRIP_ZONE, currency: 'IDR', alsoShow: ['INR'] })
-  await page.getByRole('button', { name: 'Create Trip' }).click()
-  await page.getByRole('button', { name: 'Open Trip' }).click()
-  await expect(page.getByTestId('group-workspace')).toContainText('Bali bachelor')
-}
+const createTrip = (page: Page) => createTripFromHome(page, {
+  name: 'Bali bachelor', destination: 'Bali', startDate: '2026-11-01', endDate: '2026-11-08',
+  timezone: TRIP_ZONE, international: true, currency: 'IDR', alsoShow: ['INR'],
+})
 
 const card = (page: Page, title: string) => page.getByTestId('trip-event').filter({ has: page.getByRole('heading', { name: title }) })
 const todo = (list: Locator, title: string) => list.getByTestId('todo-row').filter({ hasText: title })

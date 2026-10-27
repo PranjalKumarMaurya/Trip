@@ -1,5 +1,5 @@
 import { mkdirSync } from 'node:fs'
-import { closeTripSwitcher, openTripSwitcher, setTripSettings } from '../support/trip-frame'
+import { createTrip, goToTrips, openProfile, openTrip, setTripSettings } from '../support/trip-frame'
 import { expect, test, type Page } from '@playwright/test'
 
 // Visual tour: screenshots every main screen with realistic data for UI review.
@@ -56,15 +56,39 @@ test('tour every screen', async ({ browser }) => {
     await owner.getByRole('button', { name: 'Create account' }).click()
   })
 
+  await step('trips-home-empty', async () => {
+    await expect(owner.getByTestId('trips-empty')).toBeVisible()
+    await shot(owner, 'trips-home-empty')
+  })
+
+  await step('profile', async () => {
+    await openProfile(owner)
+    await owner.getByLabel('Home currency').selectOption('INR')
+    await owner.getByLabel('UPI ID').fill('partha@okaxis')
+    await owner.getByLabel('Dietary needs or allergies').fill('No shellfish')
+    await owner.getByRole('button', { name: 'Save details' }).click()
+    await owner.getByRole('button', { name: 'Use 😎 as your avatar' }).click()
+    await shot(owner, 'profile')
+    await owner.getByRole('button', { name: 'Delete account' }).click()
+    await owner.getByLabel('Type DELETE to confirm').waitFor()
+    await shot(owner, 'profile-delete-account')
+    await owner.getByRole('button', { name: 'Keep my account' }).click()
+    await owner.getByRole('button', { name: 'Privacy policy' }).click()
+    await shot(owner, 'privacy-policy')
+    await owner.getByRole('button', { name: 'Profile' }).click()
+    await goToTrips(owner)
+  })
+
   await step('onboarding', async () => {
+    await owner.getByRole('button', { name: 'Create Trip', exact: true }).click()
     await expect(owner.getByTestId('bootstrap-onboarding')).toBeVisible()
-    await shot(owner, 'onboarding-empty')
+    await shot(owner, 'onboarding-empty-domestic')
     await owner.getByLabel('Trip name').fill('Bali bachelor')
     await owner.getByLabel('Destination').fill('Bali, Indonesia')
     await owner.getByLabel('Start date').fill(inDays(5, '00:00').slice(0, 10))
     await owner.getByLabel('End date').fill(inDays(11, '00:00').slice(0, 10))
     await setTripSettings(owner, { timezone: 'Asia/Makassar', currency: 'INR', alsoShow: ['IDR'] })
-    await shot(owner, 'onboarding-filled')
+    await shot(owner, 'onboarding-filled-international')
     await owner.getByRole('button', { name: 'Create Trip' }).click()
     await expect(owner.getByRole('button', { name: 'Open Trip' })).toBeVisible()
     await shot(owner, 'trip-created')
@@ -137,13 +161,22 @@ test('tour every screen', async ({ browser }) => {
   })
 
   await step('frame', async () => {
-    await openTripSwitcher(owner)
-    await shot(owner, 'trips-sheet')
-    await closeTripSwitcher(owner)
-    await owner.getByRole('button', { name: 'Account', exact: true }).click()
-    await shot(owner, 'account-menu')
+    await owner.getByRole('button', { name: 'Trip settings' }).click()
+    await expect(owner.getByLabel('Trip name')).toBeVisible()
+    await shot(owner, 'trip-settings')
     await owner.keyboard.press('Escape')
-    await expect(owner.getByTestId('account-sheet')).toHaveCount(0)
+    await expect(owner.getByTestId('trip-settings-sheet')).toHaveCount(0)
+    // A domestic Trip: no FX tab, no currency in Split.
+    await createTrip(owner, { name: 'Goa long weekend', destination: 'Goa', startDate: inDays(-1, '00:00').slice(0, 10), endDate: inDays(2, '00:00').slice(0, 10) })
+    await shot(owner, 'domestic-trip')
+    await owner.getByRole('tab', { name: 'Split' }).click()
+    await owner.getByRole('button', { name: 'Add expense' }).click()
+    await shot(owner, 'domestic-split-add-expense')
+    await owner.getByRole('dialog', { name: 'Add expense' }).getByRole('button', { name: 'Cancel' }).click()
+    await goToTrips(owner)
+    await shot(owner, 'trips-home')
+    await openTrip(owner, 'Bali bachelor')
+    await owner.getByRole('tab', { name: 'Crew' }).click()
   })
 
   const friend = await friendContext.newPage()
@@ -166,6 +199,10 @@ test('tour every screen', async ({ browser }) => {
     await friend.getByRole('button', { name: 'Open Trip' }).click()
     await expect(friend.getByTestId('group-workspace')).toBeVisible()
     await shot(friend, 'friend-trip')
+    await friend.getByRole('button', { name: 'Trip details' }).click()
+    await expect(friend.getByTestId('trip-details')).toBeVisible()
+    await shot(friend, 'friend-trip-details')
+    await friend.keyboard.press('Escape')
     await friend.getByRole('tab', { name: 'Split' }).click()
     await shot(friend, 'friend-split')
     await friend.getByRole('tab', { name: 'Crew' }).click()

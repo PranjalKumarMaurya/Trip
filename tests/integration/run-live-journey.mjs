@@ -72,7 +72,7 @@ smtp_port = 58525
 enabled = true
 [auth]
 enabled = true
-site_url = "http://127.0.0.1:4173"
+site_url = "http://127.0.0.1:${process.env.TRIP_WEB_PORT ?? '4173'}"
 [auth.email]
 enable_confirmations = ${verifyEmail}
 [edge_runtime]

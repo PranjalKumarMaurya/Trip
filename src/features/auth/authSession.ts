@@ -4,7 +4,7 @@ import { supabase } from '../../lib/supabase'
 
 export type AuthSessionState =
   | { status: 'loading' }
-  | { status: 'signed-out'; reason: 'initial' | 'expired' | 'signed-out' | 'recovery' }
+  | { status: 'signed-out'; reason: 'initial' | 'expired' | 'signed-out' | 'recovery' | 'deleted' }
   | { status: 'authenticated-linked'; session: Session; profileId: string; displayName: string }
   | { status: 'authenticated-unlinked'; session: Session }
   | { status: 'error' }
@@ -68,17 +68,20 @@ async function loadSessionState(session: Session): Promise<AuthSessionState> {
   }
 }
 
-export function useAuthSession(): AuthSessionState & { retry: () => void; markSignedOut: () => void } {
+type ManualSignOut = 'signed-out' | 'deleted'
+
+export function useAuthSession(): AuthSessionState & { retry: () => void; markSignedOut: (reason?: ManualSignOut) => void } {
   const [state, setState] = useState<AuthSessionState>({ status: 'loading' })
   const [retryToken, setRetryToken] = useState(0)
-  const manualSignOut = useRef(false)
+  // Why the app itself signed out (sign out, or the account was deleted); null means the session ended on its own.
+  const manualSignOut = useRef<ManualSignOut | null>(null)
   const controllerRef = useRef<ProfileResolutionController | null>(null)
 
   const retry = useCallback(() => setRetryToken((value) => value + 1), [])
-  const markSignedOut = useCallback(() => {
-    manualSignOut.current = true
+  const markSignedOut = useCallback((reason: ManualSignOut = 'signed-out') => {
+    manualSignOut.current = reason
     controllerRef.current?.invalidate()
-    setState({ status: 'signed-out', reason: 'signed-out' })
+    setState({ status: 'signed-out', reason })
   }, [])
 
   useEffect(() => {
@@ -116,8 +119,8 @@ export function useAuthSession(): AuthSessionState & { retry: () => void; markSi
       }
       if (event === 'SIGNED_OUT') {
         void applySession(null, !manualSignOut.current)
-        setState({ status: 'signed-out', reason: manualSignOut.current ? 'signed-out' : 'expired' })
-        manualSignOut.current = false
+        setState({ status: 'signed-out', reason: manualSignOut.current ?? 'expired' })
+        manualSignOut.current = null
         return
       }
       if (event === 'PASSWORD_RECOVERY') {

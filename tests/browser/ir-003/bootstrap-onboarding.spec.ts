@@ -18,15 +18,23 @@ function syntheticSession(accountId: string) {
   }
 }
 
-async function installEligibleAccount(page: Page) {
+async function installEligibleAccount(page: Page, profile: Record<string, unknown> = {}) {
   const accountId = '00000000-0000-4000-8000-0000000003a1'
   await page.addInitScript(({ id, session }) => {
     localStorage.setItem('sb-127-auth-token', JSON.stringify(session))
     localStorage.setItem('sb-127.0.0.1-auth-token', JSON.stringify(session))
     localStorage.setItem('ir003-test-account', id)
   }, { id: accountId, session: syntheticSession(accountId) })
-  await page.route('**/rest/v1/profiles*', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([{ id: '00000000-0000-4000-8000-0000000003a2', display_name: 'Synthetic Creator' }]) }))
+  await page.route('**/rest/v1/profiles*', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([{ id: '00000000-0000-4000-8000-0000000003a2', display_name: 'Synthetic Creator', ...profile }]) }))
   await page.route('**/rest/v1/rpc/get_my_group_access', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: '[]' }))
+}
+
+/** A new user lands on the empty Trips home and opens Create Trip from it. */
+async function openCreateTrip(page: Page) {
+  await page.goto('/', { waitUntil: 'domcontentloaded' })
+  await expect(page.getByTestId('trips-empty')).toBeVisible()
+  await page.getByRole('button', { name: 'Create your first Trip' }).click()
+  await expect(page.getByTestId('bootstrap-onboarding')).toBeVisible()
 }
 
 async function fillValidBootstrapForm(page: Page) {
@@ -49,18 +57,23 @@ test.beforeEach(async ({ page }) => {
 
 test('IR-003 eligible signed-in user reaches the bootstrap form and receives client validation', async ({ page }) => {
   await installEligibleAccount(page)
-  await page.goto('/', { waitUntil: 'domcontentloaded' })
+  await openCreateTrip(page)
 
-  await expect(page.getByTestId('bootstrap-onboarding')).toBeVisible()
   // Timezone and currency are chosen from lists with sensible defaults; no free-text codes or jargon.
   await expect(page.getByLabel('Timezone')).toHaveValue('Asia/Kolkata')
   await expect(page.getByLabel('Timezone').locator('option:checked')).toHaveText('Asia/Kolkata (UTC+05:30)')
+  // Domestic by default: no currency pickers, everything in the device's currency.
+  const international = page.getByRole('switch', { name: 'International trip?' })
+  await expect(international).toHaveAttribute('aria-checked', 'false')
+  await expect(page.getByLabel('Trip currency')).toHaveCount(0)
+  await expect(international).toHaveAccessibleDescription(/INR · Indian Rupee/)
+  await international.click()
   await expect(page.getByLabel('Trip currency')).toHaveValue('INR')
   await expect(page.getByLabel('Trip currency').locator('option[value="IDR"]')).toHaveText('IDR · Indonesian Rupiah')
   await expect(page.getByText('Used to split expenses')).toBeVisible()
   await expect(page.getByTestId('bootstrap-onboarding')).not.toContainText(/IANA|ISO 4217|accounting currency|Group/)
 
-  await page.getByRole('button', { name: 'Create Trip' }).click()
+  await page.getByRole('button', { name: 'Create Trip', exact: true }).click()
   await expect(page.getByText('Check the highlighted fields.')).toBeVisible()
   await expect(page.getByText('Enter a trip name.')).toBeVisible()
   await expect(page.getByText('Enter a destination.')).toBeVisible()
@@ -69,7 +82,7 @@ test('IR-003 eligible signed-in user reaches the bootstrap form and receives cli
 
   await page.getByLabel('Start date').fill('2027-02-01')
   await page.getByLabel('End date').fill('2027-01-01')
-  await page.getByRole('button', { name: 'Create Trip' }).click()
+  await page.getByRole('button', { name: 'Create Trip', exact: true }).click()
   await expect(page.getByText('End date must be on or after the start date.')).toBeVisible()
 
   // The Trip currency is always in the display set and cannot be added twice.
@@ -87,13 +100,37 @@ test('IR-003 eligible signed-in user reaches the bootstrap form and receives cli
   await expect(page.getByTestId('bootstrap-onboarding')).toHaveCSS('max-width', '480px')
 })
 
-test('IR-003 new user can sign out from the Create Trip screen', async ({ page }) => {
+test('IR-003 new user can go back from Create Trip and sign out from Profile', async ({ page }) => {
   await installEligibleAccount(page)
   await page.route('**/auth/v1/logout*', (route) => route.fulfill({ status: 204, body: '' }))
-  await page.goto('/', { waitUntil: 'domcontentloaded' })
-  await expect(page.getByTestId('bootstrap-onboarding')).toBeVisible()
-  await page.getByRole('button', { name: 'Sign out' }).click()
+  await openCreateTrip(page)
+  await page.getByRole('button', { name: 'Trips', exact: true }).click()
+  await expect(page.getByTestId('trips-empty')).toBeVisible()
+  await page.getByRole('button', { name: 'Profile', exact: true }).click()
+  await page.getByTestId('profile-screen').getByRole('button', { name: 'Sign out' }).click()
   await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible()
+})
+
+test('a domestic Trip uses the profile home currency alone', async ({ page }) => {
+  const rpcCalls: Record<string, unknown>[] = []
+  await installEligibleAccount(page, { home_currency: 'SGD' })
+  await page.route('**/rest/v1/rpc/bootstrap_group', async (route) => {
+    const body = route.request().postDataJSON() as Record<string, unknown>
+    rpcCalls.push(body)
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([{ outcome: 'completed', group_id: '00000000-0000-4000-8000-0000000003b3', request_id: body.request_id }]) })
+  })
+  await openCreateTrip(page)
+  await page.getByLabel('Trip name').fill('Sentosa day')
+  await page.getByLabel('Destination').fill('Sentosa')
+  await page.getByLabel('Start date').fill('2027-03-06')
+  await page.getByLabel('End date').fill('2027-03-06')
+  await expect(page.getByRole('switch', { name: 'International trip?' })).toHaveAccessibleDescription(/SGD · Singapore Dollar/)
+  await page.getByRole('button', { name: 'Create Trip', exact: true }).click()
+  await expect(page.getByTestId('bootstrap-success-state-a')).toBeVisible()
+  expect(rpcCalls).toHaveLength(1)
+  expect(rpcCalls[0]).toMatchObject({
+    configuration_request: { accounting_currency: 'SGD', display_currency_codes: ['SGD'], is_international: false },
+  })
 })
 
 test('IR-003 sends only the frozen RPC arguments and renders terminal ONB-06 State A', async ({ page }) => {
@@ -108,9 +145,9 @@ test('IR-003 sends only the frozen RPC arguments and renders terminal ONB-06 Sta
       body: JSON.stringify([{ outcome: 'completed', group_id: '00000000-0000-4000-8000-0000000003b1', request_id: body.request_id }]),
     })
   })
-  await page.goto('/', { waitUntil: 'domcontentloaded' })
+  await openCreateTrip(page)
   await fillValidBootstrapForm(page)
-  await page.getByRole('button', { name: 'Create Trip' }).click()
+  await page.getByRole('button', { name: 'Create Trip', exact: true }).click()
 
   await expect(page.getByTestId('bootstrap-success-state-a')).toBeVisible()
   expect(rpcCalls).toHaveLength(1)
@@ -124,6 +161,7 @@ test('IR-003 sends only the frozen RPC arguments and renders terminal ONB-06 Sta
       timezone: 'Europe/Oslo',
       accounting_currency: 'NOK',
       display_currency_codes: ['NOK', 'EUR'],
+      is_international: true,
     },
   })
   expect(JSON.stringify(rpcCalls[0])).not.toMatch(/actor|owner|role|profile|auth_user/i)
@@ -150,9 +188,9 @@ test('IR-003 blocks duplicate submits and retries an ambiguous response with the
     }
     await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([{ outcome: 'completed', group_id: '00000000-0000-4000-8000-0000000003b2', request_id: body.request_id }]) })
   })
-  await page.goto('/', { waitUntil: 'domcontentloaded' })
+  await openCreateTrip(page)
   await fillValidBootstrapForm(page)
-  await page.getByRole('button', { name: 'Create Trip' }).click()
+  await page.getByRole('button', { name: 'Create Trip', exact: true }).click()
   await expect.poll(() => rpcCalls.length).toBe(1)
   const submit = page.getByRole('button', { name: 'Creating Trip…' })
   await expect(submit).toBeDisabled()
@@ -170,13 +208,13 @@ test('IR-003 blocks duplicate submits and retries an ambiguous response with the
 test('IR-003 presents an idempotency mismatch as a safe non-retryable state', async ({ page }) => {
   await installEligibleAccount(page)
   await page.route('**/rest/v1/rpc/bootstrap_group', (route) => route.fulfill({ status: 409, contentType: 'application/json', body: JSON.stringify({ message: 'idempotency_conflict' }) }))
-  await page.goto('/', { waitUntil: 'domcontentloaded' })
+  await openCreateTrip(page)
   await fillValidBootstrapForm(page)
-  await page.getByRole('button', { name: 'Create Trip' }).click()
+  await page.getByRole('button', { name: 'Create Trip', exact: true }).click()
 
   await expect(page.getByTestId('bootstrap-status')).toContainText('don’t match your earlier attempt')
   await expect(page.getByRole('button', { name: 'Review details to continue' })).toBeDisabled()
   await page.getByLabel('Trip name').fill('Northern lights revised')
-  await expect(page.getByRole('button', { name: 'Create Trip' })).toBeEnabled()
+  await expect(page.getByRole('button', { name: 'Create Trip', exact: true })).toBeEnabled()
   await expect(page.getByText(/constraint|database|profile|auth user/i)).toHaveCount(0)
 })

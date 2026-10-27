@@ -1399,9 +1399,17 @@ export type Database = {
         Args: { p_expected_version?: number; p_expense_id: string }
         Returns: undefined
       }
+      delete_my_account: { Args: { p_confirmation: string }; Returns: Json }
       delete_settlement: {
         Args: { p_settlement_id: string }
         Returns: undefined
+      }
+      get_account_deletion_blockers: {
+        Args: never
+        Returns: {
+          group_id: string
+          trip_name: string
+        }[]
       }
       get_group_audit_summary: {
         Args: { p_group_id: string; p_limit?: number }
@@ -1447,6 +1455,13 @@ export type Database = {
           start_date: string
           timezone: string
           trip_name: string
+        }[]
+      }
+      get_my_trip_member_counts: {
+        Args: never
+        Returns: {
+          group_id: string
+          member_count: number
         }[]
       }
       get_split_ledger: { Args: { p_group_id: string }; Returns: Json }
@@ -1609,6 +1624,10 @@ export type Database = {
           p_split_method: string
         }
         Returns: number
+      }
+      update_trip_settings: {
+        Args: { p_group_id: string; p_request_id: string; p_settings: Json }
+        Returns: Json
       }
     }
     Enums: {

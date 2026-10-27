@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test'
+import { openTrip } from '../support/trip-frame'
 
 // UI wiring only: every Auth/Profile/RPC response below is synthetic.
 const localBrowserHost = `127.0.0.1:${process.env.TRIP_WEB_PORT ?? '4173'}`
@@ -51,6 +52,7 @@ async function mockTrip(page: Page, role: 'owner' | 'member', calls: string[]) {
 
 async function openCrew(page: Page) {
   await page.goto('/')
+  await openTrip(page, 'Goa weekend')
   await page.getByRole('tab', { name: 'Crew' }).click()
   await expect(page.getByRole('list', { name: 'Trip members' })).toContainText('Farah Friend')
 }

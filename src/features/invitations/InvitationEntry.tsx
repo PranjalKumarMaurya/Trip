@@ -16,13 +16,15 @@ type ViewState =
 
 type TripSummary = { name: string; destination: string; startDate?: string; endDate?: string }
 
-export function InvitationEntry({ proof, auth, onSignOut, onClose, onAccepted, signOutError }: {
+export function InvitationEntry({ proof, auth, onSignOut, onClose, onAccepted, onOpenTrip, signOutError }: {
   proof: string
   auth: AuthSessionState
   onSignOut: () => void
   onClose: () => void
   /** Called once the server confirms membership, with the joined Trip. */
   onAccepted: (groupId: string) => void
+  /** "Open Trip" after joining; falls back to `onClose`. */
+  onOpenTrip?: (groupId: string) => void
   signOutError?: string | null
 }) {
   const [view, setView] = useState<ViewState>({ kind: 'loading' })
@@ -150,7 +152,8 @@ export function InvitationEntry({ proof, auth, onSignOut, onClose, onAccepted, s
   } else if (view.kind === 'accepted') {
     title = 'You’re in!'
     body = `You joined ${tripName}. Everyone in the Trip is in the Crew tab.`
-    actions = <NeonBtn type="button" size="lg" className="w-full" onClick={onClose}>Open Trip</NeonBtn>
+    const joined = view.groupId
+    actions = <NeonBtn type="button" size="lg" className="w-full" onClick={() => (onOpenTrip ? onOpenTrip(joined) : onClose())}>Open Trip</NeonBtn>
   }
 
   const showTripDetails = trip && title === invitedTitle
