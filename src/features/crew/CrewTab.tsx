@@ -152,7 +152,7 @@ export function CrewTab({ trip, roster, reloadRoster, onTripsChanged }: TripTabP
           </ul>
         </details>}
       </div>
-      {isOwner && <InviteMember groupId={groupId} onIssued={() => setInvitationReload((value) => value + 1)} />}
+      {isOwner && <InviteMember groupId={groupId} tripName={trip.tripName} onIssued={() => setInvitationReload((value) => value + 1)} />}
       {isOwner && <InvitationList groupId={groupId} reloadKey={invitationReload} />}
       <section aria-label="Your membership" className="surface px-4 py-5">
         <h2 className="serif-display" style={{ color: 'var(--text-primary)', fontSize: 25 }}>Your membership</h2>
