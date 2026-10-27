@@ -9,4 +9,10 @@ export interface TripTabProps {
   trip: MyGroupAccess
   roster: RosterMember[]
   reloadRoster: () => void
+  /**
+   * Re-read the caller's Trip list (role, membership, archive state) after a
+   * change such as leaving, a role change, or archiving. The workspace keeps the
+   * current tab mounted while it refreshes; a Trip the caller lost disappears.
+   */
+  onTripsChanged?: () => void
 }
