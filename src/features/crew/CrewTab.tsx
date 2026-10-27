@@ -125,6 +125,7 @@ export function CrewTab({ trip, roster, reloadRoster, onTripsChanged }: TripTabP
           <button type="button" onClick={refreshCrew} className="text-sm" style={{ color: 'var(--text-secondary)' }}>Refresh crew</button>
         </div>
         {notice && <p role="status" className="mt-2" style={{ color: 'var(--text-secondary)' }}>{notice}</p>}
+        {active.length === 0 && <p className="mt-3" style={{ color: 'var(--text-secondary)' }}>The crew list is not available right now. Try Refresh crew.</p>}
         <ul className="mt-3 flex flex-col gap-2" aria-label="Trip members">
           {active.map((member) => {
             const manageable = memberActionsFor(viewer, member).length > 0
