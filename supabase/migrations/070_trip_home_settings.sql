@@ -36,9 +36,12 @@ REVOKE ALL ON FUNCTION public.get_my_trip_member_counts() FROM PUBLIC, anon, ser
 GRANT EXECUTE ON FUNCTION public.get_my_trip_member_counts() TO authenticated;
 
 -- An Expense or payment is always recorded in the Trip's current currency. The
--- share lock on the configuration row orders each insert against
--- update_trip_settings(), which locks the same row before it checks for
--- Expenses, so a currency change and a new Expense can never interleave.
+-- insert policies already compare against the configuration, but only as of the
+-- statement's snapshot. This check runs after the row is written and takes a
+-- share lock on the configuration row, so it is ordered against
+-- update_trip_settings() (which locks that row before it looks for Expenses):
+-- whichever commits second sees the other, and a currency change can never
+-- slip past a new Expense. Running after the policies keeps their refusals as is.
 CREATE FUNCTION trip_private.trip_currency_guard()
 RETURNS trigger
 LANGUAGE plpgsql
@@ -61,15 +64,15 @@ BEGIN
   IF v_trip_currency IS DISTINCT FROM v_recorded_currency THEN
     RAISE EXCEPTION 'split_currency_changed' USING ERRCODE = 'P0001';
   END IF;
-  RETURN NEW;
+  RETURN NULL;
 END;
 $$;
 REVOKE ALL ON FUNCTION trip_private.trip_currency_guard() FROM PUBLIC, anon, authenticated, service_role;
 CREATE TRIGGER trip_expenses_currency_guard
-  BEFORE INSERT ON public.trip_expenses
+  AFTER INSERT ON public.trip_expenses
   FOR EACH ROW EXECUTE FUNCTION trip_private.trip_currency_guard();
 CREATE TRIGGER trip_settlements_currency_guard
-  BEFORE INSERT ON public.trip_settlements
+  AFTER INSERT ON public.trip_settlements
   FOR EACH ROW EXECUTE FUNCTION trip_private.trip_currency_guard();
 
 -- Owner-only settings change. SECURITY DEFINER is required because clients may

@@ -74,10 +74,8 @@ export function ProfileScreen({ userId, email, profile, profileStatus, onProfile
             <p className="field-label">Email</p>
             <p className="mt-0.5 truncate" style={{ color: 'var(--text-primary)', fontSize: 15 }} data-testid="profile-email">{email}</p>
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <NeonBtn type="button" variant="outline" size="lg" onClick={() => setSheet('email')}>Change email</NeonBtn>
-            <NeonBtn type="button" variant="outline" size="lg" onClick={() => setSheet('password')}>Change password</NeonBtn>
-          </div>
+          <NeonBtn type="button" variant="outline" size="lg" className="w-full" onClick={() => setSheet('email')}>Change email</NeonBtn>
+          <NeonBtn type="button" variant="outline" size="lg" className="w-full" onClick={() => setSheet('password')}>Change password</NeonBtn>
         </section>
 
         <section aria-labelledby="profile-help" className="flex flex-col gap-2">
@@ -267,7 +265,7 @@ function DetailsForm({ profile, onChanged }: { profile: MyProfile; onChanged: (c
           <p className="field-hint mt-0.5">Visible only to people in your Trips</p>
         </div>
         <Field id="profile-phone" label="Phone" optional error={show('phone')}>
-          <NeonInput type="tel" value={form.phone} onChange={set('phone')} autoComplete="tel" placeholder="+91 98765 43210" style={inputStyle} />
+          <NeonInput type="tel" value={form.phone} onChange={set('phone')} autoComplete="tel" placeholder="e.g. +91 98765 43210" style={inputStyle} />
         </Field>
         <Field id="profile-emergency" label="Emergency contact" optional error={show('emergencyContact')}>
           <NeonInput value={form.emergencyContact} onChange={set('emergencyContact')} maxLength={EMERGENCY_CONTACT_MAX} placeholder="Name and phone number" autoComplete="off" style={inputStyle} />

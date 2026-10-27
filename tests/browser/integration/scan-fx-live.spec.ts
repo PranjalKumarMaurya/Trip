@@ -1,5 +1,5 @@
 import { expect, test, type BrowserContext, type Page } from '@playwright/test'
-import { setTripSettings } from '../support/trip-frame'
+import { createTrip, signUp } from '../support/trip-frame'
 
 // Real local stack (Auth, PostgREST, Storage, Edge runtime with the stub
 // extractor); only the public FX rates endpoint is mocked.
@@ -16,22 +16,11 @@ async function mockRates(context: BrowserContext, mode: { online: boolean }) {
     : route.abort('internetdisconnected'))
 }
 
+// International Trips (INR, also IDR) so the FX tab is shown.
 async function signUpWithTrip(page: Page, name: string, email: string, trip: { name: string; destination: string }) {
   await page.goto('/')
-  await page.getByRole('button', { name: 'Create an account' }).click()
-  await page.getByLabel('Display name').fill(name)
-  await page.getByLabel('Email').fill(email)
-  await page.getByLabel('Password').fill('LongerPass123!')
-  await page.getByRole('button', { name: 'Create account' }).click()
-  await expect(page.getByTestId('bootstrap-onboarding')).toBeVisible()
-  await page.getByLabel('Trip name').fill(trip.name)
-  await page.getByLabel('Destination').fill(trip.destination)
-  await page.getByLabel('Start date').fill('2026-11-01')
-  await page.getByLabel('End date').fill('2026-11-05')
-  await setTripSettings(page, { timezone: 'Asia/Kolkata', currency: 'INR', alsoShow: ['IDR'] })
-  await page.getByRole('button', { name: 'Create Trip' }).click()
-  await page.getByRole('button', { name: 'Open Trip' }).click()
-  await expect(page.getByTestId('group-workspace')).toContainText(trip.name)
+  await signUp(page, name, email)
+  await createTrip(page, { ...trip, international: true, currency: 'INR', alsoShow: ['IDR'] })
 }
 
 /** The signed-in user's access token, read from the app's own session storage. */

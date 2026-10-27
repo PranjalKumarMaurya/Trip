@@ -1,5 +1,5 @@
 import { expect, test, type APIRequestContext, type Page } from '@playwright/test'
-import { setTripSettings } from '../support/trip-frame'
+import { fillAndCreateTrip } from '../support/trip-frame'
 
 test.skip(process.env.TRIP_LIVE_JOURNEY !== '1' || process.env.TRIP_VERIFY_EMAIL !== '1',
   'requires disposable local Supabase stack with mailbox confirmation')
@@ -59,15 +59,10 @@ test('verification emails return Owner and invited friend to the right journey',
     await owner.goto('/')
     await signUp(owner, 'Owner Verified', ownerEmail)
     await owner.goto(await confirmationLink(request, ownerEmail))
-    await expect(owner.getByTestId('bootstrap-onboarding')).toBeVisible()
-    await owner.getByLabel('Trip name').fill('Verified Goa')
-    await owner.getByLabel('Destination').fill('Goa')
-    await owner.getByLabel('Start date').fill('2026-11-01')
-    await owner.getByLabel('End date').fill('2026-11-05')
-    await setTripSettings(owner, { timezone: 'Asia/Kolkata', currency: 'INR' })
-    await owner.getByRole('button', { name: 'Create Trip' }).click()
-    await expect(owner.getByTestId('bootstrap-success-state-a')).toBeVisible()
-    await owner.getByRole('button', { name: 'Open Trip' }).click()
+    // A verified new user lands on the empty Trips home.
+    await expect(owner.getByTestId('trips-empty')).toBeVisible()
+    await owner.getByRole('button', { name: 'Create your first Trip' }).click()
+    await fillAndCreateTrip(owner, { name: 'Verified Goa', destination: 'Goa' })
     await owner.getByRole('tab', { name: 'Crew' }).click()
     await owner.getByLabel('Friend’s email').fill(friendEmail)
     await owner.getByRole('button', { name: 'Create link' }).click()

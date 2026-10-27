@@ -1,5 +1,5 @@
 import { expect, test, type Locator, type Page } from '@playwright/test'
-import { setTripSettings } from '../support/trip-frame'
+import { createTrip as createTripFromHome, signUp } from '../support/trip-frame'
 
 test.skip(process.env.TRIP_SPLIT_LIVE !== '1', 'requires disposable local Supabase stack (npm run test:split:live)')
 test.use({ locale: 'en-US', timezoneId: 'Asia/Kolkata' })
@@ -7,25 +7,9 @@ test.use({ locale: 'en-US', timezoneId: 'Asia/Kolkata' })
 // Realtime delivery and the re-read that follows can take a moment.
 const live = { timeout: 15_000 }
 
-async function signUp(page: Page, name: string, email: string) {
-  await page.getByRole('button', { name: 'Create an account' }).click()
-  await page.getByLabel('Display name').fill(name)
-  await page.getByLabel('Email').fill(email)
-  await page.getByLabel('Password').fill('LongerPass123!')
-  await page.getByRole('button', { name: 'Create account' }).click()
-}
-
-async function createTrip(page: Page, name: string) {
-  await expect(page.getByTestId('bootstrap-onboarding')).toBeVisible()
-  await page.getByLabel('Trip name').fill(name)
-  await page.getByLabel('Destination').fill('Goa')
-  await page.getByLabel('Start date').fill('2026-11-01')
-  await page.getByLabel('End date').fill('2026-11-05')
-  await setTripSettings(page, { timezone: 'Asia/Kolkata', currency: 'INR' })
-  await page.getByRole('button', { name: 'Create Trip' }).click()
-  await page.getByRole('button', { name: 'Open Trip' }).click()
-  await expect(page.getByTestId('group-workspace')).toContainText(name)
-}
+// An International Trip in INR, so the USD expense below can convert.
+const createTrip = (page: Page, name: string) =>
+  createTripFromHome(page, { name, destination: 'Goa', international: true, currency: 'INR' })
 
 async function expectBalance(page: Page, heading: string, amount: string) {
   await expect(page.getByRole('heading', { name: heading, exact: true }), `${heading} ${amount}`).toBeVisible(live)
