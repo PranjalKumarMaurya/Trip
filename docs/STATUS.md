@@ -19,16 +19,17 @@ Living status for the multi-user Trip app. Update it in the same commit as the w
 | Create a Trip (atomic `bootstrap_group`) | `npm run test:journey:live` |
 | Invite one recipient by email, accept, join as Member; expiry, revoke, races, last-Owner, transfer, leave/remove, archive | `npm run test:ir005:candidate` (14 checks) |
 | Switch between Trips; Member sees only joined Trips | `npm run test:journey:live` |
-| Trip workspace tab bar; Crew tab with roster and Owner invite form | mocked browser tests + live journey |
+| Trip workspace tab bar | mocked browser tests + live journey |
+| Crew tab: roster, pending/past invitations with revoke, make Owner/Member, transfer ownership, remove, leave (last-Owner guarded), archive and restore (`get_my_archived_groups`, migration 060) | `npm run test:crew:live`, `npm run test:crew:db`, `npm run test:crew:browser` |
 | Shared Trip itinerary table `trip_events` (migration 024): Trip isolation, member-only writes, no creator impersonation, removal cuts access | `npm run test:db:events` |
-| All migrations 001–024 apply as hosted `postgres` | every suite above applies them that way |
+| All migrations (001–024, 060) apply as hosted `postgres` | every suite above applies them that way |
 
 Unit tests: `npm run test:unit`. Mocked browser tests: `PLAYWRIGHT_BROWSERS_PATH=0 npx playwright test tests/browser/ir-003 tests/browser/ir-004 tests/browser/ir-005 tests/browser/integration/new-user-candidate.spec.ts`.
 
 ## Not done yet
 
-- Trip itinerary, Todos, Split, Scan, and FX tabs are placeholders.
-- Crew tab has no revoke/remove/leave/transfer/archive UI (the database functions exist).
+- Trip itinerary, Todos, Split, Scan, and FX tabs are placeholders (in progress on their branches).
+- Crew gaps: no one-step "transfer and leave", invitation list shows the newest 50, archived Trips can be restored but not browsed, roster is not live.
 - Nothing after migration 009 is deployed. The hosted project has 001–009 only, so the old v1 app cannot read its data any more.
 - Bali data import.
 
@@ -51,4 +52,4 @@ Unit tests: `npm run test:unit`. Mocked browser tests: `PLAYWRIGHT_BROWSERS_PATH
 | Trip itinerary + shared Todos | `feat/trip-todos` | 030–039 | 58600 | 4181 |
 | Split: expenses, payers, shares, settlements | `feat/split` | 040–049 | 58700 | 4182 |
 | Scan (private storage) + FX | `feat/scan-fx` | 050–059 | 58800 | 4183 |
-| Crew management UI | `feat/crew` | 060–069 | 58900 | 4184 |
+| Crew management UI (merged) | `feat/crew` | 060–069 | 58900 | 4184 |
