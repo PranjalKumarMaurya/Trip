@@ -17,25 +17,13 @@ export type CreateInvitationResult =
   | { outcome: 'created'; invitationId: string; proof: string }
   | { outcome: 'already_completed'; invitationId: string }
 
-interface RpcReply {
-  data: unknown
-  error: { message?: string } | null
-}
-
-interface InvitationRpcClient {
-  rpc: (name: string, args: Record<string, unknown>) => Promise<RpcReply>
-}
-
-// Replace this boundary with generated RPC types when candidate migrations are integrated.
-const rpcClient = supabase as unknown as InvitationRpcClient
-
 function object(value: unknown): Record<string, unknown> | null {
   return value && typeof value === 'object' && !Array.isArray(value)
     ? value as Record<string, unknown> : null
 }
 
 export async function createInvitation(groupId: string, recipientEmail: string, requestId: string): Promise<CreateInvitationResult> {
-  const { data, error } = await rpcClient.rpc('create_invitation', {
+  const { data, error } = await supabase.rpc('create_invitation', {
     group_id: groupId,
     recipient_request: { email: recipientEmail },
     invitation_request: {},
@@ -66,7 +54,7 @@ export async function createInvitation(groupId: string, recipientEmail: string, 
 
 export async function inspectInvitation(proof: string): Promise<InvitationInspection> {
   if (!isInvitationProof(proof)) return { outcome: 'invalid' }
-  const { data, error } = await rpcClient.rpc('inspect_invitation', { invitation_proof: proof })
+  const { data, error } = await supabase.rpc('inspect_invitation', { invitation_proof: proof })
   if (error) throw new Error('inspection_unavailable')
   const result = object(data)
   if (!result) throw new Error('inspection_unavailable')
@@ -91,7 +79,7 @@ export async function inspectInvitation(proof: string): Promise<InvitationInspec
 
 export async function acceptInvitation(proof: string, requestId: string): Promise<string> {
   if (!isInvitationProof(proof)) throw new Error('invalid_invitation')
-  const { data, error } = await rpcClient.rpc('accept_invitation', {
+  const { data, error } = await supabase.rpc('accept_invitation', {
     invitation_proof: proof,
     continuation_context: {},
     request_id: requestId,

@@ -24,31 +24,6 @@ export class BootstrapGroupError extends Error {
   }
 }
 
-interface BootstrapRpcClient {
-  rpc: (functionName: 'bootstrap_group', args: {
-    group_request: { trip_name: string }
-    configuration_request: {
-      destination: string
-      start_date: string
-      end_date: string
-      timezone: string
-      accounting_currency: string
-      display_currency_codes: string[]
-    }
-    request_id: string
-  }) => Promise<{
-    data: Array<{ outcome: string; group_id: string; request_id: string }> | null
-    error: { message?: string } | null
-  }>
-}
-
-/**
- * This is deliberately the only local escape around pre-010 generated types.
- * Integration replaces it with the generated `bootstrap_group` RPC signature
- * after applying migration 010 and refreshing src/lib/database.types.ts.
- */
-const bootstrapRpc = supabase as unknown as BootstrapRpcClient
-
 export function createBootstrapRequestId(): string {
   return crypto.randomUUID()
 }
@@ -62,7 +37,7 @@ function safeFailureKind(message: string | undefined): BootstrapFailureKind {
 }
 
 export async function bootstrapGroup(input: BootstrapGroupInput, requestId: string): Promise<BootstrapGroupResult> {
-  const { data, error } = await bootstrapRpc.rpc('bootstrap_group', {
+  const { data, error } = await supabase.rpc('bootstrap_group', {
     group_request: {
       trip_name: input.tripName.trim(),
     },
