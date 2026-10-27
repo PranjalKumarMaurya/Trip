@@ -42,7 +42,8 @@
     "db:reset": "node scripts/dev-db.mjs reset",
     "db:types": "node scripts/dev-db.mjs types",
     "test:db:events": "node tests/database/trip-events/verify-trip-events.mjs",
-    "test:scan:db": "node tests/database/scan/verify-scan-documents.mjs"
+    "test:scan:db": "node tests/database/scan/verify-scan-documents.mjs",
+    "test:scan:live": "node tests/integration/run-scan-fx-live.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",
