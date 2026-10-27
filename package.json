@@ -52,7 +52,8 @@
     "test:scan:db": "node tests/database/scan/verify-scan-documents.mjs",
     "test:scan:live": "node tests/integration/run-scan-fx-live.mjs",
     "test:scan:unit": "node --test tests/unit/scan-*.test.ts",
-    "test:fx:unit": "node --test tests/unit/fx-*.test.ts"
+    "test:fx:unit": "node --test tests/unit/fx-*.test.ts",
+    "test:ui:tour": "node tests/integration/run-ui-tour.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",
