@@ -151,3 +151,49 @@ export function allocateProportionally(totalMinor: bigint, weights: readonly Mon
 }
 
 export const sumLines = (lines: readonly MoneyLine[]): bigint => lines.reduce((total, line) => total + line.amount, 0n)
+
+/** Percent inputs have at most 2 decimals; they are handled as basis points (1% = 100). */
+export const PERCENT_DECIMALS = 2
+export const FULL_PERCENT = 10000n
+/** Shares are whole numbers from 1 to this; mirrors trip_private.split_parse_weight (migration 042). */
+export const MAX_SHARE_WEIGHT = 1000n
+
+/** A percent (0 to 100, at most 2 decimals) as basis points: "33.33" -> 3333. Null when invalid. */
+export function parsePercent(input: string): bigint | null {
+  const value = input.trim()
+  if (!/^\d{0,3}(?:\.\d{0,2})?$/u.test(value) || !/\d/u.test(value)) return null
+  const units = parseAmount(value, PERCENT_DECIMALS)
+  return units !== null && units <= FULL_PERCENT ? units : null
+}
+
+/** Basis points as a short percent string without padding zeros: 7000 -> "70", 1250 -> "12.5". */
+export function formatPercent(basisPoints: bigint): string {
+  return toDecimalString(basisPoints, PERCENT_DECIMALS).replace(/\.?0+$/u, '')
+}
+
+/** A whole number of shares from 0 to MAX_SHARE_WEIGHT. Null when invalid. */
+export function parseShareWeight(input: string): bigint | null {
+  const value = input.trim()
+  if (!/^\d{1,4}$/u.test(value)) return null
+  const weight = BigInt(value)
+  return weight <= MAX_SHARE_WEIGHT ? weight : null
+}
+
+export interface WeightLine {
+  memberId: string
+  /** Basis points for a percent split, a whole number of shares for a shares split. */
+  weight: bigint
+}
+
+/**
+ * Percent and shares splits: `totalMinor` in proportion to positive integer
+ * weights by largest remainder. Everyone gets floor(T x w / W); the leftover
+ * T - sum(floor) minor units go one each to the largest remainders
+ * (T x w mod W), ties to the lower group_members.id. Every weighted person gets
+ * a line (possibly zero), so the lines always sum exactly to the total.
+ * 100.00 at 1:1:1 -> 33.34, 33.33, 33.33. Mirrors
+ * trip_private.split_weighted_amounts in migration 042.
+ */
+export function weightedSplit(totalMinor: bigint, weights: readonly WeightLine[]): MoneyLine[] {
+  return allocateProportionally(totalMinor, weights.map((line) => ({ memberId: line.memberId, amount: line.weight })))
+}
