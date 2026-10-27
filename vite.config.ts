@@ -4,13 +4,8 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
-    host: '0.0.0.0',
-    port: 3000,
+    // Matches the local Supabase Auth site_url (scripts/dev-db.mjs) so email links return here.
+    port: 5173,
     strictPort: true,
-    allowedHosts: true,
-    hmr: {
-      clientPort: 443,
-      protocol: 'wss',
-    },
   },
 })
