@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test'
 import { existsSync, lstatSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 
-const localBrowserHost = '127.0.0.1:4173'
+const localBrowserHost = `127.0.0.1:${process.env.TRIP_WEB_PORT ?? '4173'}`
 let failures = 0
 
 function syntheticSession(accountId: string) {

@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 
-const localBrowserHost = '127.0.0.1:4173'
+const localBrowserHost = `127.0.0.1:${process.env.TRIP_WEB_PORT ?? '4173'}`
 
 test.beforeEach(async ({ page }) => {
   await page.route('**/*', async (route) => {

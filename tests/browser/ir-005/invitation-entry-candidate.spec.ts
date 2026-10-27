@@ -27,7 +27,7 @@ async function mockInspection(page: Page, outcome: 'continue' | 'ready') {
 
 test.beforeEach(async ({ page }) => {
   await page.route('**/*', async (route) => {
-    if (new URL(route.request().url()).host === '127.0.0.1:4173') {
+    if (new URL(route.request().url()).host === `127.0.0.1:${process.env.TRIP_WEB_PORT ?? '4173'}`) {
       await route.continue()
       return
     }

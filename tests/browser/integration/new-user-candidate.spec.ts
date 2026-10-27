@@ -24,7 +24,7 @@ async function mockAccount(page: Page, accountId: string, email: string, members
     localStorage.setItem('sb-127.0.0.1-auth-token', JSON.stringify(session))
   }, syntheticSession(accountId, email))
   await page.route('**/*', async (route) => {
-    if (new URL(route.request().url()).host === '127.0.0.1:4173') await route.continue()
+    if (new URL(route.request().url()).host === `127.0.0.1:${process.env.TRIP_WEB_PORT ?? '4173'}`) await route.continue()
     else await route.abort('blockedbyclient')
   })
   await page.route('**/rest/v1/profiles*', (route) => route.fulfill({

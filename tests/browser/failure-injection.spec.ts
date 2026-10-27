@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 
-const localBrowserHost = '127.0.0.1:4173'
+const localBrowserHost = `127.0.0.1:${process.env.TRIP_WEB_PORT ?? '4173'}`
 const participantLabels = ['Partha', 'Astitva', 'Vaibhav', 'Suryansh', 'Bittu']
 const approvedPlaceholders = [
   'Participant A',
