@@ -1,4 +1,9 @@
-import { type FormEvent, type ReactNode, useEffect, useState } from 'react'
+import { type FormEvent, useEffect, useState } from 'react'
+import { Field } from '../../components/ui/Field'
+import { IconBack } from '../../components/ui/icons'
+import { NeonBtn } from '../../components/ui/NeonBtn'
+import { NeonInput } from '../../components/ui/NeonInput'
+import { ScreenFrame } from '../../components/ui/ScreenFrame'
 import { supabase } from '../../lib/supabase'
 
 type EntryMode = 'sign-in' | 'sign-up' | 'recovery' | 'reset' | 'restoring' | 'error' | 'expired'
@@ -7,40 +12,40 @@ interface AuthEntryProps {
   mode: EntryMode
   onRetry?: () => void
   contextMessage?: string
+  /** Shows a "Back" link (e.g. back to the invitation that sent the user here). */
+  onBack?: () => void
 }
 
-const fieldStyle = {
-  width: '100%',
-  border: '1px solid var(--border)',
-  borderRadius: 'var(--radius-md)',
-  background: 'rgba(245, 241, 235, 0.04)',
-  color: 'var(--text-primary)',
-  padding: '12px 14px',
-} as const
+type Message = { text: string; tone: 'info' | 'error' }
 
-const buttonStyle = {
-  width: '100%',
-  border: '1px solid var(--accent)',
-  borderRadius: 'var(--radius-md)',
-  background: 'var(--accent)',
-  color: '#0f0b08',
-  padding: '12px 14px',
-  fontWeight: 700,
-} as const
+// 16px text keeps phones from zooming into the field on focus.
+const inputStyle = { fontSize: 16, minHeight: 48 } as const
 
-export function AuthEntry({ mode: initialMode, onRetry, contextMessage }: AuthEntryProps) {
+const titles: Record<'sign-in' | 'sign-up' | 'recovery' | 'reset', { title: string; lede: string }> = {
+  'sign-in': { title: 'Sign in', lede: 'Plan, split and share your group trip.' },
+  'sign-up': { title: 'Create your account', lede: 'Start a Trip, or join one a friend invited you to.' },
+  recovery: { title: 'Reset your password', lede: 'We’ll email you a link to choose a new one.' },
+  reset: { title: 'Choose a new password', lede: 'Use at least 8 characters.' },
+}
+
+export function AuthEntry({ mode: initialMode, onRetry, contextMessage, onBack }: AuthEntryProps) {
   const [mode, setMode] = useState<EntryMode>(initialMode)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [displayName, setDisplayName] = useState('')
   const [confirmation, setConfirmation] = useState('')
-  const [message, setMessage] = useState<string | null>(null)
+  const [message, setMessage] = useState<Message | null>(null)
   const [busy, setBusy] = useState(false)
 
   useEffect(() => {
     setMode(initialMode)
     setMessage(null)
   }, [initialMode])
+
+  const switchMode = (next: EntryMode) => {
+    setMode(next)
+    setMessage(null)
+  }
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -50,7 +55,7 @@ export function AuthEntry({ mode: initialMode, onRetry, contextMessage }: AuthEn
     try {
       if (mode === 'sign-in') {
         const { error } = await supabase.auth.signInWithPassword({ email, password })
-        if (error) setMessage('We could not sign you in. Check your details and try again.')
+        if (error) setMessage({ tone: 'error', text: 'We could not sign you in. Check your email and password and try again.' })
         return
       }
 
@@ -60,29 +65,29 @@ export function AuthEntry({ mode: initialMode, onRetry, contextMessage }: AuthEn
           password,
           options: { data: { display_name: displayName } },
         })
-        if (error) setMessage('We could not create that account. Please try again.')
-        else setMessage('Check your email to complete verification.')
+        if (error) setMessage({ tone: 'error', text: 'We could not create that account. Please try again.' })
+        else setMessage({ tone: 'info', text: 'Check your email — we sent you a link to confirm your account.' })
         return
       }
 
       if (mode === 'recovery') {
         const { error } = await supabase.auth.resetPasswordForEmail(email)
-        if (error) setMessage('We could not start recovery. Please try again.')
-        else setMessage('If the account is eligible, recovery instructions are on the way.')
+        if (error) setMessage({ tone: 'error', text: 'We could not send a reset link. Please try again.' })
+        else setMessage({ tone: 'info', text: 'If that email has an account, a reset link is on its way.' })
         return
       }
 
       if (mode === 'reset') {
         if (!password || password !== confirmation) {
-          setMessage('Passwords must match before you continue.')
+          setMessage({ tone: 'error', text: 'Passwords must match before you continue.' })
           return
         }
         const { error } = await supabase.auth.updateUser({ password })
-        if (error) setMessage('This reset link is invalid or has expired.')
+        if (error) setMessage({ tone: 'error', text: 'This reset link is invalid or has expired.' })
         else {
           await supabase.auth.signOut()
           setMode('sign-in')
-          setMessage('Password updated. Sign in with your new password.')
+          setMessage({ tone: 'info', text: 'Password updated. Sign in with your new password.' })
         }
       }
     } finally {
@@ -91,62 +96,73 @@ export function AuthEntry({ mode: initialMode, onRetry, contextMessage }: AuthEn
   }
 
   if (mode === 'restoring') {
-    return <AuthFrame eyebrow="RETURNING USER" title="Restoring your session" detail="Checking your account safely." testId="auth-loading" />
+    return (
+      <ScreenFrame testId="auth-loading" title="Just a moment" lede="Getting your Trips ready…" busy>
+        <div role="status" className="flex items-center gap-3" style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
+          <span className="spinner" aria-hidden="true" />Loading
+        </div>
+      </ScreenFrame>
+    )
   }
 
   if (mode === 'error') {
     return (
-      <AuthFrame eyebrow="AUTHENTICATION" title="Something went wrong" detail="Your workspace is still protected.">
-        <button type="button" style={buttonStyle} onClick={onRetry}>Try again</button>
-      </AuthFrame>
+      <ScreenFrame title="Something went wrong" lede="We couldn’t check your account. Check your connection and try again.">
+        <NeonBtn type="button" size="lg" className="w-full" onClick={onRetry}>Try again</NeonBtn>
+      </ScreenFrame>
     )
   }
 
   if (mode === 'expired') {
     return (
-      <AuthFrame eyebrow="SESSION EXPIRED" title="Sign in again" detail="Your previous workspace was not reopened.">
-        <button type="button" style={buttonStyle} onClick={() => setMode('sign-in')}>Continue to sign in</button>
-      </AuthFrame>
+      <ScreenFrame title="Your session expired" lede="Sign in again to pick up where you left off.">
+        <NeonBtn type="button" size="lg" className="w-full" onClick={() => switchMode('sign-in')}>Continue to sign in</NeonBtn>
+      </ScreenFrame>
     )
   }
 
   const isReset = mode === 'reset'
   const isRecovery = mode === 'recovery'
   const isSignup = mode === 'sign-up'
-  const title = isReset ? 'Choose a new password' : isRecovery ? 'Reset your password' : isSignup ? 'Create your account' : 'Sign in'
+  const { title, lede } = titles[mode]
+  const submitLabel = isReset ? 'Save password' : isRecovery ? 'Send reset link' : isSignup ? 'Create account' : 'Sign in'
 
   return (
-    <AuthFrame eyebrow="BAKCHODI IN BALI" title={title} detail="Your account session is verified by Supabase Auth." testId="auth-entry">
-      {contextMessage && <p role="status" style={{ color: 'var(--text-secondary)', fontSize: 13, marginBottom: 16 }}>{contextMessage}</p>}
-      <form onSubmit={submit} className="flex flex-col gap-3" aria-label={title}>
-        {isSignup && <input aria-label="Display name" required value={displayName} onChange={(event) => setDisplayName(event.target.value)} placeholder="Your name" style={fieldStyle} />}
-        {!isReset && <input aria-label="Email" required type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Email" style={fieldStyle} />}
-        {!isRecovery && <input aria-label="Password" required type="password" minLength={8} value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Password" style={fieldStyle} />}
-        {isReset && <input aria-label="Confirm password" required type="password" minLength={8} value={confirmation} onChange={(event) => setConfirmation(event.target.value)} placeholder="Confirm password" style={fieldStyle} />}
-        {message && <p role="status" style={{ color: 'var(--text-secondary)', fontSize: 13 }}>{message}</p>}
-        <button disabled={busy} type="submit" style={buttonStyle}>{busy ? 'Please wait…' : isReset ? 'Save password' : isRecovery ? 'Send recovery link' : isSignup ? 'Create account' : 'Sign in'}</button>
+    <ScreenFrame testId="auth-entry" title={title} lede={lede}
+      top={onBack ? <button type="button" className="text-link" onClick={onBack}><IconBack size={18} />Back to invitation</button> : undefined}>
+      {contextMessage && <p role="status" className="notice mb-6">{contextMessage}</p>}
+      <form onSubmit={(event) => void submit(event)} className="flex flex-col gap-4" aria-label={title}>
+        {isSignup && <Field id="auth-display-name" label="Display name">
+          <NeonInput required autoComplete="name" value={displayName} onChange={(event) => setDisplayName(event.target.value)} placeholder="What friends call you" style={inputStyle} />
+        </Field>}
+        {!isReset && <Field id="auth-email" label="Email">
+          <NeonInput required type="email" autoComplete="email" inputMode="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" style={inputStyle} />
+        </Field>}
+        {!isRecovery && <Field id="auth-password" label={isReset ? 'New password' : 'Password'} hint={isSignup ? 'At least 8 characters.' : undefined}>
+          <NeonInput required type="password" minLength={8} autoComplete={isSignup || isReset ? 'new-password' : 'current-password'} value={password} onChange={(event) => setPassword(event.target.value)} style={inputStyle} />
+        </Field>}
+        {isReset && <Field id="auth-confirm-password" label="Confirm password">
+          <NeonInput required type="password" minLength={8} autoComplete="new-password" value={confirmation} onChange={(event) => setConfirmation(event.target.value)} style={inputStyle} />
+        </Field>}
+        {message && <p role="status" className={`notice${message.tone === 'error' ? ' notice--error' : ''}`}>{message.text}</p>}
+        <NeonBtn disabled={busy} type="submit" size="lg" className="mt-2 w-full">{busy ? 'Please wait…' : submitLabel}</NeonBtn>
       </form>
-      {!isReset && !isRecovery && <button type="button" className="font-ui" style={{ color: 'var(--text-secondary)', marginTop: 14 }} onClick={() => setMode(isSignup ? 'sign-in' : 'sign-up')}>{isSignup ? 'Already have an account? Sign in' : 'Create an account'}</button>}
-      {!isReset && <button type="button" className="font-ui" style={{ color: 'var(--text-secondary)', marginTop: 10 }} onClick={() => setMode(isRecovery ? 'sign-in' : 'recovery')}>{isRecovery ? 'Back to sign in' : 'Forgot password?'}</button>}
-    </AuthFrame>
-  )
-}
 
-interface FrameProps {
-  eyebrow: string
-  title: string
-  detail: string
-  testId?: string
-  children?: ReactNode
-}
-
-function AuthFrame({ eyebrow, title, detail, testId, children }: FrameProps) {
-  return (
-    <main data-testid={testId} className="mx-auto flex min-h-dvh w-full max-w-[480px] flex-col justify-center px-5 py-10" style={{ background: 'rgba(15, 11, 8, 0.96)' }}>
-      <p className="font-mono" style={{ color: 'var(--text-tertiary)', fontSize: 10, letterSpacing: '0.22em' }}>{eyebrow}</p>
-      <h1 className="serif-display" style={{ color: 'var(--text-primary)', fontSize: 34, fontWeight: 400, marginTop: 12 }}>{title}</h1>
-      <p className="serif-eyebrow" style={{ color: 'var(--text-secondary)', fontSize: 15, marginTop: 10, marginBottom: 24 }}>{detail}</p>
-      {children}
-    </main>
+      {mode === 'sign-in' && <>
+        <div className="mt-2 flex justify-center">
+          <button type="button" className="text-link" onClick={() => switchMode('recovery')}>Forgot password?</button>
+        </div>
+        <div className="mt-6 flex items-center gap-3" aria-hidden="true">
+          <span className="divider flex-1" /><span className="eyebrow">New here?</span><span className="divider flex-1" />
+        </div>
+        <NeonBtn type="button" variant="outline" size="lg" className="mt-5 w-full" onClick={() => switchMode('sign-up')}>Create an account</NeonBtn>
+      </>}
+      {isSignup && <p className="mt-4 flex flex-wrap items-center justify-center gap-x-1.5 text-sm" style={{ color: 'var(--text-tertiary)' }}>
+        Already have an account?<button type="button" className="text-link" onClick={() => switchMode('sign-in')}>Sign in</button>
+      </p>}
+      {isRecovery && <div className="mt-2 flex justify-center">
+        <button type="button" className="text-link" onClick={() => switchMode('sign-in')}>Back to sign in</button>
+      </div>}
+    </ScreenFrame>
   )
 }

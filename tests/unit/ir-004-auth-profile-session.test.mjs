@@ -75,7 +75,7 @@ test('IR-004 owns only the accepted Auth forms and safe terminal states', () => 
   assert.match(entry, /display_name/)
   assert.match(entry, /Passwords must match/)
   assert.match(boundary, /supabase\.auth\.signOut/)
-  assert.match(boundary, /workspace remains closed/)
+  assert.match(boundary, /We could not sign you out\. Check your connection and try again\./)
   assert.doesNotMatch(entry, /service_role|createClient|PersonaPicker/i)
 })
 

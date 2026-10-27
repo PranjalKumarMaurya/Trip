@@ -31,8 +31,8 @@ export function ArchivedTrips({ refreshKey, onRestored, className = '' }: {
 
   return (
     <section data-testid="archived-trips" aria-label="Archived Trips" className={`surface px-4 py-5 ${className}`}>
-      <h2 className="serif-display" style={{ color: 'var(--text-primary)', fontSize: 25 }}>Archived Trips</h2>
-      <p className="mt-2" style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
+      <h2 className="serif-display" style={{ color: 'var(--text-primary)', fontSize: 20 }}>Archived Trips</h2>
+      <p className="mt-1.5" style={{ color: 'var(--text-secondary)', fontSize: 13 }}>
         Closed for everyone until an Owner restores them. Nothing in them was deleted.
       </p>
       <ul className="mt-4 flex flex-col gap-3">

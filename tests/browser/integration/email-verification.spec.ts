@@ -1,4 +1,5 @@
 import { expect, test, type APIRequestContext, type Page } from '@playwright/test'
+import { setTripSettings } from '../support/trip-frame'
 
 test.skip(process.env.TRIP_LIVE_JOURNEY !== '1' || process.env.TRIP_VERIFY_EMAIL !== '1',
   'requires disposable local Supabase stack with mailbox confirmation')
@@ -63,12 +64,10 @@ test('verification emails return Owner and invited friend to the right journey',
     await owner.getByLabel('Destination').fill('Goa')
     await owner.getByLabel('Start date').fill('2026-11-01')
     await owner.getByLabel('End date').fill('2026-11-05')
-    await owner.getByLabel('IANA timezone').fill('Asia/Kolkata')
-    await owner.getByLabel('Accounting currency').fill('INR')
-    await owner.getByLabel('Display currencies').fill('INR')
-    await owner.getByRole('button', { name: 'Create Group' }).click()
+    await setTripSettings(owner, { timezone: 'Asia/Kolkata', currency: 'INR' })
+    await owner.getByRole('button', { name: 'Create Trip' }).click()
     await expect(owner.getByTestId('bootstrap-success-state-a')).toBeVisible()
-    await owner.getByRole('button', { name: 'Continue to Trip' }).click()
+    await owner.getByRole('button', { name: 'Open Trip' }).click()
     await owner.getByRole('tab', { name: 'Crew' }).click()
     await owner.getByLabel('Friend’s email').fill(friendEmail)
     await owner.getByRole('button', { name: 'Create link' }).click()
@@ -81,10 +80,10 @@ test('verification emails return Owner and invited friend to the right journey',
     await signUp(friend, 'Friend Verified', friendEmail)
     const verificationTab = await friendContext.newPage()
     await verificationTab.goto(await confirmationLink(request, friendEmail))
-    await expect(verificationTab.getByTestId('invitation-entry')).toContainText('Join as an ordinary Member?')
+    await expect(verificationTab.getByTestId('invitation-entry')).toContainText('Join Verified Goa as a member?')
     await verificationTab.getByRole('button', { name: 'Confirm and join' }).click()
-    await expect(verificationTab.getByTestId('invitation-entry')).toContainText('Joined successfully')
-    await verificationTab.getByRole('button', { name: 'Close invitation' }).click()
+    await expect(verificationTab.getByTestId('invitation-entry')).toContainText('You joined Verified Goa.')
+    await verificationTab.getByRole('button', { name: 'Open Trip' }).click()
     await expect(verificationTab.getByTestId('group-workspace')).toContainText('Verified Goa')
   } finally {
     await ownerContext.close()

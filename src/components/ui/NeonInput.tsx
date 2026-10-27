@@ -4,10 +4,12 @@ interface Props extends InputHTMLAttributes<HTMLInputElement> {
   color?: string
 }
 
-export function NeonInput({ color = 'var(--accent)', className = '', style: externalStyle, ...rest }: Props) {
+export function NeonInput({ color = 'var(--accent)', className = '', style: externalStyle, onFocus, onBlur, ...rest }: Props) {
+  const invalid = rest['aria-invalid'] === true || rest['aria-invalid'] === 'true'
+  const restingBorder = invalid ? 'rgba(255,139,77,0.6)' : 'var(--border)'
   const base: CSSProperties = {
     background: 'rgba(245,241,235,0.035)',
-    border: '1px solid var(--border)',
+    border: `1px solid ${restingBorder}`,
     color: 'var(--text-primary)',
     fontFamily: 'var(--font-ui)',
     outline: 'none',
@@ -19,8 +21,9 @@ export function NeonInput({ color = 'var(--accent)', className = '', style: exte
     <input
       className={`px-3.5 py-2.5 rounded-md w-full ${className}`}
       style={{ ...base, ...externalStyle }}
-      onFocus={e => { e.currentTarget.style.borderColor = color; e.currentTarget.style.background = 'rgba(245,241,235,0.06)' }}
-      onBlur={e =>  { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.background = 'rgba(245,241,235,0.035)' }}
+      // Callers' focus/blur handlers run too; the focus border always resets on blur.
+      onFocus={e => { e.currentTarget.style.borderColor = color; e.currentTarget.style.background = 'rgba(245,241,235,0.06)'; onFocus?.(e) }}
+      onBlur={e =>  { e.currentTarget.style.borderColor = restingBorder; e.currentTarget.style.background = 'rgba(245,241,235,0.035)'; onBlur?.(e) }}
       {...rest}
     />
   )

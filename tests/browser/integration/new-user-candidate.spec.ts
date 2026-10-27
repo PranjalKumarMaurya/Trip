@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test'
+import { setTripSettings } from '../support/trip-frame'
 
 const ownerId = 'a5000000-0000-4000-8000-000000000001'
 const friendId = 'a5000000-0000-4000-8000-000000000002'
@@ -65,12 +66,10 @@ test('staged owner creates Trip and link; recipient joins after confirmation', a
     await owner.getByLabel('Destination').fill('Goa')
     await owner.getByLabel('Start date').fill('2026-11-01')
     await owner.getByLabel('End date').fill('2026-11-05')
-    await owner.getByLabel('IANA timezone').fill('Asia/Kolkata')
-    await owner.getByLabel('Accounting currency').fill('INR')
-    await owner.getByLabel('Display currencies').fill('INR')
-    await owner.getByRole('button', { name: 'Create Group' }).click()
+    await setTripSettings(owner, { timezone: 'Asia/Kolkata', currency: 'INR' })
+    await owner.getByRole('button', { name: 'Create Trip' }).click()
     await expect(owner.getByTestId('bootstrap-success-state-a')).toBeVisible()
-    await owner.getByRole('button', { name: 'Continue to Trip' }).click()
+    await owner.getByRole('button', { name: 'Open Trip' }).click()
     await expect(owner.getByTestId('group-workspace')).toContainText('Goa weekend')
     await owner.getByRole('tab', { name: 'Crew' }).click()
     await owner.getByLabel('Friend’s email').fill('friend@example.test')
@@ -97,8 +96,8 @@ test('staged owner creates Trip and link; recipient joins after confirmation', a
     await friend.goto(invitationLink)
     await expect(friend.getByTestId('invitation-entry')).toContainText('Goa weekend · Goa')
     await friend.getByRole('button', { name: 'Confirm and join' }).click()
-    await expect(friend.getByTestId('invitation-entry')).toContainText('Joined successfully')
-    await friend.getByRole('button', { name: 'Close invitation' }).click()
+    await expect(friend.getByTestId('invitation-entry')).toContainText('You joined Goa weekend.')
+    await friend.getByRole('button', { name: 'Open Trip' }).click()
     await expect(friend.getByTestId('group-workspace')).toContainText('Goa weekend')
     await friend.getByRole('tab', { name: 'Crew' }).click()
     await expect(friend.getByTestId('invite-member')).toHaveCount(0)

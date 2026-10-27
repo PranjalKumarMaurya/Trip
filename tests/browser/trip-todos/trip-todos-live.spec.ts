@@ -1,4 +1,5 @@
 import { expect, test, type Locator, type Page } from '@playwright/test'
+import { setTripSettings } from '../support/trip-frame'
 
 // Real stack: two Auth accounts in one Trip, itinerary and shared todos kept
 // live between them over Supabase Realtime. Run with `npm run test:trip:live`.
@@ -29,11 +30,9 @@ async function createTrip(page: Page) {
   await page.getByLabel('Destination').fill('Bali')
   await page.getByLabel('Start date').fill('2026-11-01')
   await page.getByLabel('End date').fill('2026-11-08')
-  await page.getByLabel('IANA timezone').fill(TRIP_ZONE)
-  await page.getByLabel('Accounting currency').fill('IDR')
-  await page.getByLabel('Display currencies').fill('IDR, INR')
-  await page.getByRole('button', { name: 'Create Group' }).click()
-  await page.getByRole('button', { name: 'Continue to Trip' }).click()
+  await setTripSettings(page, { timezone: TRIP_ZONE, currency: 'IDR', alsoShow: ['INR'] })
+  await page.getByRole('button', { name: 'Create Trip' }).click()
+  await page.getByRole('button', { name: 'Open Trip' }).click()
   await expect(page.getByTestId('group-workspace')).toContainText('Bali bachelor')
 }
 
@@ -72,8 +71,8 @@ test('two members share a live itinerary and todo list', async ({ browser }) => 
     await friend.getByRole('button', { name: 'Continue', exact: true }).click()
     await signUp(friend, 'Friend One', 'friend-trip@example.test')
     await friend.getByRole('button', { name: 'Confirm and join' }).click()
-    await expect(friend.getByTestId('invitation-entry')).toContainText('Joined successfully')
-    await friend.getByRole('button', { name: 'Close invitation' }).click()
+    await expect(friend.getByTestId('invitation-entry')).toContainText('You joined Bali bachelor.')
+    await friend.getByRole('button', { name: 'Open Trip' }).click()
     await expect(friend.getByTestId('group-workspace')).toContainText('Bali bachelor')
 
     // ---- Trip tab ---------------------------------------------------------
