@@ -146,7 +146,8 @@ test('crew status, invite sharing, crew info and the parse limit on a real stack
     const review = friend.getByTestId('scan-review')
     await fileInput.setInputFiles({ name: 'boarding-pass.png', mimeType: 'image/png', buffer: png })
     await friend.getByRole('button', { name: 'Upload and read' }).click()
-    await expect(review.getByLabel('Title')).toHaveValue('IndiGo 6E-123 · DEL → GOI')
+    // The first read waits for the local Edge runtime to warm up.
+    await expect(review.getByLabel('Title')).toHaveValue('IndiGo 6E-123 · DEL → GOI', { timeout: 30_000 })
     await review.getByRole('button', { name: 'Not now' }).click()
 
     await fileInput.setInputFiles({ name: 'hotel-voucher.png', mimeType: 'image/png', buffer: png })
