@@ -26,6 +26,7 @@ All four feature streams are merged into `v2`. Every row below passed on the com
 | **Scan tab:** private `trip-documents` bucket, user-scoped `parse-document` Edge Function (Claude), editable draft, confirm into itinerary, signed-URL view, uploader/Owner delete (050) | `npm run test:scan:db`, `TRIP_WEB_PORT=4183 npm run test:scan:live` (stub parser) |
 | **FX tab:** two-way converter with live reference rates, cached offline fallback, Bali price guide only for Bali Trips | `npm run test:fx:unit`, scan-fx live test |
 | **Crew tab:** roster, pending/past invitations with revoke, make Owner/Member, transfer ownership, remove, leave (last-Owner guarded), archive and restore (060) | `npm run test:crew:db`, `TRIP_WEB_PORT=4184 npm run test:crew:live`, `npm run test:crew:browser` |
+| App frame: friendly auth, Create Trip with timezone/currency pickers, invite screens with clear actions, compact header with Trips/Account sheets and a fixed bottom tab bar | mocked browser tests (`tests/browser/ir-003/app-frame.spec.ts` etc.), `npm run test:ui:tour` screenshots |
 | All migrations 001–060 apply as hosted `postgres` | every database suite applies them that way |
 
 Unit tests: `npm run test:unit`. Mocked browser tests: `PLAYWRIGHT_BROWSERS_PATH=0 npx playwright test tests/browser/ir-003 tests/browser/ir-004 tests/browser/ir-005 tests/browser/crew tests/browser/integration/new-user-candidate.spec.ts`.
@@ -43,12 +44,13 @@ Unit tests: `npm run test:unit`. Mocked browser tests: `PLAYWRIGHT_BROWSERS_PATH
 - Members cannot read `group_configuration_display_currencies`, so the FX tab falls back to a currency picker (one harmless 403 per visit).
 - The legacy public `tickets` bucket still exists with public read; make it private (or drop it after the Bali import).
 - `npm run test:ir003:evidence` (old IR-003 Lane C gate) fails its provenance check because migration 011 changed for hosted deployability. Retired with the gate process.
-- `tests/browser/current-ui-boot.spec.ts` still expects the old persona picker.
+- `tests/browser/current-ui-boot.spec.ts` still expects the old persona picker and page title.
 - Legacy `src/tabs`, `src/hooks`, `src/components` (except `ui/`) are unreachable reference code; do not wire them back in.
 
 ## Local development
 
 - `npm run db:start` starts a local Supabase with every migration and writes `.env.development.local`; then `npm run dev`. `npm run db:types` regenerates `src/lib/database.types.ts`; `npm run db:stop` stops it.
+- `npm run test:ui:tour` screenshots every main screen on a disposable stack (`TRIP_TOUR_DIR` sets the folder) — use it to review UI changes.
 - Tests need the `docker` and `psql` commands. In the `claude-box` distrobox, `docker` forwards to the host daemon.
 - New suites should use `tests/support/local-stack.mjs` (own `projectId` and `basePort`) and `tests/support/db-fixtures.mjs` (`createUsers`, `createTrip`, `sqlAs`); `tests/database/trip-events/verify-trip-events.mjs` is the template.
 
