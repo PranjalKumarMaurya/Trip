@@ -74,9 +74,31 @@ CREATE ROLE ir003_top001_executor
   NOREPLICATION
   BYPASSRLS;
 
-GRANT USAGE ON SCHEMA auth, public TO ir003_top001_executor;
+-- Hosted Supabase applies migrations as the non-superuser `postgres`, which can
+-- assign ownership only to a role it can SET ROLE to and that may CREATE in the
+-- schema. Both grants are revoked before COMMIT. Name `postgres` explicitly:
+-- `TO CURRENT_USER` crashes the server under Supabase's supautils extension.
+GRANT ir003_top001_executor TO postgres;
+GRANT CREATE ON SCHEMA public TO ir003_top001_executor;
 
-GRANT EXECUTE ON FUNCTION auth.uid() TO ir003_top001_executor;
+-- Hosted `postgres` can read auth.users and call auth.uid() but cannot grant the
+-- auth schema to other roles, so executor-owned functions reach Auth only
+-- through this narrow read-only bridge owned by `postgres`.
+CREATE SCHEMA trip_private;
+REVOKE ALL ON SCHEMA trip_private FROM PUBLIC;
+CREATE VIEW trip_private.auth_users AS
+  SELECT id, email, email_confirmed_at FROM auth.users;
+REVOKE ALL ON TABLE trip_private.auth_users FROM PUBLIC, anon, authenticated, service_role;
+CREATE FUNCTION trip_private.auth_uid() RETURNS uuid
+  LANGUAGE sql STABLE SECURITY DEFINER SET search_path = pg_catalog
+  AS $$ SELECT auth.uid() $$;
+REVOKE ALL ON FUNCTION trip_private.auth_uid() FROM PUBLIC;
+GRANT USAGE ON SCHEMA trip_private TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION trip_private.auth_uid() TO anon, authenticated;
+
+GRANT USAGE ON SCHEMA trip_private, public TO ir003_top001_executor;
+
+GRANT EXECUTE ON FUNCTION trip_private.auth_uid() TO ir003_top001_executor;
 GRANT EXECUTE ON FUNCTION public.is_valid_iana_timezone(TEXT)
   TO ir003_top001_executor;
 GRANT EXECUTE ON FUNCTION pg_catalog.gen_random_uuid()
@@ -84,7 +106,7 @@ GRANT EXECUTE ON FUNCTION pg_catalog.gen_random_uuid()
 
 GRANT SELECT ON TABLE pg_catalog.pg_timezone_names TO ir003_top001_executor;
 GRANT SELECT (id, email_confirmed_at)
-  ON TABLE auth.users TO ir003_top001_executor;
+  ON TABLE trip_private.auth_users TO ir003_top001_executor;
 GRANT SELECT (id, auth_user_id)
   ON TABLE public.profiles TO ir003_top001_executor;
 GRANT SELECT (id), INSERT
@@ -172,14 +194,14 @@ DECLARE
   v_existing_group_id uuid;
   v_existing_result jsonb;
 BEGIN
-  v_auth_user_id := auth.uid();
+  v_auth_user_id := trip_private.auth_uid();
 
   IF v_auth_user_id IS NULL THEN
     RAISE EXCEPTION USING ERRCODE = 'P0001', MESSAGE = 'not_authenticated';
   END IF;
 
   PERFORM 1
-  FROM auth.users AS auth_user
+  FROM trip_private.auth_users AS auth_user
   WHERE auth_user.id = v_auth_user_id
     AND auth_user.email_confirmed_at IS NOT NULL;
 
@@ -460,5 +482,8 @@ REVOKE ALL ON FUNCTION public.bootstrap_group(jsonb, jsonb, uuid)
   FROM PUBLIC, anon, service_role;
 GRANT EXECUTE ON FUNCTION public.bootstrap_group(jsonb, jsonb, uuid)
   TO authenticated;
+
+REVOKE CREATE ON SCHEMA public FROM ir003_top001_executor;
+REVOKE ir003_top001_executor FROM postgres;
 
 COMMIT;

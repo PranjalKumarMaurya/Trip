@@ -230,6 +230,36 @@ export type Database = {
           },
         ]
       }
+      group_configuration_display_currencies: {
+        Row: {
+          currency_code: string
+          group_id: string
+        }
+        Insert: {
+          currency_code: string
+          group_id: string
+        }
+        Update: {
+          currency_code?: string
+          group_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_configuration_display_currencies_currency_code_fkey"
+            columns: ["currency_code"]
+            isOneToOne: false
+            referencedRelation: "iso_4217_currency_codes"
+            referencedColumns: ["code"]
+          },
+          {
+            foreignKeyName: "group_configuration_display_currencies_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "group_configurations"
+            referencedColumns: ["group_id"]
+          },
+        ]
+      }
       group_configurations: {
         Row: {
           accounting_currency: string
@@ -346,6 +376,233 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      invitations: {
+        Row: {
+          accepted_at: string | null
+          accepted_by_group_member_id: string | null
+          created_at: string
+          created_by_group_member_id: string
+          expired_at: string | null
+          expires_at: string
+          group_id: string
+          id: string
+          proof_verifier: string
+          recipient_email: string
+          revoked_at: string | null
+          status: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          accepted_by_group_member_id?: string | null
+          created_at?: string
+          created_by_group_member_id: string
+          expired_at?: string | null
+          expires_at: string
+          group_id: string
+          id?: string
+          proof_verifier: string
+          recipient_email: string
+          revoked_at?: string | null
+          status: string
+        }
+        Update: {
+          accepted_at?: string | null
+          accepted_by_group_member_id?: string | null
+          created_at?: string
+          created_by_group_member_id?: string
+          expired_at?: string | null
+          expires_at?: string
+          group_id?: string
+          id?: string
+          proof_verifier?: string
+          recipient_email?: string
+          revoked_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invitations_group_id_accepted_by_group_member_id_fkey"
+            columns: ["group_id", "accepted_by_group_member_id"]
+            isOneToOne: false
+            referencedRelation: "group_members"
+            referencedColumns: ["group_id", "id"]
+          },
+          {
+            foreignKeyName: "invitations_group_id_created_by_group_member_id_fkey"
+            columns: ["group_id", "created_by_group_member_id"]
+            isOneToOne: false
+            referencedRelation: "group_members"
+            referencedColumns: ["group_id", "id"]
+          },
+          {
+            foreignKeyName: "invitations_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ir003_bootstrap_requests: {
+        Row: {
+          actor_profile_id: string
+          completed_at: string | null
+          created_at: string
+          group_id: string | null
+          operation: string
+          request_fingerprint: Json
+          request_id: string
+          result: Json | null
+          status: string
+        }
+        Insert: {
+          actor_profile_id: string
+          completed_at?: string | null
+          created_at?: string
+          group_id?: string | null
+          operation: string
+          request_fingerprint: Json
+          request_id: string
+          result?: Json | null
+          status: string
+        }
+        Update: {
+          actor_profile_id?: string
+          completed_at?: string | null
+          created_at?: string
+          group_id?: string | null
+          operation?: string
+          request_fingerprint?: Json
+          request_id?: string
+          result?: Json | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ir003_bootstrap_requests_actor_profile_id_fkey"
+            columns: ["actor_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ir003_bootstrap_requests_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ir005_invitation_requests: {
+        Row: {
+          actor_profile_id: string
+          completed_at: string | null
+          created_at: string
+          group_id: string
+          invitation_id: string | null
+          operation: string
+          request_fingerprint: Json
+          request_id: string
+          status: string
+        }
+        Insert: {
+          actor_profile_id: string
+          completed_at?: string | null
+          created_at?: string
+          group_id: string
+          invitation_id?: string | null
+          operation: string
+          request_fingerprint: Json
+          request_id: string
+          status: string
+        }
+        Update: {
+          actor_profile_id?: string
+          completed_at?: string | null
+          created_at?: string
+          group_id?: string
+          invitation_id?: string | null
+          operation?: string
+          request_fingerprint?: Json
+          request_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ir005_invitation_requests_actor_profile_id_fkey"
+            columns: ["actor_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ir005_invitation_requests_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ir005_invitation_requests_group_id_invitation_id_fkey"
+            columns: ["group_id", "invitation_id"]
+            isOneToOne: false
+            referencedRelation: "invitations"
+            referencedColumns: ["group_id", "id"]
+          },
+        ]
+      }
+      ir005_lifecycle_requests: {
+        Row: {
+          actor_profile_id: string
+          completed_at: string | null
+          created_at: string
+          group_id: string
+          operation: string
+          request_fingerprint: Json
+          request_id: string
+          result: Json | null
+          status: string
+        }
+        Insert: {
+          actor_profile_id: string
+          completed_at?: string | null
+          created_at?: string
+          group_id: string
+          operation: string
+          request_fingerprint: Json
+          request_id: string
+          result?: Json | null
+          status: string
+        }
+        Update: {
+          actor_profile_id?: string
+          completed_at?: string | null
+          created_at?: string
+          group_id?: string
+          operation?: string
+          request_fingerprint?: Json
+          request_id?: string
+          result?: Json | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ir005_lifecycle_requests_actor_profile_id_fkey"
+            columns: ["actor_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ir005_lifecycle_requests_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       iso_4217_currency_codes: {
         Row: {
@@ -475,6 +732,54 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_invitation: {
+        Args: {
+          continuation_context: Json
+          invitation_proof: string
+          request_id: string
+        }
+        Returns: Json
+      }
+      bootstrap_group: {
+        Args: {
+          configuration_request: Json
+          group_request: Json
+          request_id: string
+        }
+        Returns: {
+          group_id: string
+          outcome: string
+          request_id: string
+        }[]
+      }
+      change_member_role: {
+        Args: {
+          group_id: string
+          request_id: string
+          requested_role: string
+          target_membership_id: string
+        }
+        Returns: Json
+      }
+      create_invitation: {
+        Args: {
+          group_id: string
+          invitation_request: Json
+          recipient_request: Json
+          request_id: string
+        }
+        Returns: Json
+      }
+      deactivate_membership: {
+        Args: {
+          action: string
+          confirmation: Json
+          group_id: string
+          request_id: string
+          target_membership_id: string
+        }
+        Returns: Json
+      }
       get_group_audit_summary: {
         Args: { p_group_id: string; p_limit?: number }
         Returns: {
@@ -495,7 +800,136 @@ export type Database = {
           status: string
         }[]
       }
+      get_my_group_access: {
+        Args: never
+        Returns: {
+          accounting_currency: string
+          destination: string
+          end_date: string
+          group_id: string
+          group_member_id: string
+          role: string
+          start_date: string
+          timezone: string
+          trip_name: string
+        }[]
+      }
+      inspect_invitation: { Args: { invitation_proof: string }; Returns: Json }
+      ir003_bootstrap_group_impl: {
+        Args: {
+          p_configuration_request: Json
+          p_group_request: Json
+          p_request_id: string
+        }
+        Returns: {
+          group_id: string
+          outcome: string
+          request_id: string
+        }[]
+      }
+      ir005_accept_invitation_impl: {
+        Args: {
+          p_continuation_context: Json
+          p_invitation_proof: string
+          p_request_id: string
+        }
+        Returns: Json
+      }
+      ir005_change_member_role_impl: {
+        Args: {
+          p_group_id: string
+          p_request_id: string
+          p_requested_role: string
+          p_target_membership_id: string
+        }
+        Returns: Json
+      }
+      ir005_create_invitation_impl: {
+        Args: {
+          p_group_id: string
+          p_invitation_request: Json
+          p_recipient_request: Json
+          p_request_id: string
+        }
+        Returns: Json
+      }
+      ir005_deactivate_membership_impl: {
+        Args: {
+          p_action: string
+          p_confirmation: Json
+          p_group_id: string
+          p_request_id: string
+          p_target_membership_id: string
+        }
+        Returns: Json
+      }
+      ir005_inspect_invitation_impl: {
+        Args: { p_invitation_proof: string }
+        Returns: Json
+      }
+      ir005_list_group_invitations_impl: {
+        Args: {
+          p_before_created_at: string
+          p_before_invitation_id: string
+          p_group_id: string
+        }
+        Returns: Json
+      }
+      ir005_revoke_invitation_impl: {
+        Args: {
+          p_group_id: string
+          p_invitation_id: string
+          p_request_id: string
+        }
+        Returns: Json
+      }
+      ir005_set_group_archive_state_impl: {
+        Args: {
+          p_desired_archive_state: string
+          p_group_id: string
+          p_request_id: string
+        }
+        Returns: Json
+      }
+      ir005_transfer_ownership_impl: {
+        Args: {
+          p_group_id: string
+          p_prior_owner_outcome: string
+          p_request_id: string
+          p_successor_membership_id: string
+        }
+        Returns: Json
+      }
       is_valid_iana_timezone: { Args: { candidate: string }; Returns: boolean }
+      list_group_invitations: {
+        Args: {
+          before_created_at: string
+          before_invitation_id: string
+          group_id: string
+        }
+        Returns: Json
+      }
+      revoke_invitation: {
+        Args: { group_id: string; invitation_id: string; request_id: string }
+        Returns: Json
+      }
+      set_group_archive_state: {
+        Args: {
+          desired_archive_state: string
+          group_id: string
+          request_id: string
+        }
+        Returns: Json
+      }
+      transfer_ownership: {
+        Args: {
+          group_id: string
+          prior_owner_outcome: string
+          request_id: string
+          successor_membership_id: string
+        }
+        Returns: Json
+      }
     }
     Enums: {
       [_ in never]: never
@@ -628,3 +1062,4 @@ export const Constants = {
     Enums: {},
   },
 } as const
+
