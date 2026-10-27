@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
 import { InviteMember } from '../invitations/InviteMember'
 import type { RosterMember } from '../groups/useGroupRoster'
+import { useTripMemberProfiles } from '../groups/useTripMemberProfiles'
 import type { TripTabProps } from '../workspace/tripTab'
 import { type ActionSheetResult, type ActionSpec, ActionSheet, buttonClass, quietButtonStyle } from './ActionSheet'
 import { changeMemberRole, deactivateMembership, setTripArchiveState, transferOwnership } from './crewApi'
+import { CrewInfo } from './CrewInfo'
 import { type CrewViewer, canStepDown, crewErrorView, leaveBlockReason, memberActionsFor } from './crewRules'
 import { InvitationList } from './InvitationList'
 
@@ -22,12 +24,16 @@ export function CrewTab({ trip, roster, reloadRoster, onTripsChanged }: TripTabP
   const active = roster.filter((member) => member.status === 'active')
   const former = roster.filter((member) => member.status === 'inactive')
   const groupId = trip.groupId
+  const profiles = useTripMemberProfiles(groupId)
+  const [expanded, setExpanded] = useState<string | null>(null)
+  const profileOf = (memberId: string) => profiles.profiles.find((profile) => profile.groupMemberId === memberId)
 
   // Others may have joined or changed roles since the workspace opened.
   useEffect(() => { reloadRoster() }, [reloadRoster])
   const refreshCrew = () => {
     setNotice('')
     reloadRoster()
+    profiles.reload()
     setInvitationReload((value) => value + 1)
   }
 
@@ -129,14 +135,32 @@ export function CrewTab({ trip, roster, reloadRoster, onTripsChanged }: TripTabP
         <ul className="mt-3 flex flex-col gap-2" aria-label="Trip members">
           {active.map((member) => {
             const manageable = memberActionsFor(viewer, member).length > 0
+            const isMe = member.groupMemberId === trip.groupMemberId
+            const label = `${member.displayName}${isMe ? ' (you)' : ''}`
+            const open = expanded === member.groupMemberId
+            const infoId = `crew-info-${member.groupMemberId}`
+            const emoji = profileOf(member.groupMemberId)?.avatarEmoji
             return (
-              <li key={member.groupMemberId} className="flex items-center justify-between gap-3" style={{ color: 'var(--text-primary)', minHeight: 40 }}>
-                <span className="min-w-0 truncate">{member.displayName}{member.groupMemberId === trip.groupMemberId ? ' (you)' : ''}</span>
-                <span className="flex shrink-0 items-center gap-3">
-                  <span style={{ color: 'var(--text-secondary)' }}>{member.role === 'owner' ? 'Owner' : 'Member'}</span>
-                  {manageable && <button type="button" aria-label={`Manage ${member.displayName}`} onClick={() => { setNotice(''); setSheet({ kind: 'member', member }) }}
-                    className={buttonClass} style={quietButtonStyle}>Manage</button>}
-                </span>
+              <li key={member.groupMemberId} style={{ color: 'var(--text-primary)' }}>
+                <div className="flex items-center justify-between gap-3" style={{ minHeight: 44 }}>
+                  <button type="button" aria-expanded={open} aria-controls={infoId} aria-label={`Details for ${label}`}
+                    onClick={() => setExpanded(open ? null : member.groupMemberId)} className="flex min-h-11 min-w-0 flex-1 items-center gap-2.5 text-left">
+                    <span aria-hidden="true" className="flex shrink-0 items-center justify-center" style={{
+                      width: 30, height: 30, borderRadius: '50%', background: 'var(--accent-soft)', border: '1px solid var(--border-strong)',
+                      fontSize: emoji ? 16 : 13, fontWeight: 600,
+                    }}>{emoji || member.displayName.trim().charAt(0).toUpperCase()}</span>
+                    <span className="min-w-0 truncate">{label}</span>
+                    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"
+                      className="shrink-0 transition-transform" style={{ color: 'var(--text-tertiary)', transform: open ? 'rotate(180deg)' : undefined }}><path d="m6 9 6 6 6-6" /></svg>
+                  </button>
+                  <span className="flex shrink-0 items-center gap-3">
+                    <span style={{ color: 'var(--text-secondary)' }}>{member.role === 'owner' ? 'Owner' : 'Member'}</span>
+                    {manageable && <button type="button" aria-label={`Manage ${member.displayName}`} onClick={() => { setNotice(''); setSheet({ kind: 'member', member }) }}
+                      className={buttonClass} style={quietButtonStyle}>Manage</button>}
+                  </span>
+                </div>
+                {open && <CrewInfo id={infoId} name={member.displayName} isMe={isMe} profile={profileOf(member.groupMemberId)}
+                  loading={profiles.loading} error={profiles.error} />}
               </li>
             )
           })}
