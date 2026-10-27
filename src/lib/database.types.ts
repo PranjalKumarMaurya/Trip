@@ -697,6 +697,42 @@ export type Database = {
         }
         Relationships: []
       }
+      trip_event_audience: {
+        Row: {
+          created_at: string
+          event_id: string
+          group_id: string
+          group_member_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          group_id: string
+          group_member_id: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          group_id?: string
+          group_member_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_event_audience_event_same_group"
+            columns: ["group_id", "event_id"]
+            isOneToOne: false
+            referencedRelation: "trip_events"
+            referencedColumns: ["group_id", "id"]
+          },
+          {
+            foreignKeyName: "trip_event_audience_member_same_group"
+            columns: ["group_id", "group_member_id"]
+            isOneToOne: false
+            referencedRelation: "group_members"
+            referencedColumns: ["group_id", "id"]
+          },
+        ]
+      }
       trip_events: {
         Row: {
           airline: string | null
@@ -771,6 +807,64 @@ export type Database = {
           },
           {
             foreignKeyName: "trip_events_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trip_todos: {
+        Row: {
+          completed_at: string | null
+          completed_by: string | null
+          created_at: string
+          created_by: string
+          done: boolean
+          group_id: string
+          id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string
+          created_by: string
+          done?: boolean
+          group_id: string
+          id?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string
+          created_by?: string
+          done?: boolean
+          group_id?: string
+          id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_todos_completer_same_group"
+            columns: ["group_id", "completed_by"]
+            isOneToOne: false
+            referencedRelation: "group_members"
+            referencedColumns: ["group_id", "id"]
+          },
+          {
+            foreignKeyName: "trip_todos_creator_same_group"
+            columns: ["group_id", "created_by"]
+            isOneToOne: false
+            referencedRelation: "group_members"
+            referencedColumns: ["group_id", "id"]
+          },
+          {
+            foreignKeyName: "trip_todos_group_id_fkey"
             columns: ["group_id"]
             isOneToOne: false
             referencedRelation: "groups"
@@ -1001,6 +1095,10 @@ export type Database = {
           request_id: string
         }
         Returns: Json
+      }
+      set_trip_event_audience: {
+        Args: { p_event_id: string; p_group_id: string; p_member_ids: string[] }
+        Returns: undefined
       }
       transfer_ownership: {
         Args: {
