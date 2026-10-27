@@ -267,6 +267,7 @@ export type Database = {
           destination: string
           end_date: string
           group_id: string
+          is_international: boolean
           start_date: string
           timezone: string
           trip_name: string
@@ -278,6 +279,7 @@ export type Database = {
           destination: string
           end_date: string
           group_id: string
+          is_international?: boolean
           start_date: string
           timezone: string
           trip_name: string
@@ -289,6 +291,7 @@ export type Database = {
           destination?: string
           end_date?: string
           group_id?: string
+          is_international?: boolean
           start_date?: string
           timezone?: string
           trip_name?: string
@@ -619,26 +622,55 @@ export type Database = {
       profiles: {
         Row: {
           auth_user_id: string | null
+          avatar_emoji: string | null
+          avatar_path: string | null
           created_at: string
+          dietary_notes: string | null
           display_name: string
+          emergency_contact: string | null
+          home_currency: string | null
           id: string
+          phone: string | null
           updated_at: string
+          upi_id: string | null
         }
         Insert: {
           auth_user_id?: string | null
+          avatar_emoji?: string | null
+          avatar_path?: string | null
           created_at?: string
+          dietary_notes?: string | null
           display_name: string
+          emergency_contact?: string | null
+          home_currency?: string | null
           id?: string
+          phone?: string | null
           updated_at?: string
+          upi_id?: string | null
         }
         Update: {
           auth_user_id?: string | null
+          avatar_emoji?: string | null
+          avatar_path?: string | null
           created_at?: string
+          dietary_notes?: string | null
           display_name?: string
+          emergency_contact?: string | null
+          home_currency?: string | null
           id?: string
+          phone?: string | null
           updated_at?: string
+          upi_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_home_currency_fkey"
+            columns: ["home_currency"]
+            isOneToOne: false
+            referencedRelation: "iso_4217_currency_codes"
+            referencedColumns: ["code"]
+          },
+        ]
       }
       settlements: {
         Row: {
@@ -1343,6 +1375,7 @@ export type Database = {
           end_date: string
           group_id: string
           group_member_id: string
+          is_international: boolean
           role: string
           start_date: string
           timezone: string
@@ -1350,6 +1383,19 @@ export type Database = {
         }[]
       }
       get_split_ledger: { Args: { p_group_id: string }; Returns: Json }
+      get_trip_member_profiles: {
+        Args: { p_group_id: string }
+        Returns: {
+          avatar_emoji: string
+          avatar_path: string
+          dietary_notes: string
+          display_name: string
+          emergency_contact: string
+          group_member_id: string
+          phone: string
+          upi_id: string
+        }[]
+      }
       inspect_invitation: { Args: { invitation_proof: string }; Returns: Json }
       ir003_bootstrap_group_impl: {
         Args: {

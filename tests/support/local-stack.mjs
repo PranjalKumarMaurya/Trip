@@ -20,8 +20,8 @@ const cli = resolve(root, 'node_modules/.bin/supabase')
  * start) at `<apiUrl>/functions/v1/<name>`, with `functionSecrets` as their env.
  */
 export function createLocalStack({
-  projectId,
-  basePort,
+  projectId: baseProjectId,
+  basePort: requestedBasePort,
   workdir: fixedWorkdir,
   realtime = false,
   storage = true,
@@ -31,6 +31,10 @@ export function createLocalStack({
   functionSecrets = {},
   siteUrl = `http://127.0.0.1:${process.env.TRIP_WEB_PORT ?? '4173'}`,
 }) {
+  // Parallel worktrees running the same suite set TRIP_STACK_PORT_OFFSET (e.g. 1000)
+  // and TRIP_STACK_ID_SUFFIX (e.g. "-b") so their containers and ports never collide.
+  const projectId = `${baseProjectId}${process.env.TRIP_STACK_ID_SUFFIX ?? ''}`
+  const basePort = requestedBasePort + Number(process.env.TRIP_STACK_PORT_OFFSET ?? 0)
   const port = (offset) => String(basePort + offset)
   const container = `supabase_db_${projectId}`
   let workdir = fixedWorkdir ?? ''

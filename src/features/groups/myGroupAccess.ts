@@ -11,6 +11,8 @@ export interface MyGroupAccess {
   endDate: string
   timezone: string
   accountingCurrency: string
+  /** Domestic Trips hide currency choice and the FX tab. */
+  isInternational: boolean
 }
 
 export async function loadMyGroupAccess(): Promise<MyGroupAccess[]> {
@@ -28,6 +30,7 @@ export async function loadMyGroupAccess(): Promise<MyGroupAccess[]> {
       endDate: row.end_date,
       timezone: row.timezone,
       accountingCurrency: row.accounting_currency,
+      isInternational: row.is_international,
     }
   })
 }
