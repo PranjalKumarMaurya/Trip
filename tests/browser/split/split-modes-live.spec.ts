@@ -94,7 +94,7 @@ test('percent and shares splits, edits, and paying back via a UPI link', async (
     let form = owner.getByRole('dialog', { name: 'Add expense' })
     await form.getByLabel('Description').fill('Dinner')
     await form.getByLabel('Total amount').fill('900')
-    await form.getByRole('radio', { name: 'Percentages' }).check()
+    await form.getByRole('radio', { name: 'Percent' }).check()
     const summary = form.getByTestId('split-weight-summary')
     await expect(summary).toHaveText('0% of 100% · 100% left')
     await form.getByLabel('Percent for Friend One').fill('30')
@@ -150,7 +150,7 @@ test('percent and shares splits, edits, and paying back via a UPI link', async (
 
     await expenseCard(owner, 'Dinner').getByRole('button', { name: 'Edit Dinner' }).click()
     form = owner.getByRole('dialog', { name: 'Edit expense' })
-    await expect(form.getByRole('radio', { name: 'Percentages' })).toBeChecked()
+    await expect(form.getByRole('radio', { name: 'Percent' })).toBeChecked()
     await expect(form.getByLabel('Percent for Owner One')).toHaveValue('70')
     await expect(form.getByLabel('Percent for Friend One')).toHaveValue('30')
     await expect(form.getByTestId('split-weight-summary')).toHaveText('Percentages add up to 100%.')

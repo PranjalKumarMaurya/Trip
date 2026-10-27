@@ -10,7 +10,7 @@ import { inputClass, inputStyle } from './SplitDialog'
 export const SPLIT_OPTIONS: { value: SplitMethod; label: string }[] = [
   { value: 'equal', label: 'Equally' },
   { value: 'exact', label: 'Exact amounts' },
-  { value: 'percent', label: 'Percentages' },
+  { value: 'percent', label: 'Percent' },
   { value: 'shares', label: 'Shares' },
 ]
 
@@ -37,11 +37,11 @@ export function WeightFields({ mode, members, values, onChange, evaluation, curr
           const amount = amounts.get(member.id)
           const amountId = `${baseId}-${index}`
           return (
-            <li key={member.id} className="grid grid-cols-[1fr_88px_48px] items-center gap-2">
+            <li key={member.id} className="grid grid-cols-[minmax(0,1fr)_76px_auto] items-center gap-2">
               <span className="min-w-0">
                 <span aria-hidden="true" className="block truncate text-sm" style={{ color: 'var(--text-primary)' }}>{member.name}</span>
                 {amount !== undefined && (
-                  <span id={amountId} className="block font-mono" style={{ color: 'var(--text-tertiary)', fontSize: 11 }}>
+                  <span id={amountId} className="block font-mono" style={{ color: 'var(--text-tertiary)', fontSize: 11, overflowWrap: 'anywhere' }}>
                     {money(amount, accountingCurrency)}
                   </span>
                 )}
