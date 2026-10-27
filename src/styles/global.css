@@ -462,3 +462,8 @@ input[type="date"].is-empty::-webkit-datetime-edit { color: var(--text-tertiary)
   .sheet[open], .animate-fade-in, .animate-slide-up { animation: none; }
   .spinner { animation-duration: 2.4s; }
 }
+
+/* iOS Safari zooms the page when a focused field's text is under 16px. */
+@media (max-width: 640px) {
+  input, select, textarea { font-size: 16px !important; }
+}

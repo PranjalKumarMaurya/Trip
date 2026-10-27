@@ -55,6 +55,11 @@ test('the Trip currency defaults from the browser language region, else INR', ()
   assert.equal(defaultTripCurrency(['en', 'fr']), 'INR')
   assert.equal(defaultTripCurrency(['not a tag']), 'INR')
   assert.equal(defaultTripCurrency([]), 'INR')
+  // The device timezone wins over an en-US UI language.
+  assert.equal(defaultTripCurrency(['en-US'], 'Asia/Kolkata'), 'INR')
+  assert.equal(defaultTripCurrency(['en-US'], 'Asia/Calcutta'), 'INR')
+  assert.equal(defaultTripCurrency(['en-US'], 'Asia/Makassar'), 'IDR')
+  assert.equal(defaultTripCurrency(['en-GB'], 'Antarctica/Troll'), 'GBP')
   assert.equal(currencyName('IDR', 'en'), 'Indonesian Rupiah')
 })
 

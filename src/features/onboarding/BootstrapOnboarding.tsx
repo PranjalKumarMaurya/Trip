@@ -52,7 +52,7 @@ export function BootstrapOnboarding({ onSignOut, signOutError, onContinue, onCan
     startDate: '',
     endDate: '',
     timezone: browserTimezone(),
-    accountingCurrency: defaultTripCurrency(browserLanguages()),
+    accountingCurrency: defaultTripCurrency(browserLanguages(), browserTimezone()),
     extraCurrencies: [],
   }))
   const [errors, setErrors] = useState<BootstrapFormErrors>({})

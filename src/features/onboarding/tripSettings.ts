@@ -146,8 +146,32 @@ const regionCurrency: Readonly<Record<string, string>> = {
   ZA: 'ZAR',
 }
 
-/** The currency of the first browser language that names a region (en-GB -> GBP), else INR. */
-export function defaultTripCurrency(languages: readonly string[]): string {
+// Where the device clock is set says more about home currency than the UI language
+// (many people outside the US browse in en-US).
+const timezoneRegion: Readonly<Record<string, string>> = {
+  'Asia/Kolkata': 'IN', 'Asia/Calcutta': 'IN', 'Asia/Jakarta': 'ID', 'Asia/Makassar': 'ID', 'Asia/Jayapura': 'ID',
+  'Asia/Pontianak': 'ID', 'Asia/Singapore': 'SG', 'Asia/Bangkok': 'TH', 'Asia/Dubai': 'AE', 'Asia/Kathmandu': 'NP',
+  'Asia/Katmandu': 'NP', 'Asia/Colombo': 'LK', 'Asia/Dhaka': 'BD', 'Asia/Karachi': 'PK', 'Asia/Kuala_Lumpur': 'MY',
+  'Asia/Ho_Chi_Minh': 'VN', 'Asia/Saigon': 'VN', 'Asia/Manila': 'PH', 'Asia/Tokyo': 'JP', 'Asia/Seoul': 'KR',
+  'Asia/Shanghai': 'CN', 'Asia/Hong_Kong': 'HK', 'Asia/Taipei': 'TW', 'Asia/Qatar': 'QA', 'Asia/Riyadh': 'SA',
+  'Asia/Jerusalem': 'IL', 'Indian/Maldives': 'MV', 'Europe/London': 'GB', 'Europe/Zurich': 'CH', 'Europe/Oslo': 'NO',
+  'Europe/Stockholm': 'SE', 'Europe/Copenhagen': 'DK', 'Europe/Warsaw': 'PL', 'Europe/Prague': 'CZ',
+  'Europe/Istanbul': 'TR', 'Europe/Berlin': 'DE', 'Europe/Paris': 'FR', 'Europe/Madrid': 'ES', 'Europe/Rome': 'IT',
+  'Europe/Amsterdam': 'NL', 'Europe/Brussels': 'BE', 'Europe/Vienna': 'AT', 'Europe/Lisbon': 'PT', 'Europe/Dublin': 'IE',
+  'Europe/Athens': 'GR', 'Europe/Helsinki': 'FI', 'America/New_York': 'US', 'America/Chicago': 'US',
+  'America/Denver': 'US', 'America/Los_Angeles': 'US', 'America/Phoenix': 'US', 'America/Toronto': 'CA',
+  'America/Vancouver': 'CA', 'America/Mexico_City': 'MX', 'America/Sao_Paulo': 'BR', 'Australia/Sydney': 'AU',
+  'Australia/Melbourne': 'AU', 'Australia/Brisbane': 'AU', 'Australia/Perth': 'AU', 'Pacific/Auckland': 'NZ',
+  'Africa/Johannesburg': 'ZA', 'Africa/Nairobi': 'KE',
+}
+
+/**
+ * Default Trip currency: the device timezone's country first (Asia/Kolkata -> INR),
+ * then the first browser language that names a region (en-GB -> GBP), else INR.
+ */
+export function defaultTripCurrency(languages: readonly string[], timeZone?: string): string {
+  const zoneCurrency = timeZone ? regionCurrency[timezoneRegion[timeZone] ?? ''] : undefined
+  if (zoneCurrency && TRIP_CURRENCIES.includes(zoneCurrency)) return zoneCurrency
   for (const tag of languages) {
     try {
       const region = new Intl.Locale(tag).region
