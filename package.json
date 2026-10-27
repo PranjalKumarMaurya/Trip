@@ -16,7 +16,6 @@
     "test:db:failure": "node tests/database/run-rls-failure-injection.mjs",
     "test:db:cleanup": "node tests/database/assert-local-cleanup.mjs",
     "test:browser": "PLAYWRIGHT_BROWSERS_PATH=0 playwright test",
-    "test:browser:failure": "node tests/browser/run-failure-injection.mjs",
     "test:browser:install": "PLAYWRIGHT_BROWSERS_PATH=0 playwright install chromium",
     "test:evidence:manifest": "node tests/evidence/write-evidence-manifest.mjs",
     "test:ir002": "node tests/database/ir-002/run-tenant-foundation.mjs",
