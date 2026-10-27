@@ -1,6 +1,13 @@
 -- IR-005 isolated TOP-004 candidate. Not integrated or an IR-005 exit.
 BEGIN;
 
+-- Hosted Supabase applies migrations as the non-superuser `postgres`, which can
+-- assign ownership only to a role it can SET ROLE to and that may CREATE in the
+-- schema. Both grants are revoked before COMMIT. Name `postgres` explicitly:
+-- `TO CURRENT_USER` crashes the server under Supabase's supautils extension.
+GRANT ir005_invitation_executor TO postgres;
+GRANT CREATE ON SCHEMA public TO ir005_invitation_executor;
+
 CREATE TABLE public.ir005_lifecycle_requests (
   operation text NOT NULL CHECK (operation IN ('TOP-004', 'TOP-005', 'TOP-006', 'TOP-007')),
   actor_profile_id uuid NOT NULL REFERENCES public.profiles(id) ON DELETE RESTRICT,
@@ -51,7 +58,7 @@ DECLARE
   v_existing_result jsonb;
   v_result jsonb;
 BEGIN
-  IF auth.uid() IS NULL OR p_group_id IS NULL
+  IF trip_private.auth_uid() IS NULL OR p_group_id IS NULL
     OR p_target_membership_id IS NULL OR p_request_id IS NULL
     OR p_requested_role IS NULL
     OR p_requested_role NOT IN ('owner', 'member') THEN
@@ -60,8 +67,8 @@ BEGIN
 
   SELECT profile.id INTO v_actor_profile_id
   FROM public.profiles AS profile
-  JOIN auth.users AS auth_user ON auth_user.id = profile.auth_user_id
-  WHERE profile.auth_user_id = auth.uid()
+  JOIN trip_private.auth_users AS auth_user ON auth_user.id = profile.auth_user_id
+  WHERE profile.auth_user_id = trip_private.auth_uid()
     AND auth_user.email_confirmed_at IS NOT NULL;
   IF v_actor_profile_id IS NULL THEN
     RAISE EXCEPTION USING ERRCODE = 'P0001', MESSAGE = 'not_authorized';
@@ -202,5 +209,8 @@ GRANT EXECUTE ON FUNCTION public.change_member_role(uuid, uuid, text, uuid)
   TO authenticated;
 GRANT EXECUTE ON FUNCTION public.ir005_change_member_role_impl(uuid, uuid, text, uuid)
   TO authenticated;
+
+REVOKE CREATE ON SCHEMA public FROM ir005_invitation_executor;
+REVOKE ir005_invitation_executor FROM postgres;
 
 COMMIT;

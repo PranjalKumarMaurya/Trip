@@ -1,14 +1,21 @@
 -- IR-005 isolated TOP-002 candidate. Not integrated or an IR-005 exit.
 BEGIN;
 
-GRANT USAGE ON SCHEMA auth, public, extensions TO ir005_invitation_executor;
-GRANT EXECUTE ON FUNCTION auth.uid() TO ir005_invitation_executor;
+-- Hosted Supabase applies migrations as the non-superuser `postgres`, which can
+-- assign ownership only to a role it can SET ROLE to and that may CREATE in the
+-- schema. Both grants are revoked before COMMIT. Name `postgres` explicitly:
+-- `TO CURRENT_USER` crashes the server under Supabase's supautils extension.
+GRANT ir005_invitation_executor TO postgres;
+GRANT CREATE ON SCHEMA public TO ir005_invitation_executor;
+
+GRANT USAGE ON SCHEMA trip_private, public, extensions TO ir005_invitation_executor;
+GRANT EXECUTE ON FUNCTION trip_private.auth_uid() TO ir005_invitation_executor;
 GRANT EXECUTE ON FUNCTION extensions.gen_random_bytes(integer)
   TO ir005_invitation_executor;
 GRANT EXECUTE ON FUNCTION extensions.digest(text, text)
   TO ir005_invitation_executor;
 GRANT SELECT (id, email, email_confirmed_at)
-  ON TABLE auth.users TO ir005_invitation_executor;
+  ON TABLE trip_private.auth_users TO ir005_invitation_executor;
 GRANT SELECT (id, auth_user_id)
   ON TABLE public.profiles TO ir005_invitation_executor;
 GRANT SELECT (id, archived_at), UPDATE (updated_at)
@@ -57,7 +64,7 @@ DECLARE
   v_checked_at timestamptz;
   v_proof text;
 BEGIN
-  v_auth_user_id := auth.uid();
+  v_auth_user_id := trip_private.auth_uid();
   IF v_auth_user_id IS NULL OR p_group_id IS NULL OR p_request_id IS NULL
     OR p_recipient_request IS NULL
     OR jsonb_typeof(p_recipient_request) IS DISTINCT FROM 'object'
@@ -77,7 +84,7 @@ BEGIN
 
   SELECT profile.id INTO v_actor_profile_id
   FROM public.profiles AS profile
-  JOIN auth.users AS auth_user ON auth_user.id = profile.auth_user_id
+  JOIN trip_private.auth_users AS auth_user ON auth_user.id = profile.auth_user_id
   WHERE profile.auth_user_id = v_auth_user_id
     AND auth_user.email_confirmed_at IS NOT NULL;
   IF v_actor_profile_id IS NULL THEN
@@ -143,7 +150,7 @@ BEGIN
     SELECT 1
     FROM public.group_members AS member
     JOIN public.profiles AS profile ON profile.id = member.profile_id
-    JOIN auth.users AS auth_user ON auth_user.id = profile.auth_user_id
+    JOIN trip_private.auth_users AS auth_user ON auth_user.id = profile.auth_user_id
     WHERE member.group_id = p_group_id
       AND member.status = 'active'
       AND lower(auth_user.email) = v_recipient_email
@@ -233,5 +240,8 @@ GRANT EXECUTE ON FUNCTION public.create_invitation(uuid, jsonb, jsonb, uuid)
   TO authenticated;
 GRANT EXECUTE ON FUNCTION public.ir005_create_invitation_impl(uuid, jsonb, jsonb, uuid)
   TO authenticated;
+
+REVOKE CREATE ON SCHEMA public FROM ir005_invitation_executor;
+REVOKE ir005_invitation_executor FROM postgres;
 
 COMMIT;

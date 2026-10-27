@@ -1,6 +1,13 @@
 -- IR-005 isolated TOP-003 candidate. Not integrated or an IR-005 exit.
 BEGIN;
 
+-- Hosted Supabase applies migrations as the non-superuser `postgres`, which can
+-- assign ownership only to a role it can SET ROLE to and that may CREATE in the
+-- schema. Both grants are revoked before COMMIT. Name `postgres` explicitly:
+-- `TO CURRENT_USER` crashes the server under Supabase's supautils extension.
+GRANT ir005_invitation_executor TO postgres;
+GRANT CREATE ON SCHEMA public TO ir005_invitation_executor;
+
 GRANT SELECT (proof_verifier, accepted_by_group_member_id),
   UPDATE (status, accepted_by_group_member_id, accepted_at)
   ON TABLE public.invitations TO ir005_invitation_executor;
@@ -36,7 +43,7 @@ DECLARE
   v_existing_status text;
   v_existing_invitation_id uuid;
 BEGIN
-  v_auth_user_id := auth.uid();
+  v_auth_user_id := trip_private.auth_uid();
   IF v_auth_user_id IS NULL OR p_request_id IS NULL
     OR p_invitation_proof IS NULL
     OR p_invitation_proof !~ '^[0-9a-f]{64}$'
@@ -47,7 +54,7 @@ BEGIN
 
   SELECT lower(auth_user.email), profile.id
   INTO v_actor_email, v_actor_profile_id
-  FROM auth.users AS auth_user
+  FROM trip_private.auth_users AS auth_user
   JOIN public.profiles AS profile ON profile.auth_user_id = auth_user.id
   WHERE auth_user.id = v_auth_user_id
     AND auth_user.email_confirmed_at IS NOT NULL;
@@ -210,5 +217,8 @@ GRANT EXECUTE ON FUNCTION public.accept_invitation(text, jsonb, uuid)
   TO authenticated;
 GRANT EXECUTE ON FUNCTION public.ir005_accept_invitation_impl(text, jsonb, uuid)
   TO authenticated;
+
+REVOKE CREATE ON SCHEMA public FROM ir005_invitation_executor;
+REVOKE ir005_invitation_executor FROM postgres;
 
 COMMIT;

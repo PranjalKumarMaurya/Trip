@@ -1,6 +1,13 @@
 -- IR-005 isolated Owner-only Invitation management projection.
 BEGIN;
 
+-- Hosted Supabase applies migrations as the non-superuser `postgres`, which can
+-- assign ownership only to a role it can SET ROLE to and that may CREATE in the
+-- schema. Both grants are revoked before COMMIT. Name `postgres` explicitly:
+-- `TO CURRENT_USER` crashes the server under Supabase's supautils extension.
+GRANT ir005_invitation_executor TO postgres;
+GRANT CREATE ON SCHEMA public TO ir005_invitation_executor;
+
 CREATE INDEX invitations_group_created_id_desc_idx
   ON public.invitations (group_id, created_at DESC, id DESC);
 
@@ -20,15 +27,15 @@ DECLARE
   v_live_count bigint;
   v_items jsonb;
 BEGIN
-  IF auth.uid() IS NULL OR p_group_id IS NULL
+  IF trip_private.auth_uid() IS NULL OR p_group_id IS NULL
     OR ((p_before_created_at IS NULL) <> (p_before_invitation_id IS NULL)) THEN
     RAISE EXCEPTION USING ERRCODE = 'P0001', MESSAGE = 'invalid_request';
   END IF;
 
   SELECT profile.id INTO v_actor_profile_id
   FROM public.profiles AS profile
-  JOIN auth.users AS auth_user ON auth_user.id = profile.auth_user_id
-  WHERE profile.auth_user_id = auth.uid()
+  JOIN trip_private.auth_users AS auth_user ON auth_user.id = profile.auth_user_id
+  WHERE profile.auth_user_id = trip_private.auth_uid()
     AND auth_user.email_confirmed_at IS NOT NULL;
   IF v_actor_profile_id IS NULL OR NOT EXISTS (
     SELECT 1 FROM public.group_members AS member
@@ -102,5 +109,8 @@ GRANT EXECUTE ON FUNCTION public.list_group_invitations(uuid, timestamptz, uuid)
   TO authenticated;
 GRANT EXECUTE ON FUNCTION public.ir005_list_group_invitations_impl(uuid, timestamptz, uuid)
   TO authenticated;
+
+REVOKE CREATE ON SCHEMA public FROM ir005_invitation_executor;
+REVOKE ir005_invitation_executor FROM postgres;
 
 COMMIT;

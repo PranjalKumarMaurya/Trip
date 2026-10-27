@@ -1,6 +1,13 @@
 -- IR-005 isolated Invitation revocation candidate. Not integrated or an exit.
 BEGIN;
 
+-- Hosted Supabase applies migrations as the non-superuser `postgres`, which can
+-- assign ownership only to a role it can SET ROLE to and that may CREATE in the
+-- schema. Both grants are revoked before COMMIT. Name `postgres` explicitly:
+-- `TO CURRENT_USER` crashes the server under Supabase's supautils extension.
+GRANT ir005_invitation_executor TO postgres;
+GRANT CREATE ON SCHEMA public TO ir005_invitation_executor;
+
 ALTER TABLE public.ir005_invitation_requests
   DROP CONSTRAINT ir005_invitation_requests_operation_check;
 ALTER TABLE public.ir005_invitation_requests
@@ -33,15 +40,15 @@ DECLARE
   v_existing_status text;
   v_existing_invitation_id uuid;
 BEGIN
-  IF auth.uid() IS NULL OR p_group_id IS NULL
+  IF trip_private.auth_uid() IS NULL OR p_group_id IS NULL
     OR p_invitation_id IS NULL OR p_request_id IS NULL THEN
     RAISE EXCEPTION USING ERRCODE = 'P0001', MESSAGE = 'invalid_request';
   END IF;
 
   SELECT profile.id INTO v_actor_profile_id
   FROM public.profiles AS profile
-  JOIN auth.users AS auth_user ON auth_user.id = profile.auth_user_id
-  WHERE profile.auth_user_id = auth.uid()
+  JOIN trip_private.auth_users AS auth_user ON auth_user.id = profile.auth_user_id
+  WHERE profile.auth_user_id = trip_private.auth_uid()
     AND auth_user.email_confirmed_at IS NOT NULL;
   IF v_actor_profile_id IS NULL THEN
     RAISE EXCEPTION USING ERRCODE = 'P0001', MESSAGE = 'not_authorized';
@@ -185,5 +192,8 @@ GRANT EXECUTE ON FUNCTION public.revoke_invitation(uuid, uuid, uuid)
   TO authenticated;
 GRANT EXECUTE ON FUNCTION public.ir005_revoke_invitation_impl(uuid, uuid, uuid)
   TO authenticated;
+
+REVOKE CREATE ON SCHEMA public FROM ir005_invitation_executor;
+REVOKE ir005_invitation_executor FROM postgres;
 
 COMMIT;

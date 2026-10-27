@@ -10,6 +10,13 @@ CREATE ROLE ir002_timezone_maintenance_owner
 CREATE ROLE ir002_timezone_validator
   NOLOGIN NOINHERIT NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS;
 
+-- Hosted Supabase applies migrations as the non-superuser `postgres`, which can
+-- assign ownership only to a role it can SET ROLE to and that may CREATE in the
+-- schema. Both grants are revoked before COMMIT. Name `postgres` explicitly:
+-- `TO CURRENT_USER` crashes the server under Supabase's supautils extension.
+GRANT ir002_timezone_maintenance_owner, ir002_timezone_validator TO postgres;
+GRANT CREATE ON SCHEMA public TO ir002_timezone_maintenance_owner, ir002_timezone_validator;
+
 CREATE SCHEMA ir002_private AUTHORIZATION ir002_timezone_maintenance_owner;
 REVOKE ALL ON SCHEMA ir002_private FROM PUBLIC, anon, authenticated, service_role;
 
@@ -627,5 +634,8 @@ $$;
 ALTER FUNCTION public.is_valid_iana_timezone(text) OWNER TO ir002_timezone_validator;
 GRANT EXECUTE ON FUNCTION public.is_valid_iana_timezone(text) TO PUBLIC;
 REVOKE SELECT ON TABLE pg_catalog.pg_timezone_names FROM ir003_top001_executor;
+
+REVOKE CREATE ON SCHEMA public FROM ir002_timezone_maintenance_owner, ir002_timezone_validator;
+REVOKE ir002_timezone_maintenance_owner, ir002_timezone_validator FROM postgres;
 
 COMMIT;

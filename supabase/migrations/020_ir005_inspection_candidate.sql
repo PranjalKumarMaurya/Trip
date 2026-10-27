@@ -1,6 +1,13 @@
 -- IR-005 isolated read-only Invitation inspection candidate.
 BEGIN;
 
+-- Hosted Supabase applies migrations as the non-superuser `postgres`, which can
+-- assign ownership only to a role it can SET ROLE to and that may CREATE in the
+-- schema. Both grants are revoked before COMMIT. Name `postgres` explicitly:
+-- `TO CURRENT_USER` crashes the server under Supabase's supautils extension.
+GRANT ir005_invitation_executor TO postgres;
+GRANT CREATE ON SCHEMA public TO ir005_invitation_executor;
+
 GRANT SELECT (group_id, trip_name, destination, start_date, end_date)
   ON TABLE public.group_configurations TO ir005_invitation_executor;
 
@@ -42,11 +49,11 @@ BEGIN
     RETURN jsonb_build_object('outcome', 'invalid');
   END IF;
 
-  IF auth.uid() IS NOT NULL THEN
+  IF trip_private.auth_uid() IS NOT NULL THEN
     SELECT lower(auth_user.email), auth_user.email_confirmed_at
     INTO v_auth_email, v_email_confirmed_at
-    FROM auth.users AS auth_user
-    WHERE auth_user.id = auth.uid();
+    FROM trip_private.auth_users AS auth_user
+    WHERE auth_user.id = trip_private.auth_uid();
   END IF;
 
   IF v_archived_at IS NOT NULL THEN
@@ -73,7 +80,7 @@ BEGIN
     'end_date', v_end_date,
     'expires_at', v_expires_at
   );
-  IF auth.uid() IS NULL THEN
+  IF trip_private.auth_uid() IS NULL THEN
     RETURN v_context || jsonb_build_object('outcome', 'continue');
   END IF;
   IF v_email_confirmed_at IS NULL THEN
@@ -108,5 +115,8 @@ GRANT EXECUTE ON FUNCTION public.inspect_invitation(text)
   TO anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.ir005_inspect_invitation_impl(text)
   TO anon, authenticated;
+
+REVOKE CREATE ON SCHEMA public FROM ir005_invitation_executor;
+REVOKE ir005_invitation_executor FROM postgres;
 
 COMMIT;
