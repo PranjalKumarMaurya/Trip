@@ -3,7 +3,8 @@
 //   npm run db:types   regenerate src/lib/database.types.ts from the running stack
 //   npm run db:reset   stop (dropping data) and start fresh
 //   npm run db:stop    stop and drop data
-// Override ports with TRIP_DEV_DB_BASE_PORT (default 54320 -> API on 54321).
+// Override ports with TRIP_DEV_DB_BASE_PORT (default 54320 -> API on 54321) and the
+// container name with TRIP_DEV_DB_PROJECT (default trip-dev) when worktrees run side by side.
 import { existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { createLocalStack, root } from '../tests/support/local-stack.mjs'
@@ -12,7 +13,7 @@ const basePort = Number(process.env.TRIP_DEV_DB_BASE_PORT ?? 54320)
 const workdir = resolve(root, '.local-stack')
 mkdirSync(workdir, { recursive: true })
 const stack = createLocalStack({
-  projectId: 'trip-dev',
+  projectId: process.env.TRIP_DEV_DB_PROJECT ?? 'trip-dev',
   basePort,
   workdir,
   realtime: true,
