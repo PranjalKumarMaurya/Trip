@@ -1,6 +1,6 @@
 import { useId, useState, type CSSProperties } from 'react'
 import { eventTypeMeta, safeMapUrl, type EventStatus, type TripEvent } from './itinerary'
-import { dualTime, formatTime } from './tripTime'
+import { clocksDiffer, formatSpan } from './tripTime'
 
 const STATUS_LABEL: Record<EventStatus, string> = { past: 'Past', live: 'Live now', next: 'Next', upcoming: 'Upcoming' }
 
@@ -24,8 +24,7 @@ export function EventCard({ event, status, tripTimeZone, localTimeZone, audience
   const [deleteError, setDeleteError] = useState(false)
   const notesId = useId()
   const meta = eventTypeMeta(event.event_type)
-  const start = dualTime(event.starts_at, tripTimeZone, localTimeZone)
-  const end = event.ends_at ? dualTime(event.ends_at, tripTimeZone, localTimeZone) : null
+  const showLocal = clocksDiffer([event.starts_at, event.ends_at], tripTimeZone, localTimeZone)
   const mapUrl = safeMapUrl(event.map_url)
   const highlighted = status === 'live' || status === 'next'
   const isFlight = event.event_type === 'flight'
@@ -65,14 +64,13 @@ export function EventCard({ event, status, tripTimeZone, localTimeZone, audience
           </span>
         </div>
 
-        <p className="mt-1.5 text-sm" style={{ color: 'var(--text-secondary)' }}>
-          <span>{start.tripDay} · </span>
-          <span className="font-mono">{start.trip}{end ? `–${end.tripDay === start.tripDay ? end.trip : `${end.tripDay} ${end.trip}`}` : ''}</span>
+        <p className="mt-1.5 text-sm" data-testid="event-trip-time" style={{ color: 'var(--text-secondary)' }}>
+          {formatSpan(event.starts_at, event.ends_at, tripTimeZone)}
           <span style={{ color: 'var(--text-tertiary)' }}> trip time</span>
         </p>
-        {start.local && (
+        {showLocal && (
           <p className="font-mono text-xs" data-testid="event-local-time" style={{ color: 'var(--text-tertiary)' }}>
-            {start.local.day} · {start.local.time}{end?.local ? `–${formatTime(event.ends_at as string, localTimeZone)}` : ''} your time
+            {formatSpan(event.starts_at, event.ends_at, localTimeZone)} your time
           </p>
         )}
 
@@ -102,7 +100,7 @@ export function EventCard({ event, status, tripTimeZone, localTimeZone, audience
         {confirming ? (
           <div role="group" aria-label={`Confirm deleting ${event.title}`} className="mt-3 flex flex-wrap items-center gap-2">
             <span className="text-sm" style={{ color: 'var(--text-primary)' }}>Delete this for everyone?</span>
-            <button type="button" disabled={deleting} onClick={() => void confirmDelete()} style={{ ...smallButton, color: '#1A0A03', background: 'var(--accent)', borderColor: 'var(--accent)' }}>
+            <button type="button" disabled={deleting} onClick={() => void confirmDelete()} style={{ ...smallButton, color: '#1A0A03', background: 'var(--accent)', border: '1px solid var(--accent)' }}>
               {deleting ? 'Deleting…' : 'Yes, delete'}
             </button>
             <button type="button" disabled={deleting} onClick={() => setConfirming(false)} style={smallButton}>Keep it</button>

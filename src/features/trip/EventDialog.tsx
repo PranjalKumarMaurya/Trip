@@ -117,7 +117,7 @@ export function EventDialog({ event, initialAudience, tripTimeZone, roster, onSa
           <Field label="Title" error={errors.title}>
             <NeonInput aria-label="Title" value={values.title} maxLength={140} onChange={(change) => set('title')(change.target.value)} placeholder="Surf lesson, hotel check-in…" />
           </Field>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="flex flex-col gap-3.5">
             <Field label="Starts" hint={zone} error={errors.startsAt}>
               <NeonInput aria-label="Starts" type="datetime-local" value={values.startsAt} onChange={(change) => set('startsAt')(change.target.value)} />
             </Field>

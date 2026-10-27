@@ -5,7 +5,7 @@ import {
   countdown, emptyEventForm, eventStatuses, formatCountdown, nextFlight, safeMapUrl, sortEvents, validateEventForm,
 } from '../../src/features/trip/itinerary.ts'
 import {
-  dayKey, dualTime, formatDay, formatTime, isoToZonedInput, timeZoneCity, timeZoneOffsetMs, zonedInputToIso,
+  clocksDiffer, dayKey, dualTime, formatDay, formatSpan, formatTime, isoToZonedInput, timeZoneCity, timeZoneOffsetMs, zonedInputToIso,
 } from '../../src/features/trip/tripTime.ts'
 
 test('typed times are read as wall-clock time in the Trip timezone', () => {
@@ -64,6 +64,26 @@ test('dual time shows the viewer clock only when it reads differently', () => {
   assert.equal(apart.trip, '04:00')
   assert.equal(apart.tripDay, 'Mon 2 Nov')
   assert.deepEqual(apart.local, { time: '21:00', day: 'Sun 1 Nov', label: 'your time' })
+})
+
+test('time spans name the end day when it differs, in each clock', () => {
+  const day = (iso: string, zone: string) => formatDay(iso, zone)
+  // 19:00-21:30 in Bali (UTC+8) is 16:30-19:00 in India.
+  assert.equal(formatSpan('2026-11-01T11:00:00Z', '2026-11-01T13:30:00Z', 'Asia/Makassar'), `${day('2026-11-01T11:00:00Z', 'Asia/Makassar')} · 19:00–21:30`)
+  assert.equal(formatSpan('2026-11-01T11:00:00Z', '2026-11-01T13:30:00Z', 'Asia/Kolkata'), `${day('2026-11-01T11:00:00Z', 'Asia/Kolkata')} · 16:30–19:00`)
+  // A three-night stay keeps its end date in both clocks.
+  assert.equal(formatSpan('2026-11-01T13:55:00Z', '2026-11-04T02:00:00Z', 'Europe/Berlin'),
+    `${day('2026-11-01T13:55:00Z', 'Europe/Berlin')} · 14:55 – ${day('2026-11-04T02:00:00Z', 'Europe/Berlin')} 03:00`)
+  // Same instant, different calendar days in the two clocks.
+  assert.equal(formatSpan('2026-11-01T17:00:00Z', '2026-11-01T17:30:00Z', 'Asia/Makassar'),
+    `${day('2026-11-01T17:00:00Z', 'Asia/Makassar')} · 01:00–01:30`)
+  assert.notEqual(day('2026-11-01T17:00:00Z', 'Asia/Makassar'), day('2026-11-01T17:00:00Z', 'Europe/Berlin'))
+  assert.equal(formatSpan('2026-11-01T17:00:00Z', null, 'UTC'), `${day('2026-11-01T17:00:00Z', 'UTC')} · 17:00`)
+  assert.equal(clocksDiffer(['2026-11-01T17:00:00Z', null], 'Asia/Makassar', 'Asia/Makassar'), false)
+  assert.equal(clocksDiffer(['2026-11-01T17:00:00Z', null], 'Asia/Makassar', 'Asia/Kolkata'), true)
+  // London and UTC agree in winter but not in summer.
+  assert.equal(clocksDiffer(['2026-01-10T12:00:00Z'], 'Europe/London', 'UTC'), false)
+  assert.equal(clocksDiffer(['2026-01-10T12:00:00Z', '2026-07-10T12:00:00Z'], 'Europe/London', 'UTC'), true)
 })
 
 const event = (id: string, startsAt: string, endsAt: string | null = null, type = 'activity') =>

@@ -93,14 +93,35 @@ export function formatTime(iso: string, timeZone: string): string {
     .format(new Date(iso))
 }
 
+/** "Sun 1 Nov". Built from parts so every engine renders it identically. */
 export function formatDay(iso: string, timeZone: string): string {
-  return new Intl.DateTimeFormat('en-GB', { timeZone, weekday: 'short', day: 'numeric', month: 'short' })
-    .format(new Date(iso))
+  const parts = new Intl.DateTimeFormat('en-GB', { timeZone, weekday: 'short', day: 'numeric', month: 'short' })
+    .formatToParts(new Date(iso))
+  const part = (type: Intl.DateTimeFormatPartTypes) => parts.find((entry) => entry.type === type)?.value ?? ''
+  return `${part('weekday')} ${part('day')} ${part('month')}`
 }
 
 /** Calendar day key ("YYYY-MM-DD") of `iso` in `timeZone`. */
 export function dayKey(iso: string, timeZone: string): string {
   return isoToZonedInput(iso, timeZone).slice(0, 10)
+}
+
+/**
+ * "Sun 1 Nov · 19:00", "Sun 1 Nov · 19:00–21:30", or, across days,
+ * "Sun 1 Nov · 21:55 – Wed 4 Nov 10:00", all in `timeZone`.
+ */
+export function formatSpan(startIso: string, endIso: string | null, timeZone: string): string {
+  const startDay = formatDay(startIso, timeZone)
+  const start = `${startDay} · ${formatTime(startIso, timeZone)}`
+  if (!endIso) return start
+  const endDay = formatDay(endIso, timeZone)
+  return endDay === startDay ? `${start}–${formatTime(endIso, timeZone)}` : `${start} – ${endDay} ${formatTime(endIso, timeZone)}`
+}
+
+/** True when the two zones' clocks read differently at any of the instants. */
+export function clocksDiffer(isos: readonly (string | null)[], tripTimeZone: string, localTimeZone: string): boolean {
+  return isos.some((iso) => iso !== null
+    && timeZoneOffsetMs(Date.parse(iso), tripTimeZone) !== timeZoneOffsetMs(Date.parse(iso), localTimeZone))
 }
 
 export function viewerTimeZone(): string {
