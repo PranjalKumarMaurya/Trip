@@ -54,7 +54,8 @@
     "test:scan:unit": "node --test tests/unit/scan-*.test.ts",
     "test:fx:unit": "node --test tests/unit/fx-*.test.ts",
     "test:ui:tour": "node tests/integration/run-ui-tour.mjs",
-    "test:db:profile": "node tests/database/trip-events/verify-profile-base.mjs"
+    "test:db:profile": "node tests/database/trip-events/verify-profile-base.mjs",
+    "test:db:home": "node tests/database/home-profile/verify-home-profile.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",
