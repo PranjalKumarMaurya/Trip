@@ -26,3 +26,7 @@ export const IconPlus = ({ size }: IconProps) => <Icon size={size}><path d="M12 
 export const IconBack = ({ size }: IconProps) => <Icon size={size}><path d="m14.5 5.5-6.5 6.5 6.5 6.5" /></Icon>
 export const IconRefresh = ({ size }: IconProps) => <Icon size={size}><path d="M19.5 11.5a7.5 7.5 0 1 1-2.2-5.3" /><path d="M19.5 4.5v4.5H15" /></Icon>
 export const IconSignOut = ({ size }: IconProps) => <Icon size={size}><path d="M14 4h3.5A2.5 2.5 0 0 1 20 6.5v11a2.5 2.5 0 0 1-2.5 2.5H14" /><path d="M10 16.5 5.5 12 10 7.5M5.5 12H15" /></Icon>
+export const IconSettings = ({ size }: IconProps) => <Icon size={size}><circle cx="12" cy="12" r="3" /><path d="M19.4 13.5a7.6 7.6 0 0 0 0-3l2-1.6-2-3.4-2.4 1a7.4 7.4 0 0 0-2.6-1.5L14 2.5h-4l-.4 2.5A7.4 7.4 0 0 0 7 6.5l-2.4-1-2 3.4 2 1.6a7.6 7.6 0 0 0 0 3l-2 1.6 2 3.4 2.4-1a7.4 7.4 0 0 0 2.6 1.5l.4 2.5h4l.4-2.5a7.4 7.4 0 0 0 2.6-1.5l2.4 1 2-3.4-2-1.6z" /></Icon>
+export const IconChevronRight = ({ size }: IconProps) => <Icon size={size}><path d="m9.5 5.5 6.5 6.5-6.5 6.5" /></Icon>
+export const IconCamera = ({ size }: IconProps) => <Icon size={size}><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.8l1.4-2h4.6l1.4 2h1.8A2.5 2.5 0 0 1 20 8.5v8a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5v-8z" /><circle cx="12" cy="12.5" r="3.4" /></Icon>
+export const IconLink = ({ size }: IconProps) => <Icon size={size}><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1" /><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" /></Icon>

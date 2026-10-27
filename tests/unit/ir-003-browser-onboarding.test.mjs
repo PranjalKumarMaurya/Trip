@@ -28,13 +28,14 @@ function loadAdapter(rpc) {
   return module.exports
 }
 
-test('staged handoff uses current membership context before opening a Group shell', () => {
+test('staged handoff uses current membership context: Trips home first, a Trip only when listed', () => {
   assert.match(boundary, /loadMyGroupAccess\(\)/)
-  assert.match(boundary, /groupAccess === 'none'/)
-  assert.match(boundary, /groupAccess === 'has-group' && selectedGroupId/)
+  assert.match(boundary, /<TripsHome/)
   assert.match(boundary, /<BootstrapOnboarding/)
+  // A Trip opens only once the caller's own Trip list includes it.
+  assert.match(boundary, /const trip = groups\.find\(\(group\) => group\.groupId === view\.groupId\)/)
   assert.match(groupAccess, /get_my_group_access/)
-  assert.match(workspace, /selected\.role === 'owner'/)
+  assert.match(workspace, /trip\.role === 'owner'/)
   assert.doesNotMatch(boundary, /TripTab|PersonaPicker|useCurrentUser/)
 })
 
@@ -57,6 +58,7 @@ test('IR-003 bootstrap adapter uses the frozen three-argument RPC shape without 
     timezone: 'Europe/Oslo',
     accountingCurrency: 'nok',
     displayCurrencyCodes: ['nok', 'eur'],
+    isInternational: true,
   }, requestId)
 
   assert.deepEqual(result, { outcome: 'completed', groupId: '00000000-0000-4000-8000-000000000003', requestId })
@@ -72,6 +74,7 @@ test('IR-003 bootstrap adapter uses the frozen three-argument RPC shape without 
       timezone: 'Europe/Oslo',
       accounting_currency: 'NOK',
       display_currency_codes: ['NOK', 'EUR'],
+      is_international: true,
     },
     request_id: requestId,
   })
@@ -81,7 +84,7 @@ test('IR-003 bootstrap adapter uses the frozen three-argument RPC shape without 
 test('IR-003 adapter maps only safe error categories and keeps server details out of the UI contract', async () => {
   const { bootstrapGroup, BootstrapGroupError } = loadAdapter(async () => ({ data: null, error: { message: 'idempotency_conflict' } }))
   await assert.rejects(
-    bootstrapGroup({ tripName: 'Trip', destination: 'Oslo', startDate: '2027-01-01', endDate: '2027-01-02', timezone: 'Europe/Oslo', accountingCurrency: 'NOK', displayCurrencyCodes: ['NOK'] }, '00000000-0000-4000-8000-000000000001'),
+    bootstrapGroup({ tripName: 'Trip', destination: 'Oslo', startDate: '2027-01-01', endDate: '2027-01-02', timezone: 'Europe/Oslo', accountingCurrency: 'NOK', displayCurrencyCodes: ['NOK'], isInternational: false }, '00000000-0000-4000-8000-000000000001'),
     (error) => error instanceof BootstrapGroupError && error.kind === 'conflict',
   )
   assert.doesNotMatch(onboarding, /error\.message|error\.details|error\.hint/)

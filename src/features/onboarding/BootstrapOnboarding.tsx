@@ -1,21 +1,26 @@
-import { type ChangeEvent, type FormEvent, type ReactNode, useId, useMemo, useRef, useState } from 'react'
+import { type ChangeEvent, type FormEvent, useMemo, useRef, useState } from 'react'
 import { Field } from '../../components/ui/Field'
-import { IconBack, IconClose } from '../../components/ui/icons'
+import { IconBack } from '../../components/ui/icons'
 import { NeonBtn } from '../../components/ui/NeonBtn'
 import { NeonInput } from '../../components/ui/NeonInput'
 import { NeonSelect } from '../../components/ui/NeonSelect'
-import { BrandMark, ScreenFrame } from '../../components/ui/ScreenFrame'
+import { ScreenFrame } from '../../components/ui/ScreenFrame'
+import { Switch } from '../../components/ui/Switch'
 import { BootstrapGroupError, bootstrapGroup, createBootstrapRequestId } from './bootstrapGroup'
+import { TripCurrencyFields } from './CurrencyFields'
 import {
   type BootstrapFieldName, type BootstrapFormErrors, type BootstrapFormValues,
-  TRIP_CURRENCIES, browserTimezone, currencyName, defaultTripCurrency, displayCurrencySet, formatTripDates,
+  browserTimezone, currencyName, defaultTripCurrency, displayCurrencySet, formatTripDates,
   supportedTimezones, timezoneLabel, validateBootstrapForm,
 } from './tripSettings'
 
 type SubmissionState = 'idle' | 'validating' | 'submitting' | 'retryable-failure' | 'conflict' | 'safe-failure' | 'success'
 
-/** Form state; `extraCurrencies` are shown in addition to the Trip currency. */
-type FormState = Omit<BootstrapFormValues, 'displayCurrencies'> & { extraCurrencies: string[] }
+/**
+ * Form state. `accountingCurrency` and `extraCurrencies` are the International
+ * choices; a domestic Trip always uses `domesticCurrency` alone.
+ */
+type FormState = Omit<BootstrapFormValues, 'displayCurrencies'> & { extraCurrencies: string[]; international: boolean }
 type ConfirmedTrip = { groupId: string; tripName: string; destination: string; startDate: string; endDate: string }
 
 const allFields: BootstrapFieldName[] = ['tripName', 'destination', 'startDate', 'endDate', 'timezone', 'accountingCurrency', 'displayCurrencies']
@@ -32,37 +37,38 @@ function browserLanguages(): string[] {
   return navigator.languages?.length ? [...navigator.languages] : navigator.language ? [navigator.language] : []
 }
 
-function toValues(form: FormState): BootstrapFormValues {
-  const { extraCurrencies, ...rest } = form
-  return { ...rest, displayCurrencies: displayCurrencySet(form.accountingCurrency, extraCurrencies) }
+function toValues(form: FormState, domesticCurrency: string): BootstrapFormValues {
+  const { extraCurrencies, international, ...rest } = form
+  return international
+    ? { ...rest, displayCurrencies: displayCurrencySet(form.accountingCurrency, extraCurrencies) }
+    : { ...rest, accountingCurrency: domesticCurrency, displayCurrencies: [domesticCurrency] }
 }
 
-export function BootstrapOnboarding({ onSignOut, signOutError, onContinue, onCancel, aside }: {
-  onSignOut: () => void
-  signOutError?: string | null
+export function BootstrapOnboarding({ onContinue, onBack, homeCurrency }: {
   onContinue?: (groupId: string) => void
-  /** Return to the workspace without creating a Trip (only offered when the user already has one). */
-  onCancel?: () => void
-  /** Extra content above the form, e.g. archived Trips the user can restore. */
-  aside?: ReactNode
+  /** Back to the Trips home without creating a Trip. */
+  onBack?: () => void
+  /** The person's profile home currency, used for domestic Trips when set. */
+  homeCurrency?: string | null
 }) {
+  const deviceCurrency = useMemo(() => defaultTripCurrency(browserLanguages(), browserTimezone()), [])
+  const domesticCurrency = homeCurrency || deviceCurrency
   const [form, setForm] = useState<FormState>(() => ({
     tripName: '',
     destination: '',
     startDate: '',
     endDate: '',
     timezone: browserTimezone(),
-    accountingCurrency: defaultTripCurrency(browserLanguages(), browserTimezone()),
+    accountingCurrency: domesticCurrency,
     extraCurrencies: [],
+    international: false,
   }))
   const [errors, setErrors] = useState<BootstrapFormErrors>({})
   const [touched, setTouched] = useState<Partial<Record<BootstrapFieldName, boolean>>>({})
   const [attempted, setAttempted] = useState(false)
-  const [showMore, setShowMore] = useState(false)
   const [state, setState] = useState<SubmissionState>('idle')
   const [confirmed, setConfirmed] = useState<ConfirmedTrip | null>(null)
   const requestIdRef = useRef<string | null>(null)
-  const moreId = useId()
 
   const timezones = useMemo(() => {
     const options = timezoneOptions()
@@ -70,8 +76,7 @@ export function BootstrapOnboarding({ onSignOut, signOutError, onContinue, onCan
     return form.timezone && !options.some((option) => option.value === form.timezone)
       ? [{ value: form.timezone, label: form.timezone }, ...options] : options
   }, [form.timezone])
-  const currencies = useMemo(() => TRIP_CURRENCIES.map((code) => ({ code, name: currencyName(code) })), [])
-  const values = toValues(form)
+  const values = toValues(form, domesticCurrency)
   const formIsInert = state === 'submitting' || state === 'success'
   const requiresEditedRequest = state === 'conflict'
   const message = state === 'retryable-failure'
@@ -90,14 +95,15 @@ export function BootstrapOnboarding({ onSignOut, signOutError, onContinue, onCan
     if (requestIdRef.current) requestIdRef.current = null
     const merged = { ...form, ...next }
     setForm(merged)
-    if (attempted || Object.keys(errors).length) setErrors(validateBootstrapForm(toValues(merged)))
+    if (attempted || Object.keys(errors).length) setErrors(validateBootstrapForm(toValues(merged, domesticCurrency)))
     if (state !== 'idle') setState('idle')
   }
 
   const onText = (field: 'tripName' | 'destination' | 'startDate' | 'endDate' | 'timezone') =>
     (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => update({ [field]: event.target.value } as Partial<FormState>)
-  const onCurrency = (event: ChangeEvent<HTMLSelectElement>) => {
-    const code = event.target.value
+  const currencyChosen = useRef(false)
+  const onCurrency = (code: string) => {
+    currencyChosen.current = true
     update({ accountingCurrency: code, extraCurrencies: form.extraCurrencies.filter((extra) => extra !== code) })
   }
 
@@ -116,7 +122,6 @@ export function BootstrapOnboarding({ onSignOut, signOutError, onContinue, onCan
     setErrors(nextErrors)
     setTouched(Object.fromEntries(allFields.map((field) => [field, true])))
     if (Object.keys(nextErrors).length) {
-      if (nextErrors.displayCurrencies) setShowMore(true)
       setState('idle')
       return
     }
@@ -134,6 +139,7 @@ export function BootstrapOnboarding({ onSignOut, signOutError, onContinue, onCan
         timezone: values.timezone,
         accountingCurrency: values.accountingCurrency,
         displayCurrencyCodes: values.displayCurrencies,
+        isInternational: form.international,
       }, requestId)
       setConfirmed({
         groupId: result.groupId,
@@ -160,23 +166,12 @@ export function BootstrapOnboarding({ onSignOut, signOutError, onContinue, onCan
     return <BootstrapSuccess trip={confirmed} onContinue={onContinue ? () => onContinue(confirmed.groupId) : undefined} />
   }
 
-  const extras = form.extraCurrencies.filter((code) => code !== form.accountingCurrency)
-  const addable = currencies.filter(({ code }) => code !== form.accountingCurrency && !extras.includes(code))
-
   return (
     <ScreenFrame testId="bootstrap-onboarding" centered={false}
-      eyebrow={onCancel ? <p className="eyebrow">New Trip</p> : <BrandMark />}
+      eyebrow={<p className="eyebrow">New Trip</p>}
       title="Create your Trip"
       lede="Add the basics. You can invite friends once it’s created."
-      top={<>
-        {onCancel
-          ? <button type="button" className="text-link" onClick={onCancel}><IconBack size={18} />My Trips</button>
-          : <span />}
-        <button type="button" className="text-link" onClick={onSignOut}>Sign out</button>
-      </>}>
-      {signOutError && <p role="status" className="notice notice--error mb-6">{signOutError}</p>}
-      {aside && <div className="mb-8">{aside}</div>}
-
+      top={onBack ? <button type="button" className="text-link" onClick={onBack}><IconBack size={18} />Trips</button> : undefined}>
       <form onSubmit={(event) => void submit(event)} aria-label="Create Trip" aria-busy={formIsInert} className="flex flex-col gap-5" noValidate>
         {message && <p role="alert" data-testid="bootstrap-status" className="notice notice--error">{message}</p>}
         {hasVisibleErrors && <p role="alert" className="notice notice--error">Check the highlighted fields.</p>}
@@ -202,41 +197,16 @@ export function BootstrapOnboarding({ onSignOut, signOutError, onContinue, onCan
             {timezones.map((zone) => <option key={zone.value} value={zone.value}>{zone.label}</option>)}
           </NeonSelect>
         </Field>
-        <Field id="trip-currency" label="Trip currency" hint="Used to split expenses" error={fieldError('accountingCurrency')}>
-          <NeonSelect value={form.accountingCurrency} onChange={onCurrency} onBlur={() => validateField('accountingCurrency')} disabled={formIsInert}>
-            {!form.accountingCurrency && <option value="">Choose a currency</option>}
-            {currencies.map(({ code, name }) => <option key={code} value={code}>{code} · {name}</option>)}
-          </NeonSelect>
-        </Field>
 
-        <div>
-          <button type="button" className="text-link" aria-expanded={showMore} aria-controls={moreId} onClick={() => setShowMore((open) => !open)}>
-            {showMore ? 'Fewer options' : 'More options'}
-            {!showMore && extras.length > 0 && <span style={{ color: 'var(--text-tertiary)', textDecoration: 'none' }}>· also {extras.join(', ')}</span>}
-          </button>
-          <div id={moreId} hidden={!showMore} className="mt-2">
-            <Field id="trip-extra-currency" label="Also show amounts in" optional
-              hint={`Amounts are always shown in ${form.accountingCurrency || 'the Trip currency'}.`} error={fieldError('displayCurrencies')}>
-              <NeonSelect value="" disabled={formIsInert || addable.length === 0}
-                onChange={(event) => { if (event.target.value) update({ extraCurrencies: [...extras, event.target.value] }) }}>
-                <option value="">Add a currency</option>
-                {addable.map(({ code, name }) => <option key={code} value={code}>{code} · {name}</option>)}
-              </NeonSelect>
-            </Field>
-            <ul aria-label="Currencies shown" className="mt-3 flex flex-wrap gap-2">
-              {form.accountingCurrency && <li className="chip chip--locked" title={currencyName(form.accountingCurrency)}>{form.accountingCurrency}</li>}
-              {extras.map((code) => (
-                <li key={code} className="chip" title={currencyName(code)}>
-                  {code}
-                  <button type="button" className="chip__remove" aria-label={`Remove ${code}`} disabled={formIsInert}
-                    onClick={() => update({ extraCurrencies: extras.filter((extra) => extra !== code) })}>
-                    <IconClose size={14} />
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
+        <Switch label="International trip?" checked={form.international} disabled={formIsInert}
+          hint={form.international ? 'Pick the Trip currency, convert other currencies, and use the FX tab.'
+            : `Everything is in ${domesticCurrency} · ${currencyName(domesticCurrency)}. Turn on for travel abroad.`}
+          onChange={(international) => update(international && !currencyChosen.current
+            ? { international, accountingCurrency: domesticCurrency } : { international })} />
+        {form.international && <TripCurrencyFields idPrefix="trip" currency={form.accountingCurrency} extras={form.extraCurrencies}
+          onCurrency={onCurrency} onExtras={(extraCurrencies) => update({ extraCurrencies })} disabled={formIsInert}
+          currencyError={fieldError('accountingCurrency')} displayError={fieldError('displayCurrencies')}
+          openExtras={Boolean(fieldError('displayCurrencies'))} />}
 
         <NeonBtn type="submit" size="lg" disabled={formIsInert || requiresEditedRequest} className="mt-2 w-full">
           {state === 'submitting' ? 'Creating Trip…' : state === 'retryable-failure' ? 'Retry creating Trip' : requiresEditedRequest ? 'Review details to continue' : 'Create Trip'}

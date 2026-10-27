@@ -30,7 +30,7 @@ export async function loadMyGroupAccess(): Promise<MyGroupAccess[]> {
       endDate: row.end_date,
       timezone: row.timezone,
       accountingCurrency: row.accounting_currency,
-      isInternational: row.is_international,
+      isInternational: row.is_international === true,
     }
   })
 }

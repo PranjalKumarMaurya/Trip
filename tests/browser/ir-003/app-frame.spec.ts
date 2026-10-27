@@ -1,13 +1,14 @@
 import { expect, test, type Page } from '@playwright/test'
-import { openTripSwitcher, switchTrip } from '../support/trip-frame'
+import { goToTrips, openTrip } from '../support/trip-frame'
 
 // UI wiring only: the workspace frame around the Trip tabs, with synthetic responses.
 const localBrowserHost = `127.0.0.1:${process.env.TRIP_WEB_PORT ?? '4173'}`
 const accountId = 'a3000000-0000-4000-8000-000000000001'
 const json = (body: unknown) => ({ status: 200, contentType: 'application/json', body: JSON.stringify(body) })
-const trip = (groupId: string, role: 'owner' | 'member', tripName: string, destination: string) => ({
+const trip = (groupId: string, role: 'owner' | 'member', tripName: string, destination: string, isInternational: boolean) => ({
   group_id: groupId, group_member_id: `${groupId.slice(0, -1)}9`, role, trip_name: tripName, destination,
   start_date: '2026-11-01', end_date: '2026-11-07', timezone: 'Asia/Makassar', accounting_currency: 'INR',
+  is_international: isInternational,
 })
 
 async function openWorkspace(page: Page) {
@@ -24,13 +25,15 @@ async function openWorkspace(page: Page) {
     ? route.continue() : route.abort('blockedbyclient'))
   await page.route('**/rest/v1/profiles*', (route) => route.fulfill(json([{ id: 'p', display_name: 'Partha' }])))
   await page.route('**/rest/v1/rpc/get_my_group_access', (route) => route.fulfill(json([
-    trip('b3000000-0000-4000-8000-000000000001', 'owner', 'Bali bachelor', 'Bali, Indonesia'),
-    trip('b3000000-0000-4000-8000-000000000002', 'member', 'Goa weekend', 'Goa'),
+    trip('b3000000-0000-4000-8000-000000000001', 'owner', 'Bali bachelor', 'Bali, Indonesia', true),
+    trip('b3000000-0000-4000-8000-000000000002', 'member', 'Goa weekend', 'Goa', false),
   ])))
   await page.route('**/rest/v1/rpc/get_my_archived_groups', (route) => route.fulfill(json([])))
   await page.route('**/auth/v1/logout*', (route) => route.fulfill({ status: 204, body: '' }))
   await page.goto('/', { waitUntil: 'domcontentloaded' })
-  await expect(page.getByTestId('group-workspace').getByRole('heading', { name: 'Bali bachelor' })).toBeVisible()
+  // After sign-in the Trips home comes first; the Trip opens from its card.
+  await expect(page.getByTestId('trips-home')).toBeVisible()
+  await openTrip(page, 'Bali bachelor')
 }
 
 test('the workspace is an app shell: compact top bar and a one-row bottom tab bar', async ({ page }) => {
@@ -38,6 +41,9 @@ test('the workspace is an app shell: compact top bar and a one-row bottom tab ba
   const header = page.getByTestId('group-workspace').locator('header')
   await expect(header).toContainText('Bali, Indonesia · Owner')
   await expect(header).not.toContainText(/\bGroups?\b|IANA|Supabase|Refresh|Sign out/)
+  await expect(header.getByRole('button', { name: 'Trips', exact: true })).toBeVisible()
+  await expect(header.getByRole('button', { name: 'Trip settings' })).toBeVisible()
+  await expect(header.getByRole('button', { name: 'Profile' })).toBeVisible()
 
   const tabs = page.getByRole('tablist', { name: 'Trip sections' }).getByRole('tab')
   await expect(tabs).toHaveText(['Trip', 'Todos', 'Split', 'Scan', 'FX', 'Crew'])
@@ -70,28 +76,28 @@ test('the workspace is an app shell: compact top bar and a one-row bottom tab ba
   expect(clearance).toBeGreaterThanOrEqual(0)
 })
 
-test('Trips and account live in sheets; switching Trips resets the tabs', async ({ page }) => {
+test('the Trips home lists Trips; back control, domestic tabs, and Profile with sign out', async ({ page }) => {
   await openWorkspace(page)
   await page.getByRole('tab', { name: 'Crew' }).click()
 
-  const trips = await openTripSwitcher(page)
-  await expect(trips.getByRole('button')).toHaveText([/Bali bachelor/, /Goa weekend/])
-  await expect(trips.getByRole('button', { name: 'Bali bachelor' })).toHaveAttribute('aria-current', 'true')
-  await expect(page.getByTestId('trips-sheet').getByRole('button', { name: 'Create another Trip' })).toBeVisible()
-  await page.keyboard.press('Escape')
-  await expect(page.getByTestId('trips-sheet')).toHaveCount(0)
-  await expect(page.getByRole('button', { name: 'Trips', exact: true })).toBeFocused()
+  await goToTrips(page)
+  const home = page.getByTestId('trips-home')
+  await expect(home.getByRole('button', { name: 'Create Trip', exact: true })).toBeVisible()
+  await expect(home.getByTestId('trip-card')).toHaveText([/Bali bachelor/, /Goa weekend/])
+  await expect(home.getByRole('button', { name: 'Goa weekend' })).toHaveAccessibleDescription(/Goa · .*Member/)
 
-  await switchTrip(page, 'Goa weekend')
-  await expect(page.getByTestId('group-workspace').getByRole('heading', { name: 'Goa weekend' })).toBeVisible()
+  // A domestic Trip has no FX tab; tabs start at Trip again.
+  await openTrip(page, 'Goa weekend')
   await expect(page.getByTestId('group-workspace').locator('header')).toContainText('Goa · Member')
   await expect(page.getByRole('tab', { name: 'Trip' })).toHaveAttribute('aria-selected', 'true')
+  await expect(page.getByRole('tablist', { name: 'Trip sections' }).getByRole('tab')).toHaveText(['Trip', 'Todos', 'Split', 'Scan', 'Crew'])
+  await expect(page.getByRole('button', { name: 'Trip details' })).toBeVisible()
 
-  await page.getByRole('button', { name: 'Account', exact: true }).click()
-  const account = page.getByTestId('account-sheet')
-  await expect(account).toContainText('Partha')
-  await expect(account).toContainText('partha@example.test')
-  await expect(account.getByRole('button', { name: 'Refresh Trips' })).toBeVisible()
-  await account.getByRole('button', { name: 'Sign out' }).click()
+  await page.getByRole('button', { name: 'Profile', exact: true }).click()
+  const profile = page.getByTestId('profile-screen')
+  await expect(profile).toContainText('Partha')
+  await expect(profile).toContainText('partha@example.test')
+  await expect(profile.getByRole('button', { name: 'Goa weekend' })).toBeVisible()
+  await profile.getByRole('button', { name: 'Sign out' }).click()
   await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible()
 })

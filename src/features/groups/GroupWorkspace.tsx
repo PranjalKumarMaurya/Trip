@@ -1,18 +1,18 @@
 import { type KeyboardEvent, useRef, useState } from 'react'
-import { IconCheck, IconCrew, IconExchange, IconLayers, IconMap, IconPlus, IconReceipt, IconRefresh, IconScan, IconSignOut, IconTodos, IconUser } from '../../components/ui/icons'
-import { NeonBtn } from '../../components/ui/NeonBtn'
-import { Sheet } from '../../components/ui/Sheet'
-import { ArchivedTrips } from '../crew/ArchivedTrips'
+import { IconBack, IconCrew, IconExchange, IconMap, IconReceipt, IconScan, IconSettings, IconTodos } from '../../components/ui/icons'
 import { CrewTab } from '../crew/CrewTab'
 import { FxTab } from '../fx/FxTab'
+import type { MyProfile } from '../profile/profileApi'
+import { ProfileButton } from '../profile/ProfileButton'
 import { ScanTab } from '../scan/ScanTab'
+import { TripSettingsSheet } from '../settings/TripSettingsSheet'
 import { SplitTab } from '../split/SplitTab'
 import { TodosTab } from '../todos/TodosTab'
 import { TripTab } from '../trip/TripTab'
 import type { MyGroupAccess } from './myGroupAccess'
 import { useGroupRoster } from './useGroupRoster'
 
-const TABS = [
+const ALL_TABS = [
   { id: 'trip', label: 'Trip', Icon: IconMap, Component: TripTab },
   { id: 'todos', label: 'Todos', Icon: IconTodos, Component: TodosTab },
   { id: 'split', label: 'Split', Icon: IconReceipt, Component: SplitTab },
@@ -21,90 +21,53 @@ const TABS = [
   { id: 'crew', label: 'Crew', Icon: IconCrew, Component: CrewTab },
 ] as const
 
-type TabId = (typeof TABS)[number]['id']
+type TabId = (typeof ALL_TABS)[number]['id']
 
-const roleLabel = (group: MyGroupAccess) => group.role === 'owner' ? 'Owner' : 'Member'
+/** Domestic Trips have no currency features, so no FX tab. */
+const tabsFor = (trip: MyGroupAccess) => ALL_TABS.filter((entry) => entry.id !== 'fx' || trip.isInternational)
 
-export function GroupWorkspace({ groups, selectedGroupId, onSelect, onRefresh, onCreateAnother, onSignOut, signOutError, accountName, accountEmail }: {
-  groups: MyGroupAccess[]
-  selectedGroupId: string
-  onSelect: (groupId: string) => void
-  /** Re-read the Trip list in the background; `preferGroupId` is selected if present. */
-  onRefresh: (preferGroupId?: string) => void
-  onCreateAnother: () => void
-  onSignOut: () => void
-  signOutError: string | null
-  /** Shown in the account menu. */
-  accountName?: string
-  accountEmail?: string
+/**
+ * One Trip: a header with the way back to the Trips home, Trip settings and the
+ * person's avatar, the selected tab, and the bottom tab bar.
+ */
+export function GroupWorkspace({ trip, onBack, onRefresh, onOpenProfile, profile, accountName }: {
+  trip: MyGroupAccess
+  /** Back to the Trips home. */
+  onBack: () => void
+  /** Re-read the Trip list in the background (role, settings, membership, archive state). */
+  onRefresh: () => void
+  onOpenProfile: () => void
+  profile: MyProfile | null
+  /** Used for the avatar initial until the profile has loaded. */
+  accountName: string
 }) {
-  const [sheet, setSheet] = useState<'trips' | 'account' | null>(null)
-  const selected = groups.find((group) => group.groupId === selectedGroupId)
-  if (!selected) return null
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  const owner = trip.role === 'owner'
 
   return (
     <main data-testid="group-workspace" className="mx-auto flex min-h-dvh w-full max-w-[480px] flex-col">
-      <header className="app-topbar">
-        <div className="min-w-0 flex-1">
-          <h1 className="serif-display line-clamp-2" style={{ color: 'var(--text-primary)', fontSize: 24, lineHeight: 1.15 }}>{selected.tripName}</h1>
-          <p className="mt-0.5 truncate" style={{ color: 'var(--text-secondary)', fontSize: 13 }}>{selected.destination} · {selected.role === 'owner' ? 'Owner' : 'Member'}</p>
+      <header className="app-topbar app-topbar--stacked">
+        <div className="flex items-center gap-2">
+          <button type="button" className="text-link" style={{ textDecoration: 'none', marginLeft: -4 }} onClick={onBack}>
+            <IconBack size={20} />Trips
+          </button>
+          <span className="flex-1" />
+          <button type="button" className="round-btn" aria-label={owner ? 'Trip settings' : 'Trip details'} aria-haspopup="dialog"
+            aria-expanded={settingsOpen} onClick={() => setSettingsOpen(true)}>
+            <IconSettings size={20} />
+          </button>
+          <ProfileButton profile={profile} fallbackName={accountName} onOpen={onOpenProfile} />
         </div>
-        <button type="button" className="topbar-btn" aria-haspopup="dialog" aria-expanded={sheet === 'trips'} onClick={() => setSheet('trips')}>
-          <IconLayers size={18} />Trips
-          {groups.length > 1 && <span className="topbar-btn__count" aria-hidden="true">{groups.length}</span>}
-        </button>
-        <button type="button" className="topbar-btn topbar-btn--icon" aria-label="Account" aria-haspopup="dialog" aria-expanded={sheet === 'account'} onClick={() => setSheet('account')}>
-          <IconUser size={20} />
-        </button>
+        <div className="min-w-0">
+          <h1 className="serif-display line-clamp-2" style={{ color: 'var(--text-primary)', fontSize: 26, lineHeight: 1.15 }}>{trip.tripName}</h1>
+          <p className="mt-0.5 truncate" style={{ color: 'var(--text-secondary)', fontSize: 13 }}>{trip.destination} · {owner ? 'Owner' : 'Member'}</p>
+        </div>
       </header>
-      {signOutError && <p role="alert" className="notice notice--error mx-5 mt-4">{signOutError}</p>}
 
-      {/* Keyed by Trip so switching Trips remounts every tab with fresh state. */}
-      <TripSections key={selected.groupId} trip={selected} onTripsChanged={() => onRefresh()} />
+      {/* Keyed by Trip so opening another Trip remounts every tab with fresh state. */}
+      <TripSections key={trip.groupId} trip={trip} onTripsChanged={onRefresh} />
 
-      {sheet === 'trips' && <Sheet title="Your Trips" testId="trips-sheet" onClose={() => setSheet(null)}>
-        <nav aria-label="Choose a Trip">
-          <ul className="flex flex-col gap-2">
-            {groups.map((group) => {
-              const current = group.groupId === selected.groupId
-              return (
-                <li key={group.groupId}>
-                  <button type="button" className="list-option" aria-current={current ? 'true' : undefined} aria-label={group.tripName}
-                    aria-describedby={`trip-option-${group.groupId}`} onClick={() => { setSheet(null); onSelect(group.groupId) }}>
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate" style={{ fontSize: 15, fontWeight: 500 }}>{group.tripName}</span>
-                      <span id={`trip-option-${group.groupId}`} className="block truncate" style={{ color: 'var(--text-secondary)', fontSize: 13 }}>
-                        {group.destination} · {roleLabel(group)}{current ? ' · Open now' : ''}
-                      </span>
-                    </span>
-                    {current && <span style={{ color: 'var(--accent)' }}><IconCheck size={20} /></span>}
-                  </button>
-                </li>
-              )
-            })}
-          </ul>
-        </nav>
-        <NeonBtn type="button" variant="outline" size="lg" className="mt-4 w-full" onClick={() => { setSheet(null); onCreateAnother() }}>
-          <IconPlus size={18} />Create another Trip
-        </NeonBtn>
-        <ArchivedTrips className="mt-6" refreshKey={groups.map((group) => `${group.groupId}:${group.role}`).join(',')}
-          onRestored={(groupId) => { setSheet(null); onRefresh(groupId) }} />
-      </Sheet>}
-
-      {sheet === 'account' && <Sheet title="Account" testId="account-sheet" onClose={() => setSheet(null)}>
-        {(accountName || accountEmail) && <div className="mb-5">
-          {accountName && <p style={{ fontSize: 15, fontWeight: 500 }}>{accountName}</p>}
-          {accountEmail && <p className="truncate" style={{ color: 'var(--text-secondary)', fontSize: 13 }}>{accountEmail}</p>}
-        </div>}
-        <div className="flex flex-col gap-3">
-          <NeonBtn type="button" variant="ghost" size="lg" className="w-full" onClick={() => { setSheet(null); onRefresh() }}>
-            <IconRefresh size={18} />Refresh Trips
-          </NeonBtn>
-          <NeonBtn type="button" variant="outline" size="lg" className="w-full" onClick={() => { setSheet(null); onSignOut() }}>
-            <IconSignOut size={18} />Sign out
-          </NeonBtn>
-        </div>
-      </Sheet>}
+      {settingsOpen && <TripSettingsSheet trip={trip} onClose={() => setSettingsOpen(false)} onSaved={onRefresh} />}
     </main>
   )
 }
@@ -113,6 +76,8 @@ function TripSections({ trip, onTripsChanged }: { trip: MyGroupAccess; onTripsCh
   const [tab, setTab] = useState<TabId>('trip')
   const tabRefs = useRef<Partial<Record<TabId, HTMLButtonElement | null>>>({})
   const { roster, reload } = useGroupRoster(trip.groupId)
+  const TABS = tabsFor(trip)
+  // A tab that disappears (e.g. FX after a Trip becomes domestic) falls back to the first.
   const current = TABS.find((entry) => entry.id === tab) ?? TABS[0]
 
   const choose = (id: TabId, focus = false) => {
@@ -124,7 +89,7 @@ function TripSections({ trip, onTripsChanged }: { trip: MyGroupAccess; onTripsCh
 
   // Arrow keys move between tabs (WAI-ARIA tabs pattern, automatic activation).
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    const index = TABS.findIndex((entry) => entry.id === tab)
+    const index = TABS.findIndex((entry) => entry.id === current.id)
     const next = event.key === 'ArrowRight' ? (index + 1) % TABS.length
       : event.key === 'ArrowLeft' ? (index - 1 + TABS.length) % TABS.length
         : event.key === 'Home' ? 0 : event.key === 'End' ? TABS.length - 1 : -1
@@ -141,7 +106,7 @@ function TripSections({ trip, onTripsChanged }: { trip: MyGroupAccess; onTripsCh
       <div className="tab-bar">
         <div role="tablist" aria-label="Trip sections" className="tab-bar__inner" onKeyDown={onKeyDown}>
           {TABS.map((entry) => {
-            const active = entry.id === tab
+            const active = entry.id === current.id
             return (
               <button key={entry.id} ref={(node) => { tabRefs.current[entry.id] = node }} type="button" role="tab"
                 id={`trip-tab-${entry.id}`} aria-selected={active} aria-controls="trip-tab-panel" tabIndex={active ? 0 : -1}

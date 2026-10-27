@@ -115,7 +115,7 @@ export function SplitTab({ trip, roster, reloadRoster }: TripTabProps) {
 
       {(dialog?.kind === 'add' || dialog?.kind === 'edit') && (
         <ExpenseForm key={dialog.kind === 'edit' ? dialog.expense.id : 'add'} groupId={trip.groupId} accountingCurrency={currency}
-          timezone={trip.timezone} me={me} members={active} expense={dialog.kind === 'edit' ? dialog.expense : null}
+          timezone={trip.timezone} international={trip.isInternational} me={me} members={active} expense={dialog.kind === 'edit' ? dialog.expense : null}
           onClose={closeDialog} onSaved={saved} />
       )}
       {dialog?.kind === 'settle' && (

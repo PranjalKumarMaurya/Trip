@@ -8,6 +8,8 @@ export interface BootstrapGroupInput {
   timezone: string
   accountingCurrency: string
   displayCurrencyCodes: string[]
+  /** International Trips offer other currencies and the FX tab; domestic ones do not. */
+  isInternational: boolean
 }
 
 export interface BootstrapGroupResult {
@@ -48,6 +50,7 @@ export async function bootstrapGroup(input: BootstrapGroupInput, requestId: stri
       timezone: input.timezone.trim(),
       accounting_currency: input.accountingCurrency.trim().toUpperCase(),
       display_currency_codes: input.displayCurrencyCodes.map((code) => code.trim().toUpperCase()),
+      is_international: input.isInternational,
     },
     request_id: requestId,
   })

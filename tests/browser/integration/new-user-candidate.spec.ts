@@ -1,11 +1,14 @@
 import { expect, test, type Page } from '@playwright/test'
-import { setTripSettings } from '../support/trip-frame'
+import { fillAndCreateTrip } from '../support/trip-frame'
 
 const ownerId = 'a5000000-0000-4000-8000-000000000001'
 const friendId = 'a5000000-0000-4000-8000-000000000002'
 const groupId = 'b5000000-0000-4000-8000-000000000001'
 const proof = 'a'.repeat(64)
-const access = (role: 'owner' | 'member') => ({ group_id: groupId, role, trip_name: 'Goa weekend', destination: 'Goa' })
+const access = (role: 'owner' | 'member') => ({
+  group_id: groupId, role, trip_name: 'Goa weekend', destination: 'Goa', start_date: '2026-11-01', end_date: '2026-11-05',
+  timezone: 'Asia/Kolkata', accounting_currency: 'INR', is_international: false,
+})
 
 function syntheticSession(accountId: string, email: string) {
   const payload = Buffer.from(JSON.stringify({ sub: accountId, role: 'authenticated', exp: Math.floor(Date.now() / 1000) + 3600 })).toString('base64url')
@@ -61,16 +64,9 @@ test('staged owner creates Trip and link; recipient joins after confirmation', a
       }) })
     })
     await owner.goto('/')
-    await expect(owner.getByTestId('bootstrap-onboarding')).toBeVisible()
-    await owner.getByLabel('Trip name').fill('Goa weekend')
-    await owner.getByLabel('Destination').fill('Goa')
-    await owner.getByLabel('Start date').fill('2026-11-01')
-    await owner.getByLabel('End date').fill('2026-11-05')
-    await setTripSettings(owner, { timezone: 'Asia/Kolkata', currency: 'INR' })
-    await owner.getByRole('button', { name: 'Create Trip' }).click()
-    await expect(owner.getByTestId('bootstrap-success-state-a')).toBeVisible()
-    await owner.getByRole('button', { name: 'Open Trip' }).click()
-    await expect(owner.getByTestId('group-workspace')).toContainText('Goa weekend')
+    await expect(owner.getByTestId('trips-empty')).toBeVisible()
+    await owner.getByRole('button', { name: 'Create your first Trip' }).click()
+    await fillAndCreateTrip(owner, { name: 'Goa weekend', destination: 'Goa' })
     await owner.getByRole('tab', { name: 'Crew' }).click()
     await owner.getByLabel('Friend’s email').fill('friend@example.test')
     await owner.getByRole('button', { name: 'Create link' }).click()

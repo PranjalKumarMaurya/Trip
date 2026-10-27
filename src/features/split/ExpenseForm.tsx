@@ -19,10 +19,12 @@ export interface SplitMember {
 
 type RateState = { kind: 'idle' } | { kind: 'loading' } | { kind: 'live'; asOf: string | null } | { kind: 'error' }
 
-export function ExpenseForm({ groupId, accountingCurrency, timezone, me, members, expense, onClose, onSaved }: {
+export function ExpenseForm({ groupId, accountingCurrency, timezone, me, members, expense, onClose, onSaved, international = true }: {
   groupId: string
   accountingCurrency: string
   timezone: string
+  /** Domestic Trips record everything in the Trip currency: no currency field or conversion. */
+  international?: boolean
   me: string
   /** Active members, in roster order. */
   members: SplitMember[]
@@ -60,6 +62,9 @@ export function ExpenseForm({ groupId, accountingCurrency, timezone, me, members
   const evaluation = evaluateDraft(draft, context)
   const currency = evaluation.currency
   const converts = !evaluation.errors.currency && currency !== accountingCurrency
+  // Domestic: the currency is always the Trip currency. An older expense in another
+  // currency (from when the Trip was international) still shows its conversion.
+  const showCurrency = international || initial.currency !== accountingCurrency
   const dirty = JSON.stringify(draft) !== JSON.stringify(initial)
   const show = (field: DraftField) => (attempted || touched.has(field) ? evaluation.errors[field] : undefined)
   const touch = (field: DraftField) => () => setTouched((current) => new Set(current).add(field))
@@ -138,21 +143,21 @@ export function ExpenseForm({ groupId, accountingCurrency, timezone, me, members
                 maxLength={120} placeholder="Dinner, ferry, villa…" onChange={(event) => update({ description: event.target.value })}
                 onBlur={touch('description')} />}
             </Field>
-            <div className="grid grid-cols-[1fr_96px] gap-3">
+            <div className={showCurrency ? 'grid grid-cols-[1fr_96px] gap-3' : 'grid grid-cols-1 gap-3'}>
               <Field label="Total amount" error={show('amount')}>
                 {(control) => <input {...control} className={inputClass} style={inputStyle} value={draft.amount} inputMode="decimal"
                   autoComplete="off" placeholder="0.00" onChange={(event) => update({ amount: event.target.value })} onBlur={touch('amount')} />}
               </Field>
-              <Field label="Currency" error={show('currency')}>
+              {showCurrency && <Field label="Currency" error={show('currency')}>
                 {(control) => <input {...control} className={inputClass} style={inputStyle} value={draft.currency} maxLength={3}
                   list="split-currencies" autoComplete="off"
                   onChange={(event) => changeCurrency(event.target.value.toUpperCase())}
                   onBlur={touch('currency')} />}
-              </Field>
-              <datalist id="split-currencies">{COMMON_CURRENCIES.map((code) => <option key={code} value={code} />)}</datalist>
+              </Field>}
+              {showCurrency && <datalist id="split-currencies">{COMMON_CURRENCIES.map((code) => <option key={code} value={code} />)}</datalist>}
             </div>
 
-            {converts && (
+            {showCurrency && converts && (
               <div className="surface flex flex-col gap-2 px-3.5 py-3">
                 <Field label={`Exchange rate: ${accountingCurrency} for 1 ${currency}`} error={show('rate')}
                   hint={rateHint(rateState, keepsSnapshot ? expense : null, timezone)}>
