@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test'
+import { createAnotherTrip, expectTripCount, refreshTrips, setTripSettings, switchTrip } from '../support/trip-frame'
 
 test.skip(process.env.TRIP_LIVE_JOURNEY !== '1', 'requires disposable local Supabase stack')
 
@@ -16,12 +17,10 @@ async function createTrip(page: Page, name: string, destination: string) {
   await page.getByLabel('Destination').fill(destination)
   await page.getByLabel('Start date').fill('2026-11-01')
   await page.getByLabel('End date').fill('2026-11-05')
-  await page.getByLabel('IANA timezone').fill('Asia/Kolkata')
-  await page.getByLabel('Accounting currency').fill('INR')
-  await page.getByLabel('Display currencies').fill('INR')
-  await page.getByRole('button', { name: 'Create Group' }).click()
+  await setTripSettings(page, { timezone: 'Asia/Kolkata', currency: 'INR' })
+  await page.getByRole('button', { name: 'Create Trip' }).click()
   await expect(page.getByTestId('bootstrap-success-state-a')).toContainText(name)
-  await page.getByRole('button', { name: 'Continue to Trip' }).click()
+  await page.getByRole('button', { name: 'Open Trip' }).click()
   await expect(page.getByTestId('group-workspace')).toContainText(name)
 }
 
@@ -44,23 +43,23 @@ test('two real Auth accounts create, invite, join, and stay in their own Groups'
     await expect(friend.getByTestId('invitation-entry')).toContainText('Goa weekend · Goa')
     await friend.getByRole('button', { name: 'Continue', exact: true }).click()
     await signUp(friend, 'Friend One', 'friend-live@example.test')
-    await expect(friend.getByTestId('invitation-entry')).toContainText('Join as an ordinary Member?')
+    await expect(friend.getByTestId('invitation-entry')).toContainText('Join Goa weekend as a member?')
     await friend.getByRole('button', { name: 'Confirm and join' }).click()
-    await expect(friend.getByTestId('invitation-entry')).toContainText('Joined successfully')
-    await friend.getByRole('button', { name: 'Close invitation' }).click()
+    await expect(friend.getByTestId('invitation-entry')).toContainText('You joined Goa weekend.')
+    await friend.getByRole('button', { name: 'Open Trip' }).click()
     await expect(friend.getByTestId('group-workspace')).toContainText('Goa weekend')
     await friend.getByRole('tab', { name: 'Crew' }).click()
     await expect(friend.getByTestId('invite-member')).toHaveCount(0)
 
-    await owner.getByRole('button', { name: 'Create another Trip' }).click()
+    await createAnotherTrip(owner)
     await createTrip(owner, 'Jaipur weekend', 'Jaipur')
-    await expect(owner.getByRole('navigation', { name: 'Choose a Trip' }).getByRole('button')).toHaveCount(2)
-    await owner.getByRole('navigation', { name: 'Choose a Trip' }).getByRole('button', { name: 'Goa weekend' }).click()
+    await expectTripCount(owner, 2)
+    await switchTrip(owner, 'Goa weekend')
     await expect(owner.getByTestId('group-workspace').getByRole('heading', { name: 'Goa weekend' })).toBeVisible()
-    await owner.getByRole('navigation', { name: 'Choose a Trip' }).getByRole('button', { name: 'Jaipur weekend' }).click()
+    await switchTrip(owner, 'Jaipur weekend')
     await expect(owner.getByTestId('group-workspace').getByRole('heading', { name: 'Jaipur weekend' })).toBeVisible()
-    await friend.getByRole('button', { name: 'Refresh Trips' }).click()
-    await expect(friend.getByRole('navigation', { name: 'Choose a Trip' }).getByRole('button')).toHaveCount(1)
+    await refreshTrips(friend)
+    await expectTripCount(friend, 1)
   } finally {
     await ownerContext.close()
     await friendContext.close()

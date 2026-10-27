@@ -5,6 +5,7 @@ import { createRequire } from 'node:module'
 
 const adapter = readFileSync('src/features/onboarding/bootstrapGroup.ts', 'utf8')
 const onboarding = readFileSync('src/features/onboarding/BootstrapOnboarding.tsx', 'utf8')
+const tripSettings = readFileSync('src/features/onboarding/tripSettings.ts', 'utf8')
 const boundary = readFileSync('src/features/auth/AuthBoundary.tsx', 'utf8')
 const groupAccess = readFileSync('src/features/groups/myGroupAccess.ts', 'utf8')
 const workspace = readFileSync('src/features/groups/GroupWorkspace.tsx', 'utf8')
@@ -90,17 +91,21 @@ test('IR-003 onboarding retains one request identity for retry and resets it onl
   assert.match(onboarding, /const requestId = requestIdRef\.current \?\? createBootstrapRequestId\(\)/)
   assert.match(onboarding, /if \(requestIdRef\.current\) requestIdRef\.current = null/)
   assert.match(onboarding, /state === 'submitting'/)
-  assert.match(onboarding, /Retry creating Group/)
+  assert.match(onboarding, /Retry creating Trip/)
 })
 
 test('IR-003 validates every frozen bootstrap field and renders ONB-06 State A only', () => {
   for (const field of ['tripName', 'destination', 'startDate', 'endDate', 'timezone', 'accountingCurrency', 'displayCurrencies']) {
-    assert.match(onboarding, new RegExp(`errors\\.${field}`))
+    assert.match(tripSettings, new RegExp(`errors\\.${field}`))
   }
-  assert.match(onboarding, /End date must be on or after the start date\./)
-  assert.match(onboarding, /Include the accounting currency in the display set\./)
+  assert.match(onboarding, /validateBootstrapForm\(values\)/)
+  assert.match(tripSettings, /End date must be on or after the start date\./)
+  assert.match(tripSettings, /Include the Trip currency\./)
   assert.match(onboarding, /bootstrap-success-state-a/)
-  assert.match(onboarding, /GROUP CREATED/)
-  assert.match(onboarding, /No Invitation has been issued yet\./)
+  assert.match(onboarding, /Trip created/)
+  // State A creates no invitation; it only points to the Crew tab.
+  assert.match(onboarding, /Invite friends from the Crew tab/)
   assert.doesNotMatch(onboarding, /copy invitation|share invitation|invitation URL|invitation code|invite members|recipient/i)
+  // No jargon on the Create Trip screen.
+  assert.doesNotMatch(onboarding, /IANA|ISO 4217|Accounting currency|\bGroups?\b/)
 })

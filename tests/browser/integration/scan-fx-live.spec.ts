@@ -1,4 +1,5 @@
 import { expect, test, type BrowserContext, type Page } from '@playwright/test'
+import { setTripSettings } from '../support/trip-frame'
 
 // Real local stack (Auth, PostgREST, Storage, Edge runtime with the stub
 // extractor); only the public FX rates endpoint is mocked.
@@ -27,11 +28,9 @@ async function signUpWithTrip(page: Page, name: string, email: string, trip: { n
   await page.getByLabel('Destination').fill(trip.destination)
   await page.getByLabel('Start date').fill('2026-11-01')
   await page.getByLabel('End date').fill('2026-11-05')
-  await page.getByLabel('IANA timezone').fill('Asia/Kolkata')
-  await page.getByLabel('Accounting currency').fill('INR')
-  await page.getByLabel('Display currencies').fill('INR, IDR')
-  await page.getByRole('button', { name: 'Create Group' }).click()
-  await page.getByRole('button', { name: 'Continue to Trip' }).click()
+  await setTripSettings(page, { timezone: 'Asia/Kolkata', currency: 'INR', alsoShow: ['IDR'] })
+  await page.getByRole('button', { name: 'Create Trip' }).click()
+  await page.getByRole('button', { name: 'Open Trip' }).click()
   await expect(page.getByTestId('group-workspace')).toContainText(trip.name)
 }
 

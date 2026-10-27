@@ -1,4 +1,5 @@
 import { mkdirSync } from 'node:fs'
+import { closeTripSwitcher, openTripSwitcher, setTripSettings } from '../support/trip-frame'
 import { expect, test, type Page } from '@playwright/test'
 
 // Visual tour: screenshots every main screen with realistic data for UI review.
@@ -62,14 +63,12 @@ test('tour every screen', async ({ browser }) => {
     await owner.getByLabel('Destination').fill('Bali, Indonesia')
     await owner.getByLabel('Start date').fill(inDays(5, '00:00').slice(0, 10))
     await owner.getByLabel('End date').fill(inDays(11, '00:00').slice(0, 10))
-    await owner.getByLabel('IANA timezone').fill('Asia/Makassar')
-    await owner.getByLabel('Accounting currency').fill('INR')
-    await owner.getByLabel('Display currencies').fill('INR, IDR')
+    await setTripSettings(owner, { timezone: 'Asia/Makassar', currency: 'INR', alsoShow: ['IDR'] })
     await shot(owner, 'onboarding-filled')
-    await owner.getByRole('button', { name: 'Create Group' }).click()
-    await expect(owner.getByRole('button', { name: 'Continue to Trip' })).toBeVisible()
+    await owner.getByRole('button', { name: 'Create Trip' }).click()
+    await expect(owner.getByRole('button', { name: 'Open Trip' })).toBeVisible()
     await shot(owner, 'trip-created')
-    await owner.getByRole('button', { name: 'Continue to Trip' }).click()
+    await owner.getByRole('button', { name: 'Open Trip' }).click()
     await expect(owner.getByTestId('group-workspace')).toBeVisible()
   })
 
@@ -137,6 +136,16 @@ test('tour every screen', async ({ browser }) => {
     await shot(owner, 'crew-invite-link')
   })
 
+  await step('frame', async () => {
+    await openTripSwitcher(owner)
+    await shot(owner, 'trips-sheet')
+    await closeTripSwitcher(owner)
+    await owner.getByRole('button', { name: 'Account', exact: true }).click()
+    await shot(owner, 'account-menu')
+    await owner.keyboard.press('Escape')
+    await expect(owner.getByTestId('account-sheet')).toHaveCount(0)
+  })
+
   const friend = await friendContext.newPage()
   await step('friend-join', async () => {
     await friend.goto(link)
@@ -152,9 +161,9 @@ test('tour every screen', async ({ browser }) => {
     await expect(friend.getByRole('button', { name: 'Confirm and join' })).toBeVisible()
     await shot(friend, 'invite-confirm-join')
     await friend.getByRole('button', { name: 'Confirm and join' }).click()
-    await expect(friend.getByTestId('invitation-entry')).toContainText('Joined successfully')
+    await expect(friend.getByTestId('invitation-entry')).toContainText('You joined Bali bachelor.')
     await shot(friend, 'invite-joined')
-    await friend.getByRole('button', { name: 'Close invitation' }).click()
+    await friend.getByRole('button', { name: 'Open Trip' }).click()
     await expect(friend.getByTestId('group-workspace')).toBeVisible()
     await shot(friend, 'friend-trip')
     await friend.getByRole('tab', { name: 'Split' }).click()

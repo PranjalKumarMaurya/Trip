@@ -38,12 +38,15 @@ test.beforeEach(async ({ page }) => {
 test('signed-out friend retains invite through the sign-in path', async ({ page }) => {
   await mockInspection(page, 'continue')
   await page.goto(`/#invite=${proof}`)
-  await expect(page.getByTestId('invitation-entry')).toContainText('Trip A · Goa')
-  await expect(page.getByTestId('invitation-entry')).toContainText('Nothing has been accepted yet', { ignoreCase: true })
+  await expect(page.getByTestId('invitation-entry')).toContainText('invited to Trip A · Goa')
+  await expect(page.getByTestId('invitation-entry')).toContainText('You join only after you confirm')
   await page.getByRole('button', { name: 'Continue', exact: true }).click()
-  await expect(page.getByTestId('auth-entry')).toContainText('Your Trip invitation will be checked')
+  await expect(page.getByTestId('auth-entry')).toContainText('Sign in or create an account to join Trip A.')
+  await page.getByRole('button', { name: 'Back to invitation' }).click()
+  await expect(page.getByTestId('invitation-entry')).toContainText('invited to Trip A · Goa')
+  await page.getByRole('button', { name: 'Continue', exact: true }).click()
   await page.goto('/')
-  await expect(page.getByTestId('invitation-entry')).toContainText('Trip A · Goa')
+  await expect(page.getByTestId('invitation-entry')).toContainText('invited to Trip A · Goa')
 })
 
 test('verified friend confirms once; unknown response retries the same request', async ({ page }) => {
@@ -68,13 +71,31 @@ test('verified friend confirms once; unknown response retries the same request',
     }) })
   })
   await page.goto(`/#invite=${proof}`)
-  await expect(page.getByTestId('invitation-entry')).toContainText('Join as an ordinary Member?')
+  await expect(page.getByTestId('invitation-entry')).toContainText('Join Trip A as a member?')
   await page.getByRole('button', { name: 'Confirm and join' }).click()
-  await expect(page.getByRole('button', { name: 'Retry acceptance' })).toBeVisible()
-  await page.getByRole('button', { name: 'Retry acceptance' }).click()
-  await expect(page.getByTestId('invitation-entry')).toContainText('Joined successfully')
+  await expect(page.getByRole('alert')).toContainText('safe to try again')
+  await page.getByRole('button', { name: 'Try again' }).click()
+  await expect(page.getByTestId('invitation-entry')).toContainText('You joined Trip A.')
+  await expect(page.getByRole('button', { name: 'Open Trip' })).toBeVisible()
   expect(requestIds).toHaveLength(2)
   expect(requestIds[0]).toBe(requestIds[1])
   await expect.poll(() => page.evaluate(() => location.hash)).toBe('')
   expect(await page.evaluate(() => localStorage.getItem('trip:pending-invitation:v1'))).toBeNull()
 })
+
+for (const [outcome, message] of [
+  ['expired', 'This invite has expired'],
+  ['revoked', 'This invite was cancelled'],
+  ['used', 'This invite has already been used'],
+  ['invalid', 'This invite link doesn’t work'],
+] as const) {
+  test(`a ${outcome} invite explains itself and offers a way on`, async ({ page }) => {
+    await page.route('**/rest/v1/rpc/inspect_invitation', (route) => route.fulfill({
+      status: 200, contentType: 'application/json', body: JSON.stringify({ outcome }),
+    }))
+    await page.goto(`/#invite=${proof}`)
+    await expect(page.getByRole('heading', { name: message })).toBeVisible()
+    await page.getByRole('button', { name: 'Go to sign in' }).click()
+    await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible()
+  })
+}
