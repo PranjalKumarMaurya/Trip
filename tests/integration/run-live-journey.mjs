@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process'
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -84,27 +84,15 @@ enabled = false
   run(cli, ['start', '--workdir', workdir], { label: 'stack-start' })
 }
 
+// Apply every migration in order as `postgres`, the role hosted Supabase uses.
 function migrate() {
-  const read = (name) => readFileSync(resolve(root, 'supabase/migrations', name), 'utf8')
-  psql(read('001_initial.sql'), 'migration-001')
-  adminSql(readFileSync(resolve(root, 'tests/database/ir-002/platform-storage-baseline.sql'), 'utf8'), 'storage-baseline')
-  const ordinary = [
-    '002_tickets_bucket.sql', '003_gmap_url.sql', '004_paid_by_splits.sql',
-    '005_todos.sql', '006_ir002_tenant_root.sql',
-    '007_ir002_configuration_archive_audit.sql', '008_ir004_profile_auth.sql',
-    '009_ir007_base_rls_ownership.sql',
-  ]
-  for (const name of ordinary) psql(read(name), name)
-  const candidates = [
-    '010_ir003_atomic_group_bootstrap.sql', '011_ir002_timezone_reference.sql',
-    '012_ir005_invitation_foundation.sql', '013_ir005_create_invitation_candidate.sql',
-    '014_ir005_accept_invitation_candidate.sql', '015_ir005_revoke_invitation_candidate.sql',
-    '016_ir005_role_change_candidate.sql', '017_ir005_transfer_ownership_candidate.sql',
-    '018_ir005_deactivate_membership_candidate.sql', '019_ir005_archive_state_candidate.sql',
-    '020_ir005_inspection_candidate.sql', '021_ir005_owner_invitation_list_candidate.sql',
-    '022_ir011_my_group_access_candidate.sql', '023_ir004_profile_filter_grant_candidate.sql',
-  ]
-  for (const name of candidates) adminSql(read(name), name)
+  const files = readdirSync(resolve(root, 'supabase/migrations')).filter((name) => name.endsWith('.sql')).sort()
+  for (const name of files) {
+    psql(readFileSync(resolve(root, 'supabase/migrations', name), 'utf8'), name)
+    if (name === '001_initial.sql') {
+      adminSql(readFileSync(resolve(root, 'tests/database/ir-002/platform-storage-baseline.sql'), 'utf8'), 'storage-baseline')
+    }
+  }
 }
 
 function anonKey() {
