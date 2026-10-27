@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { NeonBtn } from '../../components/ui/NeonBtn'
+import { useTripMemberProfiles } from '../groups/useTripMemberProfiles'
 import type { TripTabProps } from '../workspace/tripTab'
 import { ExpenseForm, formatWhen, type SplitMember } from './ExpenseForm'
 import { CATEGORIES, expenseMemberIds } from './expenseDraft'
@@ -35,6 +36,10 @@ function weightText(method: SplitMethod, share: ShareLine): string {
 
 export function SplitTab({ trip, roster, reloadRoster }: TripTabProps) {
   const { state, reload } = useSplitLedger(trip.groupId)
+  // Co-members' UPI IDs for "Pay via UPI"; re-read whenever Settle up opens.
+  const { profiles, loading: profilesLoading, error: profilesError, reload: reloadProfiles } = useTripMemberProfiles(trip.groupId)
+  const upiIds = useMemo(() => (profilesLoading || profilesError ? null
+    : new Map(profiles.map((profile) => [profile.groupMemberId, profile.upiId]))), [profiles, profilesLoading, profilesError])
   const [dialog, setDialog] = useState<Dialog>(null)
   const me = trip.groupMemberId
   const isOwner = trip.role === 'owner'
@@ -106,7 +111,7 @@ export function SplitTab({ trip, roster, reloadRoster }: TripTabProps) {
 
           <div className="flex gap-2">
             <NeonBtn type="button" className="min-h-11 flex-1" onClick={() => { reloadRoster(); setDialog({ kind: 'add' }) }}>Add expense</NeonBtn>
-            <NeonBtn type="button" variant="outline" color="#FF8B4D" className="min-h-11 flex-1" onClick={() => setDialog({ kind: 'settle' })}>Settle up</NeonBtn>
+            <NeonBtn type="button" variant="outline" color="#FF8B4D" className="min-h-11 flex-1" onClick={() => { reloadProfiles(); setDialog({ kind: 'settle' }) }}>Settle up</NeonBtn>
           </div>
 
           {ledger.heldOut.length > 0 && (
@@ -135,8 +140,8 @@ export function SplitTab({ trip, roster, reloadRoster }: TripTabProps) {
           onClose={closeDialog} onSaved={saved} />
       )}
       {dialog?.kind === 'settle' && (
-        <SettleUpDialog groupId={trip.groupId} currency={currency} me={me} isOwner={isOwner} members={active} nameOf={nameOf}
-          suggestions={suggestions} onClose={closeDialog} onRecorded={() => void reload()} />
+        <SettleUpDialog groupId={trip.groupId} tripName={trip.tripName} currency={currency} me={me} isOwner={isOwner} members={active}
+          nameOf={nameOf} upiIds={upiIds} suggestions={suggestions} onClose={closeDialog} onRecorded={() => void reload()} />
       )}
     </section>
   )

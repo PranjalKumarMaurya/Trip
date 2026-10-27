@@ -958,18 +958,21 @@ export type Database = {
           expense_id: string
           group_id: string
           group_member_id: string
+          weight: number | null
         }
         Insert: {
           amount: number
           expense_id: string
           group_id: string
           group_member_id: string
+          weight?: number | null
         }
         Update: {
           amount?: number
           expense_id?: string
           group_id?: string
           group_member_id?: string
+          weight?: number | null
         }
         Relationships: [
           {
