@@ -316,7 +316,8 @@ try {
 
   // Realtime publishes all four tables.
   assert.equal(stack.psql(`SELECT string_agg(tablename, ',' ORDER BY tablename) FROM pg_publication_tables
-    WHERE pubname = 'supabase_realtime' AND tablename LIKE 'trip_%' AND tablename <> 'trip_events';`),
+    WHERE pubname = 'supabase_realtime' AND tablename IN
+      ('trip_expenses', 'trip_expense_payers', 'trip_expense_shares', 'trip_settlements');`),
   'trip_expense_payers,trip_expense_shares,trip_expenses,trip_settlements')
 
   stack.stop()
