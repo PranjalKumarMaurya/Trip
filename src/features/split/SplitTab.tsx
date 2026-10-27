@@ -187,7 +187,7 @@ function GroupTotals({ totals, nameOf, money, me }: {
         <tbody>
           {rows.map(([id, entry]) => (
             <tr key={id} style={{ borderTop: '1px solid var(--border)' }}>
-              <th scope="row" className="truncate px-4 py-2 text-left font-normal" style={{ color: 'var(--text-secondary)', maxWidth: 120 }}>
+              <th scope="row" className="px-4 py-2 text-left font-normal" style={{ color: 'var(--text-secondary)', overflowWrap: 'anywhere' }}>
                 {nameOf(id)}{id === me ? ' (you)' : ''}
               </th>
               <td className="font-mono whitespace-nowrap px-2 py-2 text-right" style={{ color: 'var(--text-secondary)' }}>{money(entry.paid)}</td>
