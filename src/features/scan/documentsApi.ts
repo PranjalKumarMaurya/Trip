@@ -60,7 +60,7 @@ export async function uploadTripDocument(groupId: string, groupMemberId: string,
     throw new ScanError(status === '413' ? 'too_large' : status === '415' ? 'unsupported' : 'upload_failed')
   }
   const { data, error } = await supabase.from('trip_documents').insert({
-    group_id: groupId, storage_path: path, file_name: file.name.slice(0, 255) || 'document',
+    group_id: groupId, storage_path: path, file_name: file.name.trim().slice(0, 255) || 'document',
     mime_type: file.type, size_bytes: file.size, uploaded_by: groupMemberId,
   }).select(DOCUMENT_COLUMNS).single()
   if (error || !data) {

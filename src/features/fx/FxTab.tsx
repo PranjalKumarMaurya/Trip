@@ -106,7 +106,7 @@ export function FxTab({ trip }: TripTabProps) {
           <label className="flex flex-col gap-1.5 text-sm" style={{ color: 'var(--text-secondary)' }}>
             <span>Convert to</span>
             <select aria-label="Other currency" value={counter} onChange={(event) => pick(event.target.value)}
-              className="w-full rounded-md px-3 py-2.5" style={{ background: 'rgba(245,241,235,0.035)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}>
+              className="w-full rounded-md px-3 py-2.5" style={{ background: 'rgba(245,241,235,0.035)', border: '1px solid var(--border)', color: 'var(--text-primary)', colorScheme: 'dark' }}>
               {options.map((code) => <option key={code} value={code}>{code}</option>)}
             </select>
           </label>
@@ -146,7 +146,7 @@ export function FxTab({ trip }: TripTabProps) {
                 </span>
                 <span className="shrink-0 text-right">
                   <span className="block" style={{ color: 'var(--text-primary)' }}>{formatMoney(item.idr, 'IDR')}</span>
-                  {guideRate && guideTarget !== 'IDR' && <span className="block font-mono text-xs" style={{ color: 'var(--text-tertiary)' }}>≈ {formatMoney(item.idr * guideRate, guideTarget)}</span>}
+                  {guideRate && guideTarget !== 'IDR' && <span className="block font-mono text-xs" style={{ color: 'var(--text-tertiary)' }}>≈ {formatMoney(Math.round(item.idr * guideRate), guideTarget)}</span>}
                 </span>
               </li>
             ))}

@@ -1,4 +1,4 @@
-import { type ChangeEvent, type FormEvent, type ReactNode, useState } from 'react'
+import { type ChangeEvent, type FormEvent, type ReactNode, useEffect, useRef, useState } from 'react'
 import { NeonBtn } from '../../components/ui/NeonBtn'
 import { NeonInput } from '../../components/ui/NeonInput'
 import {
@@ -11,8 +11,9 @@ const COMMON_ZONES = ['Asia/Kolkata', 'Asia/Makassar', 'Asia/Jakarta', 'Asia/Sin
 
 const fieldStyle = { color: 'var(--text-secondary)' }
 const selectStyle = {
-  background: 'rgba(245,241,235,0.035)', border: '1px solid var(--border)', color: 'var(--text-primary)', fontSize: 14,
-}
+  background: 'rgba(245,241,235,0.035)', border: '1px solid var(--border)', color: 'var(--text-primary)', fontSize: 14, colorScheme: 'dark',
+} as const
+const dateStyle = { colorScheme: 'dark' } as const
 
 export function DraftReviewForm({ draft, fileName, notice, tripTimezone, saving, saveError, onSubmit, onCancel, onRetryRead }: {
   draft: EventDraft
@@ -27,6 +28,9 @@ export function DraftReviewForm({ draft, fileName, notice, tripTimezone, saving,
 }) {
   const [form, setForm] = useState<EventForm>(() => draftToForm(draft))
   const [errors, setErrors] = useState<FormErrors>({})
+  const headingRef = useRef<HTMLHeadingElement>(null)
+  // Move focus (and the viewport on phones) to the form when it opens.
+  useEffect(() => { headingRef.current?.focus() }, [])
   const set = (field: keyof EventForm) => (event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
     setForm((current) => ({ ...current, [field]: event.target.value }))
 
@@ -44,7 +48,7 @@ export function DraftReviewForm({ draft, fileName, notice, tripTimezone, saving,
 
   return (
     <section data-testid="scan-review" aria-label="Review booking" className="surface px-4 py-5">
-      <h2 className="serif-display" style={{ color: 'var(--text-primary)', fontSize: 25 }}>Review booking</h2>
+      <h2 ref={headingRef} tabIndex={-1} className="serif-display outline-none" style={{ color: 'var(--text-primary)', fontSize: 25 }}>Review booking</h2>
       <p className="mt-1 truncate" style={{ color: 'var(--text-secondary)', fontSize: 13 }}>From {fileName}</p>
       {notice && <p role="status" className="mt-3 rounded-md border px-3 py-2 text-sm" style={{ borderColor: 'var(--border)', color: 'var(--text-secondary)' }}>{notice}</p>}
       {draft.warnings.length > 0 && (
@@ -64,13 +68,13 @@ export function DraftReviewForm({ draft, fileName, notice, tripTimezone, saving,
         </Field>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Field label="Starts" error={errors.startLocal}>
-            <NeonInput aria-label="Starts" type="datetime-local" value={form.startLocal} onChange={set('startLocal')} disabled={saving} />
+            <NeonInput aria-label="Starts" type="datetime-local" value={form.startLocal} onChange={set('startLocal')} disabled={saving} style={dateStyle} />
           </Field>
           <Field label="Start timezone" error={errors.startTimezone}>
             <NeonInput aria-label="Start timezone" list="scan-timezones" value={form.startTimezone} onChange={set('startTimezone')} disabled={saving} />
           </Field>
           <Field label="Ends (optional)" error={errors.endLocal}>
-            <NeonInput aria-label="Ends" type="datetime-local" value={form.endLocal} onChange={set('endLocal')} disabled={saving} />
+            <NeonInput aria-label="Ends" type="datetime-local" value={form.endLocal} onChange={set('endLocal')} disabled={saving} style={dateStyle} />
           </Field>
           <Field label="End timezone" error={errors.endTimezone}>
             <NeonInput aria-label="End timezone" list="scan-timezones" value={form.endTimezone} onChange={set('endTimezone')} disabled={saving} />
