@@ -69,6 +69,7 @@ test('verification emails return Owner and invited friend to the right journey',
     await owner.getByRole('button', { name: 'Create Group' }).click()
     await expect(owner.getByTestId('bootstrap-success-state-a')).toBeVisible()
     await owner.getByRole('button', { name: 'Continue to Trip' }).click()
+    await owner.getByRole('tab', { name: 'Crew' }).click()
     await owner.getByLabel('Friend’s email').fill(friendEmail)
     await owner.getByRole('button', { name: 'Create link' }).click()
     const invitationLink = await owner.getByLabel('Invitation link').inputValue()
@@ -84,7 +85,7 @@ test('verification emails return Owner and invited friend to the right journey',
     await verificationTab.getByRole('button', { name: 'Confirm and join' }).click()
     await expect(verificationTab.getByTestId('invitation-entry')).toContainText('Joined successfully')
     await verificationTab.getByRole('button', { name: 'Close invitation' }).click()
-    await expect(verificationTab.getByTestId('group-workspace-candidate')).toContainText('Verified Goa')
+    await expect(verificationTab.getByTestId('group-workspace')).toContainText('Verified Goa')
   } finally {
     await ownerContext.close()
     await friendContext.close()

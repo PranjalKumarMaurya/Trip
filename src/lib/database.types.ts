@@ -803,9 +803,14 @@ export type Database = {
       get_my_group_access: {
         Args: never
         Returns: {
+          accounting_currency: string
           destination: string
+          end_date: string
           group_id: string
+          group_member_id: string
           role: string
+          start_date: string
+          timezone: string
           trip_name: string
         }[]
       }

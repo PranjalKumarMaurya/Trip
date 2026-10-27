@@ -9,17 +9,22 @@ BEGIN;
 GRANT ir005_invitation_executor TO postgres;
 GRANT CREATE ON SCHEMA public TO ir005_invitation_executor;
 
-GRANT SELECT (group_id, trip_name, destination)
+GRANT SELECT (group_id, trip_name, destination, start_date, end_date, timezone, accounting_currency)
   ON TABLE public.group_configurations TO ir005_invitation_executor;
 
+-- group_member_id is the caller's stable Participant identity in that Trip.
 CREATE FUNCTION public.get_my_group_access()
-RETURNS TABLE(group_id uuid, role text, trip_name text, destination text)
+RETURNS TABLE(
+  group_id uuid, group_member_id uuid, role text, trip_name text, destination text,
+  start_date date, end_date date, timezone text, accounting_currency text
+)
 LANGUAGE sql
 STABLE
 SECURITY DEFINER
 SET search_path = pg_catalog
 AS $$
-  SELECT member.group_id, member.role, config.trip_name, config.destination
+  SELECT member.group_id, member.id, member.role, config.trip_name, config.destination,
+    config.start_date, config.end_date, config.timezone, config.accounting_currency
   FROM trip_private.auth_users AS auth_user
   JOIN public.profiles AS profile ON profile.auth_user_id = auth_user.id
   JOIN public.group_members AS member ON member.profile_id = profile.id

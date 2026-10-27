@@ -36,7 +36,11 @@
     "test:ir007:unit": "node --test tests/unit/ir-007-rls-ownership-matrix.test.mjs",
     "test:ir007:static": "node --test tests/unit/ir-007-static-contract.test.mjs",
     "test:ir007:evidence": "node tests/database/ir-007/run-rls-ownership-evidence.mjs",
-    "test:ir007:cleanup": "node tests/database/ir-007/assert-cleanup.mjs"
+    "test:ir007:cleanup": "node tests/database/ir-007/assert-cleanup.mjs",
+    "db:start": "node scripts/dev-db.mjs start",
+    "db:stop": "node scripts/dev-db.mjs stop",
+    "db:reset": "node scripts/dev-db.mjs reset",
+    "db:types": "node scripts/dev-db.mjs types"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",

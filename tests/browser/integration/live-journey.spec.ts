@@ -22,7 +22,7 @@ async function createTrip(page: Page, name: string, destination: string) {
   await page.getByRole('button', { name: 'Create Group' }).click()
   await expect(page.getByTestId('bootstrap-success-state-a')).toContainText(name)
   await page.getByRole('button', { name: 'Continue to Trip' }).click()
-  await expect(page.getByTestId('group-workspace-candidate')).toContainText(name)
+  await expect(page.getByTestId('group-workspace')).toContainText(name)
 }
 
 test('two real Auth accounts create, invite, join, and stay in their own Groups', async ({ browser }) => {
@@ -33,6 +33,7 @@ test('two real Auth accounts create, invite, join, and stay in their own Groups'
     await owner.goto('/')
     await signUp(owner, 'Owner One', 'owner-live@example.test')
     await createTrip(owner, 'Goa weekend', 'Goa')
+    await owner.getByRole('tab', { name: 'Crew' }).click()
     await owner.getByLabel('Friend’s email').fill('friend-live@example.test')
     await owner.getByRole('button', { name: 'Create link' }).click()
     const link = await owner.getByLabel('Invitation link').inputValue()
@@ -47,16 +48,17 @@ test('two real Auth accounts create, invite, join, and stay in their own Groups'
     await friend.getByRole('button', { name: 'Confirm and join' }).click()
     await expect(friend.getByTestId('invitation-entry')).toContainText('Joined successfully')
     await friend.getByRole('button', { name: 'Close invitation' }).click()
-    await expect(friend.getByTestId('group-workspace-candidate')).toContainText('Goa weekend')
+    await expect(friend.getByTestId('group-workspace')).toContainText('Goa weekend')
+    await friend.getByRole('tab', { name: 'Crew' }).click()
     await expect(friend.getByTestId('invite-member')).toHaveCount(0)
 
     await owner.getByRole('button', { name: 'Create another Trip' }).click()
     await createTrip(owner, 'Jaipur weekend', 'Jaipur')
     await expect(owner.getByRole('navigation', { name: 'Choose a Trip' }).getByRole('button')).toHaveCount(2)
     await owner.getByRole('navigation', { name: 'Choose a Trip' }).getByRole('button', { name: 'Goa weekend' }).click()
-    await expect(owner.getByTestId('group-workspace-candidate').getByRole('heading', { name: 'Goa weekend' })).toBeVisible()
+    await expect(owner.getByTestId('group-workspace').getByRole('heading', { name: 'Goa weekend' })).toBeVisible()
     await owner.getByRole('navigation', { name: 'Choose a Trip' }).getByRole('button', { name: 'Jaipur weekend' }).click()
-    await expect(owner.getByTestId('group-workspace-candidate').getByRole('heading', { name: 'Jaipur weekend' })).toBeVisible()
+    await expect(owner.getByTestId('group-workspace').getByRole('heading', { name: 'Jaipur weekend' })).toBeVisible()
     await friend.getByRole('button', { name: 'Refresh Trips' }).click()
     await expect(friend.getByRole('navigation', { name: 'Choose a Trip' }).getByRole('button')).toHaveCount(1)
   } finally {

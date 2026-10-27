@@ -1,6 +1,8 @@
 import { defineConfig } from '@playwright/test'
 
-const localBaseUrl = 'http://127.0.0.1:4173'
+// Parallel worktrees each set their own TRIP_WEB_PORT so preview servers never collide.
+const webPort = process.env.TRIP_WEB_PORT ?? '4173'
+const localBaseUrl = `http://127.0.0.1:${webPort}`
 
 export default defineConfig({
   testDir: './tests/browser',
@@ -20,7 +22,7 @@ export default defineConfig({
     video: 'off',
   },
   webServer: {
-    command: 'npm run build && npm run preview -- --host 127.0.0.1 --port 4173',
+    command: `npm run build && npm run preview -- --host 127.0.0.1 --port ${webPort} --strictPort`,
     url: localBaseUrl,
     reuseExistingServer: !process.env.CI,
     timeout: 60_000,
