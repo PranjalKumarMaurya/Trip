@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - v2
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Types, unit tests, build, mocked browser tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      # The build only needs a well-formed Supabase URL; every browser test mocks it.
+      VITE_SUPABASE_URL: http://127.0.0.1:56321
+      VITE_SUPABASE_ANON_KEY: ci-placeholder-anon-key
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          # 24 runs the .test.ts unit tests natively (type stripping).
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run test:types
+      - run: npm run test:unit
+      - run: npm run build
+      - name: Check the build is an installable app
+        run: test -f dist/manifest.webmanifest && test -f dist/sw.js
+      - run: npm run test:browser:install -- --with-deps
+      # Mocked specs only: the real-stack specs skip themselves without their runner.
+      - run: npm run test:browser
+      - name: Keep failure screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-failures
+          path: artifacts/ir-001/browser/raw-test-results
+          retention-days: 7
+          if-no-files-found: ignore

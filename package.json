@@ -16,7 +16,6 @@
     "test:db:failure": "node tests/database/run-rls-failure-injection.mjs",
     "test:db:cleanup": "node tests/database/assert-local-cleanup.mjs",
     "test:browser": "PLAYWRIGHT_BROWSERS_PATH=0 playwright test",
-    "test:browser:failure": "node tests/browser/run-failure-injection.mjs",
     "test:browser:install": "PLAYWRIGHT_BROWSERS_PATH=0 playwright install chromium",
     "test:evidence:manifest": "node tests/evidence/write-evidence-manifest.mjs",
     "test:ir002": "node tests/database/ir-002/run-tenant-foundation.mjs",
@@ -57,7 +56,9 @@
     "test:scan:unit": "node --test tests/unit/scan-*.test.ts",
     "test:fx:unit": "node --test tests/unit/fx-*.test.ts",
     "test:ui:tour": "node tests/integration/run-ui-tour.mjs",
-    "test:db:profile": "node tests/database/trip-events/verify-profile-base.mjs"
+    "test:db:profile": "node tests/database/trip-events/verify-profile-base.mjs",
+    "test:extras:db": "node tests/database/extras/verify-extras-db.mjs",
+    "test:extras:live": "node tests/integration/run-extras-live.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",

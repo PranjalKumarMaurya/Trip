@@ -3,6 +3,7 @@ import { NeonBtn } from '../../components/ui/NeonBtn'
 import { NeonInput } from '../../components/ui/NeonInput'
 import { createInvitation } from './invitationApi'
 import { invitationShareUrl } from './invitationLink'
+import { canNativeShare, inviteShare } from './inviteShare'
 
 type IssueState =
   | { kind: 'idle' }
@@ -11,8 +12,10 @@ type IssueState =
   | { kind: 'already-issued' }
   | { kind: 'error'; message: string; retryable: boolean }
 
-export function InviteMember({ groupId, onIssued }: {
+export function InviteMember({ groupId, tripName, onIssued }: {
   groupId: string
+  /** Named in the message shared with the link. */
+  tripName?: string
   /** Called once the server confirms an invitation, e.g. to refresh the invitation list. */
   onIssued?: () => void
 }) {
@@ -82,6 +85,22 @@ export function InviteMember({ groupId, onIssued }: {
     }
   }
 
+  const shareDetails = state.kind === 'issued' ? inviteShare({ tripName, url: state.url, recipient: state.recipient }) : null
+  const nativeShare = shareDetails !== null && canNativeShare(typeof navigator === 'undefined' ? undefined : navigator, shareDetails.share)
+
+  const share = async () => {
+    if (!shareDetails) return
+    setCopyMessage('')
+    try {
+      await navigator.share(shareDetails.share)
+    } catch (error) {
+      // Closing the share sheet is not a failure.
+      if (!(error instanceof DOMException && error.name === 'AbortError')) {
+        setCopyMessage('Sharing didn’t work here. Copy the link or send it on WhatsApp instead.')
+      }
+    }
+  }
+
   return (
     <section data-testid="invite-member" aria-label="Invite a friend" className="surface px-4 py-5">
       <h2 className="serif-display" style={{ color: 'var(--text-primary)', fontSize: 25 }}>Invite a friend</h2>
@@ -92,6 +111,12 @@ export function InviteMember({ groupId, onIssued }: {
           <NeonInput readOnly value={state.url} onFocus={(event) => event.target.select()} className="mt-2" />
         </label>
         <NeonBtn type="button" onClick={() => void copy()} className="mt-4 min-h-11 w-full">Copy link</NeonBtn>
+        <div className="mt-3 flex gap-3">
+          {nativeShare && <NeonBtn type="button" variant="outline" onClick={() => void share()} className="min-h-11 shrink-0 px-5">Share…</NeonBtn>}
+          {shareDetails && <a href={shareDetails.whatsAppUrl} target="_blank" rel="noopener noreferrer"
+            className="font-ui inline-flex min-h-11 min-w-0 flex-1 items-center justify-center whitespace-nowrap rounded-full px-4 text-sm transition-all duration-200 hover:brightness-110"
+            style={{ border: '1px solid rgba(37,211,102,0.45)', color: '#5FE08D', fontWeight: 500, letterSpacing: 0.2 }}>Send on WhatsApp</a>}
+        </div>
         {copyMessage && <p role="status" className="mt-2" style={{ color: 'var(--text-secondary)' }}>{copyMessage}</p>}
         <NeonBtn type="button" variant="ghost" onClick={inviteAnother} className="mt-3 min-h-11 w-full">Invite someone else</NeonBtn>
       </> : state.kind === 'already-issued' ? <>

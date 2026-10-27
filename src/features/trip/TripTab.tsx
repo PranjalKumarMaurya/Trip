@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { NeonBtn } from '../../components/ui/NeonBtn'
 import type { TripTabProps } from '../workspace/tripTab'
+import { CrewStatusStrip } from './CrewStatusStrip'
 import { EventCard } from './EventCard'
 import { EventDialog, type SaveEvent } from './EventDialog'
 import { NextFlight } from './NextFlight'
@@ -58,6 +59,8 @@ export function TripTab({ trip, roster }: TripTabProps) {
 
   return (
     <section data-testid="trip-tab" className="flex flex-col gap-6">
+      {/* Statuses come from the itinerary, so wait for it rather than guess. */}
+      {!loading && !error && <CrewStatusStrip trip={trip} roster={roster} events={events} audience={audience} tripTimeZone={tripZone} />}
       <NextFlight flight={flight} tripTimeZone={tripZone} localTimeZone={localTimeZone} />
 
       <div>

@@ -16,10 +16,29 @@ export type ParseErrorCode =
   | 'document_unavailable'
   | 'parser_unavailable'
   | 'parse_failed'
+  | 'parse_limit_reached'
 
 export interface StoredDocument { id: string; groupId: string; storagePath: string; fileName: string; mimeType: string }
 export interface DocumentFile { bytes: Uint8Array; mimeType: string }
 export type ParseResult = { status: 'parsed'; draft: EventDraft } | { status: 'failed'; error: ParseErrorCode }
+
+/** Model calls allowed per person and per Trip in any 24 hours. */
+export interface ParseLimits { member: number; trip: number }
+export type ParseClaim = 'claimed' | 'member_limit' | 'trip_limit'
+
+export const DEFAULT_PARSE_LIMITS: ParseLimits = { member: 20, trip: 100 }
+
+/** Limits from SCAN_PARSE_DAILY_LIMIT_MEMBER / _TRIP; anything but a whole number ≥ 0 uses the default. */
+export function parseLimitsFromEnv(get: (name: string) => string | undefined): ParseLimits {
+  const read = (name: string, fallback: number) => {
+    const raw = get(name)?.trim()
+    return raw && /^\d{1,9}$/u.test(raw) ? Number(raw) : fallback
+  }
+  return {
+    member: read('SCAN_PARSE_DAILY_LIMIT_MEMBER', DEFAULT_PARSE_LIMITS.member),
+    trip: read('SCAN_PARSE_DAILY_LIMIT_TRIP', DEFAULT_PARSE_LIMITS.trip),
+  }
+}
 
 /** Every method runs as the caller, so Row Level Security decides what exists. */
 export interface ParseStore {
@@ -28,6 +47,11 @@ export interface ParseStore {
   tripContext(groupId: string): Promise<TripContext | null>
   download(path: string): Promise<DocumentFile | null>
   saveResult(documentId: string, result: ParseResult): Promise<void>
+  /**
+   * Count this parse against the daily limits (claim_document_parse, as the
+   * caller). Throws when the count cannot be checked; the model is then not called.
+   */
+  claimParse(documentId: string, limits: ParseLimits): Promise<ParseClaim>
 }
 
 export type Extractor = (input: { file: DocumentFile; fileName: string; trip: TripContext }) => Promise<unknown>
@@ -44,9 +68,10 @@ function json(status: number, body: unknown): Response {
   return new Response(JSON.stringify(body), { status, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } })
 }
 
-export function createParseHandler({ openStore, extractor, log = () => {} }: {
+export function createParseHandler({ openStore, extractor, limits = DEFAULT_PARSE_LIMITS, log = () => {} }: {
   openStore: (authorization: string) => ParseStore
   extractor: Extractor | null
+  limits?: ParseLimits
   log?: (event: string) => void
 }) {
   return async function handle(request: Request): Promise<Response> {
@@ -74,10 +99,10 @@ export function createParseHandler({ openStore, extractor, log = () => {} }: {
     const trip = await store.tripContext(document.groupId)
     if (!trip) return json(404, { error: 'document_not_found' })
 
-    const fail = async (status: number, error: ParseErrorCode) => {
+    const fail = async (status: number, error: ParseErrorCode, extra: Record<string, string> = {}) => {
       try { await store.saveResult(document.id, { status: 'failed', error }) } catch { log('save_failed') }
       log(error)
-      return json(status, { error })
+      return json(status, { error, ...extra })
     }
 
     if (!isParseableMimeType(document.mimeType)) return fail(422, 'unsupported_for_parsing')
@@ -86,6 +111,20 @@ export function createParseHandler({ openStore, extractor, log = () => {} }: {
     if (!isParseableMimeType(file.mimeType)) return fail(422, 'unsupported_for_parsing')
     if (file.mimeType !== 'application/pdf' && file.bytes.byteLength > MAX_PARSE_IMAGE_BYTES) return fail(422, 'too_large_to_parse')
     if (!extractor) return fail(503, 'parser_unavailable')
+
+    // Cost cap: counted (and checked) before the model is called. If the count
+    // cannot be checked, do not call the model.
+    let claim: ParseClaim
+    try {
+      claim = await store.claimParse(document.id, limits)
+    } catch {
+      log('claim_failed')
+      return fail(503, 'parser_unavailable')
+    }
+    if (claim === 'member_limit' || claim === 'trip_limit') {
+      return fail(429, 'parse_limit_reached', { scope: claim === 'member_limit' ? 'member' : 'trip' })
+    }
+    if (claim !== 'claimed') return fail(503, 'parser_unavailable')
 
     let raw: unknown
     try {
