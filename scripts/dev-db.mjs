@@ -10,10 +10,16 @@ import { resolve } from 'node:path'
 import { createLocalStack, root } from '../tests/support/local-stack.mjs'
 
 const basePort = Number(process.env.TRIP_DEV_DB_BASE_PORT ?? 54320)
-const workdir = resolve(root, '.local-stack')
+const projectId = process.env.TRIP_DEV_DB_PROJECT ?? 'trip-dev'
+// Only the main dev stack owns .env.development.local (the file `npm run dev` reads).
+// Other named stacks (type generation, parallel worktrees) get their own workdir and
+// never write or delete it, so they cannot repoint a running dev server.
+const ownsEnvFile = projectId === 'trip-dev'
+const workdir = resolve(root, ownsEnvFile ? '.local-stack' : `.local-stack-${projectId}`)
+const envFile = resolve(root, '.env.development.local')
 mkdirSync(workdir, { recursive: true })
 const stack = createLocalStack({
-  projectId: process.env.TRIP_DEV_DB_PROJECT ?? 'trip-dev',
+  projectId,
   basePort,
   workdir,
   realtime: true,
@@ -25,16 +31,17 @@ const stack = createLocalStack({
 function start() {
   stack.start()
   stack.migrate()
-  const { anonKey } = stack.keys()
-  writeFileSync(resolve(root, '.env.development.local'),
-    `# Written by scripts/dev-db.mjs for the local dev stack only.\nVITE_SUPABASE_URL=${stack.apiUrl}\nVITE_SUPABASE_ANON_KEY=${anonKey}\n`)
   console.log(`Local Supabase ready: API ${stack.apiUrl}, mailbox ${stack.mailboxUrl}`)
+  if (!ownsEnvFile) return
+  const { anonKey } = stack.keys()
+  writeFileSync(envFile,
+    `# Written by scripts/dev-db.mjs for the local dev stack only.\nVITE_SUPABASE_URL=${stack.apiUrl}\nVITE_SUPABASE_ANON_KEY=${anonKey}\n`)
   console.log('Wrote .env.development.local; `npm run dev` now uses this stack.')
 }
 
 function stop() {
   if (stack.containerExists()) stack.stop()
-  if (existsSync(resolve(root, '.env.development.local'))) rmSync(resolve(root, '.env.development.local'))
+  if (ownsEnvFile && existsSync(envFile)) rmSync(envFile)
 }
 
 function types() {

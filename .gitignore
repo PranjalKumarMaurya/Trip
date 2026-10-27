@@ -23,6 +23,7 @@ credentials.json
 
 # Local dev Supabase stack (scripts/dev-db.mjs)
 .local-stack/
+.local-stack-*/
 
 # UI tour screenshots (npm run test:ui:tour)
 artifacts/ui-tour/
