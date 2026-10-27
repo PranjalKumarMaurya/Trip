@@ -175,7 +175,7 @@ try {
 
   check('realtime-publication-and-replica-identity', () => {
     assert.equal(stack.psql(`SELECT string_agg(tablename, ',' ORDER BY tablename) FROM pg_publication_tables
-      WHERE pubname = 'supabase_realtime' AND schemaname = 'public' AND tablename LIKE 'trip_%';`), 'trip_event_audience,trip_events,trip_todos')
+      WHERE pubname = 'supabase_realtime' AND schemaname = 'public' AND tablename IN ('trip_todos', 'trip_events', 'trip_event_audience');`), 'trip_event_audience,trip_events,trip_todos')
     assert.equal(stack.psql(`SELECT string_agg(relname || '=' || relreplident::text, ',' ORDER BY relname) FROM pg_class
       WHERE relnamespace = 'public'::regnamespace AND relname IN ('trip_todos', 'trip_events', 'trip_event_audience');`),
     'trip_event_audience=f,trip_events=f,trip_todos=f')

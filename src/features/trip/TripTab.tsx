@@ -15,6 +15,7 @@ export function TripTab({ trip, roster }: TripTabProps) {
   const [editing, setEditing] = useState<Editing | null>(null)
   const [now, setNow] = useState(() => Date.now())
   const [localTimeZone] = useState(viewerTimeZone)
+  const [notice, setNotice] = useState<string | null>(null)
 
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 30_000)
@@ -36,11 +37,11 @@ export function TripTab({ trip, roster }: TripTabProps) {
   }, [events, trip.timezone])
 
   const save: SaveEvent = async (payload, people, overwrite) => {
-    if (editing?.mode === 'edit') {
-      await updateTripEvent(trip.groupId, editing.event.id, overwrite ? null : editing.event.updated_at, payload, people)
-    } else {
-      await createTripEvent(trip.groupId, trip.groupMemberId, payload, people)
-    }
+    const saved = editing?.mode === 'edit'
+      ? await updateTripEvent(trip.groupId, editing.event.id, overwrite ? null : editing.event.updated_at, payload, people)
+      : await createTripEvent(trip.groupId, trip.groupMemberId, payload, people)
+    // The event is saved either way; never leave the dialog open to be saved twice.
+    setNotice(saved.audienceSaved ? null : `“${payload.title}” was saved, but who’s on it was not. Edit it to try again.`)
     setEditing(null)
     void reload()
   }
@@ -73,6 +74,11 @@ export function TripTab({ trip, roster }: TripTabProps) {
           </div>
         </div>
 
+        {notice && (
+          <p role="status" className="surface mt-4 px-3.5 py-3 text-sm" style={{ color: 'var(--text-secondary)' }}>
+            {notice} <button type="button" onClick={() => setNotice(null)} style={{ color: 'var(--accent)' }}>Dismiss</button>
+          </p>
+        )}
         {error && (
           <p role="alert" className="surface mt-4 px-3.5 py-3 text-sm" style={{ color: 'var(--text-secondary)' }}>
             Could not load the itinerary. <button type="button" onClick={() => void reload()} style={{ color: 'var(--accent)' }}>Try again</button>

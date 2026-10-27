@@ -77,6 +77,7 @@ export function TodosTab({ trip, roster }: TripTabProps) {
   }
 
   const clearDone = async () => {
+    if (editing && done.some((todo) => todo.id === editing.id)) setEditing(null)
     setClearing(true)
     await run(() => clearCompleted(trip.groupId, done.map((todo) => todo.id)), 'Could not clear completed todos. Try again.')
     setClearing(false)

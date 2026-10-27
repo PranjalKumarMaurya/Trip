@@ -51,17 +51,20 @@ export class EventSaveError extends Error {
   }
 }
 
-async function setAudience(groupId: string, eventId: string, memberIds: string[]) {
+/** Returns false if the audience could not be saved (the event itself already was). */
+async function setAudience(groupId: string, eventId: string, memberIds: string[]): Promise<boolean> {
   const { error } = await supabase.rpc('set_trip_event_audience', { p_group_id: groupId, p_event_id: eventId, p_member_ids: memberIds })
-  if (error) throw new EventSaveError('failed')
+  return !error
 }
 
-export async function createTripEvent(groupId: string, createdBy: string, payload: EventPayload, audience: string[]) {
+/** Saved event; `audienceSaved` is false when only the "who's on this" step failed. */
+export interface EventSaved { audienceSaved: boolean }
+
+export async function createTripEvent(groupId: string, createdBy: string, payload: EventPayload, audience: string[]): Promise<EventSaved> {
   const { data, error } = await supabase.from('trip_events')
     .insert({ ...payload, group_id: groupId, created_by: createdBy }).select('id').single()
   if (error || !data) throw new EventSaveError('failed')
-  if (audience.length) await setAudience(groupId, data.id, audience)
-  return data.id
+  return { audienceSaved: audience.length ? await setAudience(groupId, data.id, audience) : true }
 }
 
 /**
@@ -69,7 +72,7 @@ export async function createTripEvent(groupId: string, createdBy: string, payloa
  * edit by another member is reported instead of silently overwritten.
  * Pass `expectedUpdatedAt = null` to overwrite deliberately.
  */
-export async function updateTripEvent(groupId: string, eventId: string, expectedUpdatedAt: string | null, payload: EventPayload, audience: string[]) {
+export async function updateTripEvent(groupId: string, eventId: string, expectedUpdatedAt: string | null, payload: EventPayload, audience: string[]): Promise<EventSaved> {
   let query = supabase.from('trip_events').update(payload).eq('group_id', groupId).eq('id', eventId)
   if (expectedUpdatedAt) query = query.eq('updated_at', expectedUpdatedAt)
   const { data, error } = await query.select('id')
@@ -79,7 +82,7 @@ export async function updateTripEvent(groupId: string, eventId: string, expected
     if (readError) throw new EventSaveError('failed')
     throw new EventSaveError(existing.length ? 'conflict' : 'removed')
   }
-  await setAudience(groupId, eventId, audience)
+  return { audienceSaved: await setAudience(groupId, eventId, audience) }
 }
 
 export async function deleteTripEvent(groupId: string, eventId: string) {
