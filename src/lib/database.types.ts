@@ -697,6 +697,76 @@ export type Database = {
         }
         Relationships: []
       }
+      trip_documents: {
+        Row: {
+          created_at: string
+          event_id: string | null
+          extracted: Json | null
+          file_name: string
+          group_id: string
+          id: string
+          mime_type: string
+          parse_error: string | null
+          parse_status: string
+          size_bytes: number
+          storage_path: string
+          updated_at: string
+          uploaded_by: string
+        }
+        Insert: {
+          created_at?: string
+          event_id?: string | null
+          extracted?: Json | null
+          file_name: string
+          group_id: string
+          id?: string
+          mime_type: string
+          parse_error?: string | null
+          parse_status?: string
+          size_bytes: number
+          storage_path: string
+          updated_at?: string
+          uploaded_by: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string | null
+          extracted?: Json | null
+          file_name?: string
+          group_id?: string
+          id?: string
+          mime_type?: string
+          parse_error?: string | null
+          parse_status?: string
+          size_bytes?: number
+          storage_path?: string
+          updated_at?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_documents_event_same_group"
+            columns: ["group_id", "event_id"]
+            isOneToOne: false
+            referencedRelation: "trip_events"
+            referencedColumns: ["group_id", "id"]
+          },
+          {
+            foreignKeyName: "trip_documents_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trip_documents_uploader_same_group"
+            columns: ["group_id", "uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "group_members"
+            referencedColumns: ["group_id", "id"]
+          },
+        ]
+      }
       trip_events: {
         Row: {
           airline: string | null
@@ -841,6 +911,25 @@ export type Database = {
           target_membership_id: string
         }
         Returns: Json
+      }
+      create_event_from_document: {
+        Args: {
+          p_airline?: string
+          p_arr_code?: string
+          p_booking_ref?: string
+          p_dep_code?: string
+          p_document_id: string
+          p_ends_at?: string
+          p_event_type: string
+          p_flight_no?: string
+          p_location?: string
+          p_location_to?: string
+          p_notes?: string
+          p_starts_at: string
+          p_terminal?: string
+          p_title: string
+        }
+        Returns: string
       }
       create_invitation: {
         Args: {

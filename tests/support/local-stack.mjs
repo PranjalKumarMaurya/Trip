@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process'
-import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -15,6 +15,9 @@ const cli = resolve(root, 'node_modules/.bin/supabase')
  *
  * Disposable by default (temporary workdir, removed on stop). Pass `workdir` to
  * keep a persistent stack, e.g. for local development.
+ *
+ * `edgeRuntime: true` also serves `supabase/functions` (copied into the workdir at
+ * start) at `<apiUrl>/functions/v1/<name>`, with `functionSecrets` as their env.
  */
 export function createLocalStack({
   projectId,
@@ -24,6 +27,8 @@ export function createLocalStack({
   storage = true,
   mailbox = false,
   confirmations = false,
+  edgeRuntime = false,
+  functionSecrets = {},
   siteUrl = `http://127.0.0.1:${process.env.TRIP_WEB_PORT ?? '4173'}`,
 }) {
   const port = (offset) => String(basePort + offset)
@@ -61,6 +66,11 @@ export function createLocalStack({
     if (containerExists()) throw new Error(`${projectId}-stack-already-exists`)
     if (!workdir) workdir = mkdtempSync(resolve(tmpdir(), `${projectId}-`))
     mkdirSync(resolve(workdir, 'supabase'), { recursive: true })
+    if (edgeRuntime) cpSync(resolve(root, 'supabase/functions'), resolve(workdir, 'supabase/functions'), { recursive: true })
+    const edgeConfig = edgeRuntime
+      ? `policy = "per_worker"\n[edge_runtime.secrets]\n${Object.entries(functionSecrets)
+        .map(([key, value]) => `${key} = ${JSON.stringify(String(value))}\n`).join('')}`
+      : ''
     writeFileSync(resolve(workdir, 'supabase/config.toml'), `project_id = "${projectId}"
 [api]
 enabled = true
@@ -87,8 +97,8 @@ site_url = "${siteUrl}"
 [auth.email]
 enable_confirmations = ${confirmations}
 [edge_runtime]
-enabled = false
-[analytics]
+enabled = ${edgeRuntime}
+${edgeConfig}[analytics]
 enabled = false
 `)
     run(cli, ['start', '--workdir', workdir], { label: 'stack-start' })

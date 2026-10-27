@@ -1,11 +1,14 @@
 // Private Trip documents (migration 050): Storage object policies through the real
-// Storage API, `trip_documents` metadata RLS, cross-Trip Event links, the
+// Storage API, `trip_documents` metadata RLS, the parse-document Edge Function
+// (stub extractor) running as the caller, cross-Trip Event links, the
 // create_event_from_document RPC, delete rules, and member removal.
 import assert from 'node:assert/strict'
 import { createLocalStack } from '../../support/local-stack.mjs'
 import { createTrip, quote, sqlAs } from '../../support/db-fixtures.mjs'
 
-const stack = createLocalStack({ projectId: 'scan-fx-db', basePort: 58800 })
+const stack = createLocalStack({
+  projectId: 'scan-fx-db', basePort: 58800, edgeRuntime: true, functionSecrets: { SCAN_PARSE_STUB: '1' },
+})
 const tripA = 'c0000000-0000-4000-8000-00000000000a'
 const tripB = 'c0000000-0000-4000-8000-00000000000b'
 const bucket = 'trip-documents'
@@ -61,6 +64,10 @@ function insertDocument(groupId, path, uploadedBy) {
     VALUES (${quote(groupId)}, ${quote(path)}, 'ticket.pdf', 'application/pdf', ${pdf.byteLength}, ${quote(uploadedBy)})
     RETURNING id;`
 }
+
+const parse = (user, documentId) => api('/functions/v1/parse-document', {
+  token: user.token, method: 'POST', contentType: 'application/json', body: JSON.stringify({ documentId }),
+})
 
 const createEvent = (documentId, title = 'Flight to Goa') => `SELECT public.create_event_from_document(
   ${quote(documentId)}, 'flight', ${quote(title)}, '2026-11-01T00:45:00Z', '2026-11-01T02:00:00Z',
@@ -141,6 +148,19 @@ try {
   assert.equal(otherDoc.ok, true, otherDoc.error)
   const otherDocId = otherDoc.rows[0][0]
 
+  // The Edge Function reads documents as the caller and returns a draft without creating Events.
+  const parsed = await parse(friend, ownerDocId)
+  assert.equal(parsed.status, 200, parsed.text)
+  assert.equal(parsed.json.draft.flightNo, '6E-123')
+  assert.equal(parsed.json.draft.startsAt, '2026-11-01T00:45:00.000Z')
+  assert.equal(stack.psql(`SELECT parse_status || '|' || (extracted ->> 'bookingRef') FROM public.trip_documents WHERE id = ${quote(ownerDocId)};`), 'parsed|STUB42')
+  assert.equal(stack.psql('SELECT count(*) FROM public.trip_events;'), '0', 'parse created an Event')
+  assert.equal((await parse(stranger, ownerDocId)).status, 404, 'stranger parse')
+  assert.equal((await parse(other, ownerDocId)).status, 404, 'other Trip parse')
+  assert.equal((await parse({ token: keys.anonKey }, ownerDocId)).status, 401, 'anon parse')
+  assert.equal((await parse({ token: 'not-a-jwt' }, ownerDocId)).status, 401, 'forged token')
+  assert.equal((await parse(friend, 'not-a-uuid')).status, 400)
+
   // Metadata reads are Trip-scoped.
   const names = (userId) => sqlAs(stack, userId, 'SELECT group_id FROM public.trip_documents ORDER BY group_id;').rows
   assert.deepEqual(names(friend.id), [[tripA], [tripA]])
@@ -209,7 +229,7 @@ try {
   assert.equal((await download(owner, leaverPath)).status, 200, 'remaining members keep access')
 
   stack.stop()
-  console.log(JSON.stringify({ scanDocuments: 'passed', storagePolicies: 'passed', metadataRls: 'passed', crossTripLinks: 'passed', deleteRules: 'passed', removal: 'passed', cleanup: 'passed' }))
+  console.log(JSON.stringify({ scanDocuments: 'passed', storagePolicies: 'passed', parseFunction: 'passed', metadataRls: 'passed', crossTripLinks: 'passed', deleteRules: 'passed', removal: 'passed', cleanup: 'passed' }))
 } catch (error) {
   try { stack.stop() } catch { /* keep the primary failure */ }
   console.error(error instanceof Error && /^[a-z0-9-]+$/u.test(error.message) ? error.message : 'scan-documents-verification-failed')
