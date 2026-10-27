@@ -69,10 +69,11 @@ export function CrewTab({ trip, roster, reloadRoster, onTripsChanged }: TripTabP
     }
   })
 
+  const leaveBlocked = leaveBlockReason(viewer, roster)
   const leaveSpec: ActionSpec = {
-    id: 'leave', menuLabel: 'Leave Trip', title: 'Leave this Trip?', tone: 'danger',
+    id: 'leave', menuLabel: 'Leave Trip', title: leaveBlocked ? 'Hand over before you leave' : 'Leave this Trip?', tone: 'danger',
     body: `You lose access to ${trip.tripName} straight away. Your expenses and history stay in the Trip. An Owner can invite you back.`,
-    blocked: leaveBlockReason(viewer, roster) ?? undefined,
+    blocked: leaveBlocked ?? undefined,
     confirmLabel: 'Leave Trip', busyLabel: 'Leaving…',
     run: async (requestId) => { await deactivateMembership(groupId, trip.groupMemberId, 'leave', requestId); return `You left ${trip.tripName}.` },
     describeError: (code) => crewErrorView('leave', code),

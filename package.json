@@ -43,7 +43,8 @@
     "db:types": "node scripts/dev-db.mjs types",
     "test:db:events": "node tests/database/trip-events/verify-trip-events.mjs",
     "test:crew:db": "node tests/database/crew/verify-crew-access.mjs",
-    "test:crew:live": "node tests/integration/run-crew-live.mjs"
+    "test:crew:live": "node tests/integration/run-crew-live.mjs",
+    "test:crew:browser": "PLAYWRIGHT_BROWSERS_PATH=0 playwright test tests/browser/crew"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",
