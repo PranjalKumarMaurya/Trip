@@ -24,6 +24,9 @@ jobs:
       VITE_SUPABASE_ANON_KEY: ci-placeholder-anon-key
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Full history: the IR-007 static contract test diffs against older commits.
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           # 24 runs the .test.ts unit tests natively (type stripping).
